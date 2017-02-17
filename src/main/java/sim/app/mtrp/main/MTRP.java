@@ -1,4 +1,4 @@
-package sim.app.mtrp;
+package sim.app.mtrp.main;
 
 import sim.engine.*;
 
