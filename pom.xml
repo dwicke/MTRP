@@ -20,5 +20,10 @@
             <artifactId>mason</artifactId>
             <version>v1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.dwicke</groupId>
+            <artifactId>ParameterDatabase</artifactId>
+            <version>v1.1</version>
+        </dependency>
     </dependencies>
 </project>
