@@ -14,11 +14,20 @@ public class MTRP extends SimState {
 
 
     public int numAgents = 4;
+    public int numNeighborhoods = 4;
+    public int simWidth = 100;
+    public int simHeight = 100;
+
+
+    // agent params:
+
     public int maxCarrySize = 4;
     public double startFunds = 100;
     public double fuelCapacity = 1000;
 
-    public int numNeighborhoods = 4;
+
+    // neighborhood params:
+
     public int numDepos = 2;
     public int depoCapacity = 20; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
@@ -27,14 +36,21 @@ public class MTRP extends SimState {
     public double maxCostPerResource = 20.0; // for each type of resource we get the price and set it for all of the depos
 
     public double fuelCost = 1.0;
-    public int maxNumTasksPerNeighborhood = 6;
+    public int maxNumTasksPerNeighborhood = 6; // task == customer
     public int maxJobLength = 10; // change...
-    public int maxNumResourcesPerJob = numResourceTypes*2;
+    public int maxNumResourcesPerJob = numResourceTypes * 2;
+
+
+    // bondsman params:
+
     public double basebounty = 100;
+    public double increment = 1.0;
 
 
-    public int simWidth = 100;
-    public int simHeight = 100;
+    public Bondsman bondsman;
+    public Agent agents[];
+    public Depo depos[];
+    public Neighborhood neighborhoods[];
 
 
 
@@ -54,11 +70,170 @@ public class MTRP extends SimState {
         super.start();
         // here we go!
 
-
+        neighborhoods = new Neighborhood[numNeighborhoods];
         // First create the neighborhoods.  Use the mean location as the location for the depos
+        for (int i = 0; i < numNeighborhoods; i++) {
+            neighborhoods[i] = new Neighborhood();
+            // schedule it
+            schedule.scheduleRepeating(Schedule.EPOCH, 0, neighborhoods[i]);
+        }
+
+        // create the bondsman and pass in the neighborhoods
+        bondsman = new Bondsman();
+
+        // create the agents
+        agents = new Agent[numAgents];
+        for (int i = 0; i < numAgents; i++) {
+            agents[i] = new Agent();
+        }
+
+        // start the simulation
+        schedule.scheduleRepeating(Schedule.EPOCH, 0, bondsman);
+
+    }
 
 
+    public int getNumAgents() {
+        return numAgents;
+    }
 
+    public void setNumAgents(int numAgents) {
+        this.numAgents = numAgents;
+    }
 
+    public int getNumNeighborhoods() {
+        return numNeighborhoods;
+    }
+
+    public void setNumNeighborhoods(int numNeighborhoods) {
+        this.numNeighborhoods = numNeighborhoods;
+    }
+
+    public int getSimWidth() {
+        return simWidth;
+    }
+
+    public void setSimWidth(int simWidth) {
+        this.simWidth = simWidth;
+    }
+
+    public int getSimHeight() {
+        return simHeight;
+    }
+
+    public void setSimHeight(int simHeight) {
+        this.simHeight = simHeight;
+    }
+
+    public int getMaxCarrySize() {
+        return maxCarrySize;
+    }
+
+    public void setMaxCarrySize(int maxCarrySize) {
+        this.maxCarrySize = maxCarrySize;
+    }
+
+    public double getStartFunds() {
+        return startFunds;
+    }
+
+    public void setStartFunds(double startFunds) {
+        this.startFunds = startFunds;
+    }
+
+    public double getFuelCapacity() {
+        return fuelCapacity;
+    }
+
+    public void setFuelCapacity(double fuelCapacity) {
+        this.fuelCapacity = fuelCapacity;
+    }
+
+    public int getNumDepos() {
+        return numDepos;
+    }
+
+    public void setNumDepos(int numDepos) {
+        this.numDepos = numDepos;
+    }
+
+    public int getDepoCapacity() {
+        return depoCapacity;
+    }
+
+    public void setDepoCapacity(int depoCapacity) {
+        this.depoCapacity = depoCapacity;
+    }
+
+    public int getDepoRefreshRate() {
+        return depoRefreshRate;
+    }
+
+    public void setDepoRefreshRate(int depoRefreshRate) {
+        this.depoRefreshRate = depoRefreshRate;
+    }
+
+    public int getNumResourceTypes() {
+        return numResourceTypes;
+    }
+
+    public void setNumResourceTypes(int numResourceTypes) {
+        this.numResourceTypes = numResourceTypes;
+    }
+
+    public double getMaxCostPerResource() {
+        return maxCostPerResource;
+    }
+
+    public void setMaxCostPerResource(double maxCostPerResource) {
+        this.maxCostPerResource = maxCostPerResource;
+    }
+
+    public double getFuelCost() {
+        return fuelCost;
+    }
+
+    public void setFuelCost(double fuelCost) {
+        this.fuelCost = fuelCost;
+    }
+
+    public int getMaxNumTasksPerNeighborhood() {
+        return maxNumTasksPerNeighborhood;
+    }
+
+    public void setMaxNumTasksPerNeighborhood(int maxNumTasksPerNeighborhood) {
+        this.maxNumTasksPerNeighborhood = maxNumTasksPerNeighborhood;
+    }
+
+    public int getMaxJobLength() {
+        return maxJobLength;
+    }
+
+    public void setMaxJobLength(int maxJobLength) {
+        this.maxJobLength = maxJobLength;
+    }
+
+    public int getMaxNumResourcesPerJob() {
+        return maxNumResourcesPerJob;
+    }
+
+    public void setMaxNumResourcesPerJob(int maxNumResourcesPerJob) {
+        this.maxNumResourcesPerJob = maxNumResourcesPerJob;
+    }
+
+    public double getBasebounty() {
+        return basebounty;
+    }
+
+    public void setBasebounty(double basebounty) {
+        this.basebounty = basebounty;
+    }
+
+    public double getIncrement() {
+        return increment;
+    }
+
+    public void setIncrement(double increment) {
+        this.increment = increment;
     }
 }
