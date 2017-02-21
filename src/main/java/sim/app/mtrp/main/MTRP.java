@@ -1,6 +1,7 @@
 package sim.app.mtrp.main;
 
 import sim.engine.*;
+import sim.field.continuous.Continuous2D;
 
 
 /**
@@ -52,6 +53,8 @@ public class MTRP extends SimState {
     public Depo depos[];
     public Neighborhood neighborhoods[];
 
+    public Continuous2D world;
+
 
 
     public MTRP(long seed) {
@@ -70,28 +73,47 @@ public class MTRP extends SimState {
         super.start();
         // here we go!
 
+        world = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+
+        int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
         // First create the neighborhoods.  Use the mean location as the location for the depos
         for (int i = 0; i < numNeighborhoods; i++) {
-            neighborhoods[i] = new Neighborhood();
+            neighborhoods[i] = new Neighborhood(this, i);
             // schedule it
-            schedule.scheduleRepeating(Schedule.EPOCH, 0, neighborhoods[i]);
+            schedule.scheduleRepeating(Schedule.EPOCH, order, neighborhoods[i]);
+            order++;
         }
 
-        // create the bondsman and pass in the neighborhoods
-        bondsman = new Bondsman();
+        depos = new Depo[numDepos];
+        // create the depos after the neighborhood as we place the depos in random neighborhoods
+        for (int i =0; i < numDepos; i++) {
+            depos[i] = new Depo(this, i);
+            schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
+            order++;
+        }
+
+        // create the bondsman and pass in this
+        bondsman = new Bondsman(this);
+        schedule.scheduleRepeating(Schedule.EPOCH, order, bondsman);
+        order++;
 
         // create the agents
         agents = new Agent[numAgents];
         for (int i = 0; i < numAgents; i++) {
-            agents[i] = new Agent();
+            agents[i] = new Agent(this, i);
+            schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
+            order++;
         }
-
-        // start the simulation
-        schedule.scheduleRepeating(Schedule.EPOCH, 0, bondsman);
-
     }
 
+
+    @Override
+    public void finish() {
+        super.finish();
+        StatsPublisher p = new StatsPublisher(this, 200000, "/home/drew/tmp");
+        p.step(this);
+    }
 
     public int getNumAgents() {
         return numAgents;

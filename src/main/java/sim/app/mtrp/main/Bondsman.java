@@ -9,6 +9,12 @@ import sim.engine.Steppable;
 public class Bondsman implements Steppable {
     private static final long serialVersionUID = 1;
 
+    MTRP state;
+
+    public Bondsman(MTRP state) {
+        this.state = state;
+    }
+
     public void step(SimState simState) {
 
     }
