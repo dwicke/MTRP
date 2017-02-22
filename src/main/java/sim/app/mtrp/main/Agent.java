@@ -43,11 +43,12 @@ public class Agent implements Steppable {
     }
 
     public void pickDestination() {
-
+        // basic greedy approach go to the nearest location that is currently available
+        // if I have the
     }
 
     public void buySellResources() {
-
+        // buy equal parts of each
     }
 
 

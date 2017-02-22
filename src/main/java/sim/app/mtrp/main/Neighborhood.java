@@ -50,5 +50,8 @@ public class Neighborhood implements Steppable{
         return meanLocation;
     }
 
-
+    @Override
+    public String toString() {
+        return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")";
+    }
 }

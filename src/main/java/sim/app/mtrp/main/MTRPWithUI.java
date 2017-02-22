@@ -1,10 +1,13 @@
 package sim.app.mtrp.main;
 
+import sim.app.mtrp.main.portrayals.AgentPortrayal;
+import sim.app.mtrp.main.portrayals.DepoPortrayal;
+import sim.app.mtrp.main.portrayals.TaskPortrayal;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.grid.SparseGridPortrayal2D;
+import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
 
@@ -20,22 +23,19 @@ public class MTRPWithUI extends GUIState {
     public Display2D display;
     public JFrame displayFrame;
 
-    // the goals grid displays the locations where balls can be dropped off at
-    // each type of ball has a particular goal location.  So, ball type 1 has goal location 1
-    // ball type 2 has goal location 2.  There can be multiple balls of type 1 but they
-    // may be of different tasks but they each must be brought to goal location 1.
+
+    ContinuousPortrayal2D agentsPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D tasksPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D deposPortrayal = new ContinuousPortrayal2D();
 
 
-    // the grid that displays the balls.
-    SparseGridPortrayal2D ballGridPortrayal = new SparseGridPortrayal2D();
-    SparseGridPortrayal2D robotPortrayal = new SparseGridPortrayal2D();
+
 
     public static void main(String[] args) {
         new MTRPWithUI().createController();
     }
 
     public MTRPWithUI() {
-        //super(new Bounties("kelsey".hashCode()));
         super(new MTRP(System.currentTimeMillis()));
     }
 
@@ -49,27 +49,30 @@ public class MTRPWithUI extends GUIState {
     }  // non-volatile
 
     public static String getName() {
-        return "Bounties";
+        return "MTRP with bounty hunting";
     }
 
     public void setupPortrayals() {
-        MTRP bounties = (MTRP) state;
-        // tell the portrayals what to portray and how to portray them
-//        ballGridPortrayal.setField(bounties.tasksGrid);
-//
-//
-//        for(int i = 0; i < bounties.tasksGrid.allObjects.numObjs; i++) {
-//            ballGridPortrayal.setPortrayalForObject(bounties.tasksGrid.allObjects.objs[i],
-//                    new MovablePortrayal2D(new TaskPortrayal((Task)bounties.tasksGrid.allObjects.objs[i])));
-//        }
-//
-//
-//        robotPortrayal.setField(bounties.robotgrid);
-//        for(int i = 0; i < bounties.robotgrid.allObjects.numObjs; i++) {
-//            IAgent ir = (IAgent) bounties.robotgrid.allObjects.objs[i];
-//            robotPortrayal.setPortrayalForObject(bounties.robotgrid.allObjects.objs[i],
-//                    new MovablePortrayal2D(new LabelledPortrayal2D(new RobotPortrayal(ir), "id: " + ir.getId())));
-//        }
+        MTRP myState = (MTRP) state;
+
+
+        agentsPortrayal.setField(myState.agentPlane);
+        // now setup the portrayals for the objects in this plane
+        for (Agent a: myState.getAgents()) {
+            agentsPortrayal.setPortrayalForObject(a, new MovablePortrayal2D(new LabelledPortrayal2D(new AgentPortrayal(a), "id = " + a.id)));
+        }
+
+        tasksPortrayal.setField(myState.taskPlane);
+        for (Object o: myState.getTaskPlane().getAllObjects()) {
+            Task t = (Task) o;
+            tasksPortrayal.setPortrayalForObject(t, new MovablePortrayal2D(new TaskPortrayal(t)));
+        }
+
+        deposPortrayal.setField(myState.depoPlane);
+        for (Depo d: myState.getDepos()) {
+            tasksPortrayal.setPortrayalForObject(d, new MovablePortrayal2D(new DepoPortrayal(d)));
+        }
+
         // reschedule the displayer
         display.reset();
 
@@ -93,14 +96,16 @@ public class MTRPWithUI extends GUIState {
         super.init(c);
 
         // Make the Display2D.  We'll have it display stuff later.
-        display = new Display2D(600, 400, this); // at 400x400, we've got 4x4 per array position
+        display = new Display2D(100, 100, this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
 
         // attach the portrayals from bottom to top
-        display.attach(ballGridPortrayal, "Tasks");
-        display.attach(robotPortrayal, "Agents");
+        display.attach(agentsPortrayal, "Agents");
+        display.attach(tasksPortrayal, "Tasks");
+        display.attach(deposPortrayal, "Depos");
+
 
         // specify the backdrop color  -- what gets painted behind the displays
         display.setBackdrop(Color.white);

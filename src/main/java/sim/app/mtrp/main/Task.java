@@ -37,4 +37,16 @@ public class Task {
     public void incrementBounty() {
         job.incrementBounty();
     }
+
+    public double getBounty() {
+        return job.getCurrentBounty();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Neighborhood getNeighborhood() {
+        return neighborhood;
+    }
 }
