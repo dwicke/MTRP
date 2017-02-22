@@ -17,8 +17,8 @@ public class Agent implements Steppable {
     double bounty;
     int resourcesQuantities[];
     int curTotalNumResources;
-    double stepsize = 0.7; // this is the max distance I can travel in one step
     Job curJob;
+    Double2D curDestination;
     Double2D curLocation;
 
     public Agent(MTRP state, int id) {
@@ -32,31 +32,44 @@ public class Agent implements Steppable {
         // pick a random depo and start there
         Depo startDepo = state.getDepos()[state.random.nextInt(state.getDepos().length)];
         curLocation = new Double2D(startDepo.location.getX(), startDepo.location.getY());
+        curDestination = new Double2D(curLocation.getX(), curLocation.getY());
         state.getAgentPlane().setObjectLocation(this, curLocation);
     }
 
     public void step(SimState simState) {
-
-        buySellResources();
-        pickDestination();
-        travel();
-
-    }
-
-
-    public void buySellResources() {
-
+        pickDestination(); // where do I want to go??
+        buySellResources(); // what do I need when I get there?
+        travel(); // lets go!
     }
 
     public void pickDestination() {
 
     }
 
+    public void buySellResources() {
+
+    }
+
 
     public void travel() {
-        if (curJob != null) {
-            // then lets go!
-            //
-        }
+
+
+        // example
+        // 3-4-5 triangle
+        // sqrt((3/5*.7)^2 + (4/5*.7)^2) = .7
+        // therefore if I move (3/5*.7) in the x direction and (4/5*.7) in the y direction I will end up only going .7
+        // so do that. essentially normalizing on the euclidean distance.
+        double dis = curLocation.distance(curDestination);
+        if (dis == 0.0) // might need to account for some error here eventually...
+            return; // don't move already at destination.
+        double dx = curDestination.getX() - curLocation.getX();
+        dx = dx/dis * state.getStepsize();
+
+        double dy = curDestination.getY() - curLocation.getY();
+        dy = dy/dis * state.getStepsize();
+
+        curLocation = new Double2D(curLocation.getX() + dx, curLocation.getY() + dy);
+        // now travel there!
+        state.getAgentPlane().setObjectLocation(this, curLocation);
     }
 }

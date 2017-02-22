@@ -28,6 +28,8 @@ public class MTRP extends SimState {
     public int maxCarrySize = 16;
     public double startFunds = 100;
     public double fuelCapacity = 1000;
+    public double stepsize = 0.7; // this is the max distance I can travel in one step
+
 
 
     // neighborhood params:
@@ -156,6 +158,10 @@ public class MTRP extends SimState {
 
     public Continuous2D getTaskPlane() {
         return taskPlane;
+    }
+
+    public double getStepsize() {
+        return stepsize;
     }
 
     public int getNumAgents() {
