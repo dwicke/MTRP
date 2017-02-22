@@ -2,6 +2,9 @@ package sim.app.mtrp.main;
 
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
+import sim.util.Bag;
+
+import java.util.Collections;
 
 
 /**
@@ -22,7 +25,7 @@ public class MTRP extends SimState {
 
     // agent params:
 
-    public int maxCarrySize = 4;
+    public int maxCarrySize = 16;
     public double startFunds = 100;
     public double fuelCapacity = 1000;
 
@@ -53,8 +56,11 @@ public class MTRP extends SimState {
     public Depo depos[];
     public Neighborhood neighborhoods[];
 
-    public Continuous2D world;
+    public Continuous2D agentPlane;
+    public Continuous2D taskPlane;
+    public Continuous2D depoPlane;
 
+    public double taskLocStdDev = 5.0; // this is the same as what we used in the original paper.
 
 
     public MTRP(long seed) {
@@ -73,7 +79,11 @@ public class MTRP extends SimState {
         super.start();
         // here we go!
 
-        world = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+
+        agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+        taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+        depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+
 
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
@@ -86,9 +96,12 @@ public class MTRP extends SimState {
         }
 
         depos = new Depo[numDepos];
+        Bag shuffledNeighborhoods = new Bag(neighborhoods);
+        shuffledNeighborhoods.shuffle(random);
         // create the depos after the neighborhood as we place the depos in random neighborhoods
         for (int i =0; i < numDepos; i++) {
-            depos[i] = new Depo(this, i);
+            // only a single neighborhood per depo
+            depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i));
             schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
             order++;
         }
@@ -108,11 +121,41 @@ public class MTRP extends SimState {
     }
 
 
+
     @Override
     public void finish() {
         super.finish();
         StatsPublisher p = new StatsPublisher(this, 200000, "/home/drew/tmp");
         p.step(this);
+    }
+
+
+    public Depo[] getDepos() {
+        return depos;
+    }
+
+    public Agent[] getAgents() {
+        return agents;
+    }
+
+    public Bondsman getBondsman() {
+        return bondsman;
+    }
+
+    public Neighborhood[] getNeighborhoods() {
+        return neighborhoods;
+    }
+
+    public Continuous2D getAgentPlane() {
+        return agentPlane;
+    }
+
+    public Continuous2D getDepoPlane() {
+        return depoPlane;
+    }
+
+    public Continuous2D getTaskPlane() {
+        return taskPlane;
     }
 
     public int getNumAgents() {

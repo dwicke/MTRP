@@ -16,6 +16,10 @@ public class Bondsman implements Steppable {
     }
 
     public void step(SimState simState) {
+        for (Object otask: state.getTaskPlane().getAllObjects()) {
+            Task task = (Task) otask;
+            task.incrementBounty();
+        }
 
     }
 }

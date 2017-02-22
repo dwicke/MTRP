@@ -15,24 +15,40 @@ public class Neighborhood implements Steppable{
     int id;
 
     Double2D meanLocation;
-    Bag tasks;
+    Task tasks[];
 
 
 
-    public Neighborhood(MTRP mtrp, int id) {
-        this.mtrp = mtrp;
+
+    public Neighborhood(MTRP state, int id) {
+        this.mtrp = state;
         this.id = id;
 
-        // first set the mean location for the neighborhood
-        //meanLocation = new Double2D(mtrp.random.nextD)
-        // then
+        // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
+        meanLocation = new Double2D(state.random.nextDouble(true,true)*state.simWidth, state.random.nextDouble(true,true)*state.simHeight);
+        // then generate the initial tasks locations
+        tasks = new Task[state.getMaxNumTasksPerNeighborhood()];
+        int numTasks = state.random.nextInt(state.getMaxNumTasksPerNeighborhood()) + 1;
+        for (int i = 0; i < numTasks; i++) {
+            tasks[i] = new Task(this, state, state.getMaxNumTasksPerNeighborhood()*id + i);
+            // add it to the continuous2d
+            state.getTaskPlane().setObjectLocation(tasks[i], tasks[i].getLocation());
+
+        }
 
 
     }
 
 
     public void step(SimState simState) {
-        // here we decide if we create a new task
+        // here we decide if we create a new task and we cleanup the finished ones
+
 
     }
+
+    public Double2D getMeanLocation() {
+        return meanLocation;
+    }
+
+
 }
