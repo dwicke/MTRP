@@ -51,4 +51,8 @@ public class Depo implements Steppable{
     public Resource[] getResources() {
         return resources;
     }
+
+    public int getID() {
+        return id;
+    }
 }

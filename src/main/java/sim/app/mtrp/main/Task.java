@@ -12,8 +12,9 @@ public class Task {
     Neighborhood neighborhood;
     MTRP state;
     int id; // unique id
-    MutableDouble2D location;
+    Double2D location;
     Job job;
+    boolean finished = false;
 
     public Task(Neighborhood neighborhood, MTRP state, int id) {
         this.id = id;
@@ -21,8 +22,9 @@ public class Task {
         this.state = state;
         double x = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getX();
         double y = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getY();
-        location = new MutableDouble2D(x,y);
-
+        location = new Double2D(x,y);
+        // add it to the continuous2d
+        state.getTaskPlane().setObjectLocation(this, location);
         // now generate the job
         job = new Job(this, state, id);// can easily make this an array then later...
 
@@ -30,12 +32,13 @@ public class Task {
 
 
     public Double2D getLocation() {
-        return new Double2D(location.getX(), location.getY());
+        return location;
     }
 
 
     public void incrementBounty() {
-        job.incrementBounty();
+        if (!finished)
+            job.incrementBounty();
     }
 
     public double getBounty() {
@@ -48,5 +51,16 @@ public class Task {
 
     public Neighborhood getNeighborhood() {
         return neighborhood;
+    }
+
+    public boolean getIsAvailable() {
+        return job.getIsAvailable();
+    }
+
+    public void setFinished() {
+        finished = true;
+    }
+    public boolean getFinished() {
+        return finished;
     }
 }

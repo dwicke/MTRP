@@ -10,9 +10,12 @@ public class Job {
     MTRP state;
     int id;
 
+    Agent curWorker;
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
     double currentBounty;
     int jobLength; // how long it takes to complete the job in number of timesteps
+    boolean isAvailable = true;
+    int curWorkLeft;
 
 
     public Job(Task task, MTRP state, int id) {
@@ -23,6 +26,7 @@ public class Job {
         // now setup the job
         currentBounty = state.basebounty;
         jobLength = state.random.nextInt(state.getMaxJobLength());
+        curWorkLeft = jobLength;
         resourcesNeeded = new int[state.getNumResourceTypes()];
         int numResource = state.random.nextInt(state.getMaxNumResourcesPerJob());
         while (numResource != 0) {
@@ -65,5 +69,26 @@ public class Job {
 
     public void incrementBounty() {
         currentBounty++;
+    }
+
+    public boolean getIsAvailable() {
+        return isAvailable;
+    }
+
+    public void claimWork(Agent worker) {
+
+        curWorker = worker;
+        isAvailable = false;
+    }
+
+    public boolean doWork() {
+        curWorkLeft--;
+        return curWorkLeft == 0;
+    }
+
+    public void finish() {
+        if (curWorkLeft == 0) {
+            task.setFinished();
+        }
     }
 }

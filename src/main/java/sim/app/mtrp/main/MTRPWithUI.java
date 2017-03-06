@@ -96,7 +96,7 @@ public class MTRPWithUI extends GUIState {
         super.init(c);
 
         // Make the Display2D.  We'll have it display stuff later.
-        display = new Display2D(100, 100, this);
+        display = new Display2D(500, 500, this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);

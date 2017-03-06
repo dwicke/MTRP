@@ -16,6 +16,7 @@ public class Neighborhood implements Steppable{
 
     Double2D meanLocation;
     Task tasks[];
+    int numTasks;
 
 
 
@@ -28,12 +29,9 @@ public class Neighborhood implements Steppable{
         meanLocation = new Double2D(state.random.nextDouble(true,true)*state.simWidth, state.random.nextDouble(true,true)*state.simHeight);
         // then generate the initial tasks locations
         tasks = new Task[state.getMaxNumTasksPerNeighborhood()];
-        int numTasks = state.random.nextInt(state.getMaxNumTasksPerNeighborhood()) + 1;
+        numTasks = state.random.nextInt(state.getMaxNumTasksPerNeighborhood()) + 1;
         for (int i = 0; i < numTasks; i++) {
             tasks[i] = new Task(this, state, state.getMaxNumTasksPerNeighborhood()*id + i);
-            // add it to the continuous2d
-            state.getTaskPlane().setObjectLocation(tasks[i], tasks[i].getLocation());
-
         }
 
 
@@ -42,7 +40,10 @@ public class Neighborhood implements Steppable{
 
     public void step(SimState simState) {
         // here we decide if we create a new task and we cleanup the finished ones
+        for (int i = 0; i < numTasks; i++) {
+            Task t = tasks[i];
 
+        }
 
     }
 
@@ -52,6 +53,6 @@ public class Neighborhood implements Steppable{
 
     @Override
     public String toString() {
-        return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")";
+        return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")" + " numTasks = " + numTasks;
     }
 }
