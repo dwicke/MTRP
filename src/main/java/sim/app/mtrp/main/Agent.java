@@ -23,9 +23,8 @@ public class Agent implements Steppable {
     boolean amWorking = false;
     Double2D curDestination;
     Double2D curLocation;
-    boolean atDepo = false;
     boolean needResources;
-    double fuelEpsilon = 1; // min amount of fuel
+    double fuelEpsilon = 2; // min amount of fuel
     Depo curDepo;
 
 
@@ -42,7 +41,6 @@ public class Agent implements Steppable {
         Depo startDepo = state.getDepos()[state.random.nextInt(state.getDepos().length)];
         curLocation = new Double2D(startDepo.location.getX(), startDepo.location.getY());
         curDestination = new Double2D(curLocation.getX(), curLocation.getY());
-        atDepo = true;
         curDepo = startDepo;
         state.getAgentPlane().setObjectLocation(this, curLocation);
     }
@@ -108,11 +106,18 @@ public class Agent implements Steppable {
             curDestination = nearestDepo.location;
             curJob = null; // not going after a job so free it up
 
-        } else if (!amWorking && curJob == null) {
+        } else if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
             Task[] nextTasks = getAvailableTasksInRange();
-            Task nextTask = nextTasks[state.random.nextInt(nextTasks.length)];
-            curDestination = nextTask.getLocation();
-            curJob = nextTask.job;
+            if (nextTasks.length == 0) {
+                // this means that within my range i can't actually get to any tasks that are available
+                // so go to the depo
+                curDestination = nearestDepo.location;
+                curJob = null;
+            } else {
+                Task nextTask = nextTasks[state.random.nextInt(nextTasks.length)];
+                curDestination = nextTask.getLocation();
+                curJob = nextTask.job;
+            }
         }
 
 
@@ -126,9 +131,16 @@ public class Agent implements Steppable {
 
         for (Depo d : depos) {
             double dist = getNumTimeStepsFromLocation(d.location);
+
             if (dist <= this.curFuel && dist < curMinDist) {
                 curMinDist = dist;
                 closestWithinRange = d;
+            }
+        }
+        if (closestWithinRange == null) {
+            for (Depo d : depos) {
+                double dist = getNumTimeStepsFromLocation(d.location);
+                state.printlnSynchronized("curfuel = " + curFuel + " dist = " + dist);
             }
         }
 
@@ -250,5 +262,14 @@ public class Agent implements Steppable {
 
     public double getCurFuel() {
         return curFuel;
+    }
+
+    public boolean isAmWorking() {
+        return amWorking;
+    }
+
+
+    public Job getCurJob() {
+        return curJob;
     }
 }

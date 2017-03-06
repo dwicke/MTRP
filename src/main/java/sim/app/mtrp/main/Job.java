@@ -14,7 +14,7 @@ public class Job {
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
     double currentBounty;
     int jobLength; // how long it takes to complete the job in number of timesteps
-    boolean isAvailable = true;
+    boolean isAvailable;
     int curWorkLeft;
 
 
@@ -24,6 +24,11 @@ public class Job {
         this.task = task;
 
         // now setup the job
+        reset();
+    }
+
+    public final void reset() {
+        isAvailable = true;
         currentBounty = state.basebounty;
         jobLength = state.random.nextInt(state.getMaxJobLength());
         curWorkLeft = jobLength;
@@ -67,6 +72,14 @@ public class Job {
         this.jobLength = jobLength;
     }
 
+    public int getCurWorkLeft() {
+        return curWorkLeft;
+    }
+
+    public Agent getCurWorker() {
+        return curWorker;
+    }
+
     public void incrementBounty() {
         currentBounty++;
     }
@@ -82,6 +95,8 @@ public class Job {
     }
 
     public boolean doWork() {
+        if (curWorkLeft == 0)
+            return true;
         curWorkLeft--;
         return curWorkLeft == 0;
     }

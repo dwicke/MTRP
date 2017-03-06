@@ -15,6 +15,8 @@ public class Task {
     Double2D location;
     Job job;
     boolean finished = false;
+    int respawnTime = 0;
+    int maxRespawnTime = 20;
 
     public Task(Neighborhood neighborhood, MTRP state, int id) {
         this.id = id;
@@ -28,6 +30,13 @@ public class Task {
         // now generate the job
         job = new Job(this, state, id);// can easily make this an array then later...
 
+    }
+
+    public void step() {
+        if (getFinished() && respawnTime-- == 0) {
+            finished = false;
+            job.reset();
+        }
     }
 
 
@@ -59,6 +68,7 @@ public class Task {
 
     public void setFinished() {
         finished = true;
+        respawnTime = state.random.nextInt(maxRespawnTime);
     }
     public boolean getFinished() {
         return finished;

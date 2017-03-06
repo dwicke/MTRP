@@ -21,7 +21,11 @@ public class AgentPortrayal extends OvalPortrayal2D {
     @Override
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
 
-        graphics.setColor(Color.black);
+        if (model.isAmWorking()) {
+            graphics.setColor(Color.orange);
+        } else {
+            graphics.setColor(Color.black);
+        }
         // this code was stolen from OvalPortrayal2D
         int x = (int) (info.draw.x - info.draw.width / 2.0);
         int y = (int) (info.draw.y - info.draw.height / 2.0);

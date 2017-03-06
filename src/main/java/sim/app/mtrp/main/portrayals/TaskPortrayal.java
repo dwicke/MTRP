@@ -28,7 +28,14 @@ public class TaskPortrayal extends OvalPortrayal2D {
 //        else
 //            graphics.setColor(model.getAvailableColor());
 
-        graphics.setColor(Color.GREEN);
+        if (model.getFinished()) {
+            graphics.setColor(Color.RED);
+        }
+        else if (!model.getIsAvailable()) {
+            graphics.setColor(Color.yellow);
+        } else {
+            graphics.setColor(Color.GREEN);
+        }
 
 
         // this code was stolen from OvalPortrayal2D

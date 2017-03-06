@@ -42,7 +42,7 @@ public class Neighborhood implements Steppable{
         // here we decide if we create a new task and we cleanup the finished ones
         for (int i = 0; i < numTasks; i++) {
             Task t = tasks[i];
-
+            t.step();
         }
 
     }
