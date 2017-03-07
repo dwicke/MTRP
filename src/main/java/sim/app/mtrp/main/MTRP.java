@@ -1,10 +1,9 @@
 package sim.app.mtrp.main;
 
+import sim.app.mtrp.main.agents.AgentFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
-
-import java.util.Collections;
 
 
 /**
@@ -27,6 +26,7 @@ public class MTRP extends SimState {
 
     // agent params:
 
+    public int agentType = 0;
     public int maxCarrySize = 16;
     public double startFunds = 100;
     public double fuelCapacity = 1000;
@@ -118,7 +118,7 @@ public class MTRP extends SimState {
         // create the agents
         agents = new Agent[numAgents];
         for (int i = 0; i < numAgents; i++) {
-            agents[i] = new Agent(this, i);
+            agents[i] = AgentFactory.buildAgent(this, i, agentType);
             schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
             order++;
         }
@@ -136,6 +136,13 @@ public class MTRP extends SimState {
         statsPublisher.finish();
     }
 
+    public int getAgentType() {
+        return agentType;
+    }
+
+    public void setAgentType(int agentType) {
+        this.agentType = agentType;
+    }
 
     public Depo[] getDepos() {
         return depos;
@@ -315,6 +322,7 @@ public class MTRP extends SimState {
 
     public double getTotalTime() {
         // so get the total time the tasks have been waiting
+        if (bondsman == null) { return 0.0;}
         return bondsman.getTotalTime();
     }
 }

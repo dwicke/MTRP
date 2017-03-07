@@ -40,6 +40,10 @@ public class Job {
         }
     }
 
+    public Task getTask() {
+        return task;
+    }
+
     public int[] getResourcesNeeded() {
         return resourcesNeeded;
     }

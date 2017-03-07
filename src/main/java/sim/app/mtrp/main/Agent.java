@@ -9,20 +9,20 @@ import sim.util.Double2D;
 /**
  * Created by drew on 2/20/17.
  */
-public class Agent implements Steppable {
+public abstract class Agent implements Steppable {
     private static final long serialVersionUID = 1;
 
-    MTRP state;
+    protected MTRP state;
     int id;
-    double fuelCapacity;
-    double curFuel;
-    double bounty;
-    int resourcesQuantities[];
-    int curTotalNumResources;
-    Job curJob;
+    protected double fuelCapacity;
+    protected double curFuel;
+    protected double bounty;
+    protected int resourcesQuantities[];
+    protected int curTotalNumResources;
+    protected Job curJob;
     boolean amWorking = false;
     Double2D curDestination;
-    Double2D curLocation;
+    protected Double2D curLocation;
     boolean needResources;
     double fuelEpsilon = 2; // min amount of fuel
     Depo curDepo;
@@ -106,15 +106,15 @@ public class Agent implements Steppable {
             curDestination = nearestDepo.location;
             curJob = null; // not going after a job so free it up
 
-        } else if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
-            Task[] nextTasks = getAvailableTasksInRange();
-            if (nextTasks.length == 0) {
+        } else if (!amWorking /* && (curJob == null || !curJob.getIsAvailable())*/) {
+            Task nextTask = getAvailableTask();
+
+            if (nextTask == null) {
                 // this means that within my range i can't actually get to any tasks that are available
                 // so go to the depo
                 curDestination = nearestDepo.location;
                 curJob = null;
             } else {
-                Task nextTask = nextTasks[state.random.nextInt(nextTasks.length)];
                 curDestination = nextTask.getLocation();
                 curJob = nextTask.job;
             }
@@ -122,6 +122,8 @@ public class Agent implements Steppable {
 
 
     }
+
+    public abstract Task getAvailableTask();
 
 
     public Depo getClosestDepo() {
@@ -255,7 +257,7 @@ public class Agent implements Steppable {
 
     }
 
-    private int getNumTimeStepsFromLocation(Double2D dest) {
+    protected int getNumTimeStepsFromLocation(Double2D dest) {
         return (int) Math.floor((curLocation.distance(dest))/state.stepsize);
     }
 
