@@ -17,6 +17,7 @@ public class Task {
     boolean finished = false;
     int respawnTime = 0;
     int maxRespawnTime = 20;
+    double timeNotFinished = 0;
 
     public Task(Neighborhood neighborhood, MTRP state, int id) {
         this.id = id;
@@ -69,8 +70,20 @@ public class Task {
     public void setFinished() {
         finished = true;
         respawnTime = state.random.nextInt(maxRespawnTime);
+        timeNotFinished = 0.0;
+
     }
     public boolean getFinished() {
         return finished;
+    }
+
+    public void incrementTimeNotFinished() {
+        if (!finished) {
+            timeNotFinished++;
+        }
+    }
+    public double getTimeNotFinished() {
+
+        return timeNotFinished;
     }
 }

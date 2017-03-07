@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.github.dwicke</groupId>
             <artifactId>mason</artifactId>
-            <version>31bfca8</version>
+            <version>11365e3</version>
         </dependency>
         <dependency>
             <groupId>com.github.dwicke</groupId>

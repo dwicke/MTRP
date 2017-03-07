@@ -20,6 +20,7 @@ public class Bondsman implements Steppable {
     public void step(SimState simState) {
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
             ((Task)task).incrementBounty();
+            ((Task)task).incrementTimeNotFinished();
         }
 
     }
@@ -35,4 +36,11 @@ public class Bondsman implements Steppable {
     }
 
 
+    public double getTotalTime() {
+        double totalTime = 0.0;
+        for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
+            totalTime += ((Task)task).getTimeNotFinished();
+        }
+        return totalTime;
+    }
 }

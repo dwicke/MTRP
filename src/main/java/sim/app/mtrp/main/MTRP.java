@@ -22,6 +22,8 @@ public class MTRP extends SimState {
     public int simWidth = 100;
     public int simHeight = 100;
 
+    // stat publisher
+    StatsPublisher statsPublisher;
 
     // agent params:
 
@@ -120,6 +122,10 @@ public class MTRP extends SimState {
             schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
             order++;
         }
+
+        // create the stat publisher
+        statsPublisher = new StatsPublisher(this, 200000, "/home/drew/tmp");
+        schedule.scheduleRepeating(Schedule.EPOCH, order, statsPublisher);
     }
 
 
@@ -127,8 +133,7 @@ public class MTRP extends SimState {
     @Override
     public void finish() {
         super.finish();
-        StatsPublisher p = new StatsPublisher(this, 200000, "/home/drew/tmp");
-        p.step(this);
+        statsPublisher.finish();
     }
 
 
@@ -306,5 +311,10 @@ public class MTRP extends SimState {
 
     public void setIncrement(double increment) {
         this.increment = increment;
+    }
+
+    public double getTotalTime() {
+        // so get the total time the tasks have been waiting
+        return bondsman.getTotalTime();
     }
 }
