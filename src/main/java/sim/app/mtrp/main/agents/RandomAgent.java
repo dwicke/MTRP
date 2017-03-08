@@ -16,21 +16,10 @@ public class RandomAgent extends Agent {
     @Override
     public Task getAvailableTask() {
 
-        if (curJob == null || !curJob.getIsAvailable()) {
+        if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
 
-            Task[] tasks = state.getBondsman().getAvailableTasks();
-            if (tasks.length == 0) {
-                state.printlnSynchronized("NO TASKS!");
-            }
-            Bag closestWithinRange = new Bag();
+            Bag closestWithinRange = getTasksWithinRange();
 
-
-            for (Task t : tasks) {
-                double dist = getNumTimeStepsFromLocation(t.getLocation());
-                if (dist < this.curFuel) {
-                    closestWithinRange.add(t);
-                }
-            }
             if (closestWithinRange.size() == 0) {
                 return null; // need to go for resources.
             }

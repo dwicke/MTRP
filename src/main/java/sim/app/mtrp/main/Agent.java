@@ -20,7 +20,7 @@ public abstract class Agent implements Steppable {
     protected int resourcesQuantities[];
     protected int curTotalNumResources;
     protected Job curJob;
-    boolean amWorking = false;
+    protected boolean amWorking = false;
     Double2D curDestination;
     protected Double2D curLocation;
     boolean needResources;
@@ -106,7 +106,7 @@ public abstract class Agent implements Steppable {
             curDestination = nearestDepo.location;
             curJob = null; // not going after a job so free it up
 
-        } else if (!amWorking /* && (curJob == null || !curJob.getIsAvailable())*/) {
+        } else {
             Task nextTask = getAvailableTask();
 
             if (nextTask == null) {
@@ -123,7 +123,27 @@ public abstract class Agent implements Steppable {
 
     }
 
+    /**
+     * @return
+     */
     public abstract Task getAvailableTask();
+
+    public Bag getTasksWithinRange() {
+        Task[] tasks = state.getBondsman().getAvailableTasks();
+        if (tasks.length == 0) {
+            state.printlnSynchronized("NO TASKS!");
+        }
+        Bag closestWithinRange = new Bag();
+
+
+        for (Task t : tasks) {
+            double dist = getNumTimeStepsFromLocation(t.getLocation());
+            if (dist < this.curFuel) {
+                closestWithinRange.add(t);
+            }
+        }
+        return closestWithinRange;
+    }
 
 
     public Depo getClosestDepo() {
@@ -237,10 +257,7 @@ public abstract class Agent implements Steppable {
             // then continue to work
             // see if done the task
             if (curJob.doWork()) {
-                amWorking = false;
-                bounty += curJob.getCurrentBounty();
-                curJob.finish();
-                curJob = null;
+                finishTask();
             }
 
         } else {
@@ -255,6 +272,17 @@ public abstract class Agent implements Steppable {
             }
         }
 
+    }
+
+
+    /**
+     * Can overide this method to provide functionallity to learn
+     */
+    protected void finishTask() {
+        amWorking = false;
+        bounty += curJob.getCurrentBounty();
+        curJob.finish();
+        curJob = null;
     }
 
     protected int getNumTimeStepsFromLocation(Double2D dest) {

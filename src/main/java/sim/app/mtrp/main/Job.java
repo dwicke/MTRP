@@ -14,8 +14,11 @@ public class Job {
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
     double currentBounty;
     int jobLength; // how long it takes to complete the job in number of timesteps
+    double probJobSucess;
     boolean isAvailable;
     int curWorkLeft;
+
+
 
 
     public Job(Task task, MTRP state, int id) {
@@ -23,6 +26,8 @@ public class Job {
         this.state = state;
         this.task = task;
 
+        jobLength = state.random.nextInt(state.getMaxJobLength());
+        probJobSucess = 1.0 / (double) jobLength;
         // now setup the job
         reset();
     }
@@ -30,7 +35,7 @@ public class Job {
     public final void reset() {
         isAvailable = true;
         currentBounty = state.basebounty;
-        jobLength = state.random.nextInt(state.getMaxJobLength());
+
         curWorkLeft = jobLength;
         resourcesNeeded = new int[state.getNumResourceTypes()];
         int numResource = state.random.nextInt(state.getMaxNumResourcesPerJob());
@@ -99,10 +104,13 @@ public class Job {
     }
 
     public boolean doWork() {
-        if (curWorkLeft == 0)
-            return true;
-        curWorkLeft--;
-        return curWorkLeft == 0;
+        // geometric distribution.
+        boolean finished = state.random.nextDouble() <= probJobSucess;
+        if (finished) {
+            curWorkLeft = 0;
+        }
+        return finished;
+
     }
 
     public void finish() {

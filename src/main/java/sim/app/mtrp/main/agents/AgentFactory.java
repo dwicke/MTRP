@@ -13,6 +13,8 @@ public class AgentFactory {
 
         if (type == 0) {
             return new RandomAgent(state, id);
+        } else if (type == 1) {
+            return new LearningAgent(state, id);
         }
         return null;
     }
