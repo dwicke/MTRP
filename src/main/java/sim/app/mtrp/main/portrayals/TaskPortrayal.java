@@ -12,11 +12,7 @@ import java.awt.*;
 public class TaskPortrayal extends OvalPortrayal2D {
     private static final long serialVersionUID = 1;
 
-    Task model;
 
-    public TaskPortrayal(Task model) {
-        this.model = model;
-    }
 
 
     @Override
@@ -28,14 +24,14 @@ public class TaskPortrayal extends OvalPortrayal2D {
 //        else
 //            graphics.setColor(model.getAvailableColor());
 
-        if (model.getFinished()) {
-            graphics.setColor(Color.RED);
+        Task t = (Task) object;
+
+
+        int alpha = (int)(t.getBounty() / 10);
+        if (alpha > 255) {
+            alpha = 255;
         }
-        else if (!model.getIsAvailable()) {
-            graphics.setColor(Color.yellow);
-        } else {
-            graphics.setColor(Color.GREEN);
-        }
+        graphics.setColor(new Color(0,255,0,alpha));
 
 
         // this code was stolen from OvalPortrayal2D

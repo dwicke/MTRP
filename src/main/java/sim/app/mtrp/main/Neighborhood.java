@@ -11,39 +11,29 @@ import sim.util.Double2D;
 public class Neighborhood implements Steppable{
     private static final long serialVersionUID = 1;
 
-    MTRP mtrp;
+    MTRP state;
     int id;
 
     Double2D meanLocation;
-    Task tasks[];
-    int numTasks;
+    Bag tasks;
 
 
 
 
     public Neighborhood(MTRP state, int id) {
-        this.mtrp = state;
+        this.state = state;
         this.id = id;
 
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
         meanLocation = new Double2D(state.random.nextDouble(true,true)*state.simWidth, state.random.nextDouble(true,true)*state.simHeight);
         // then generate the initial tasks locations
-        tasks = new Task[state.getMaxNumTasksPerNeighborhood()];
-        numTasks = state.random.nextInt(state.getMaxNumTasksPerNeighborhood()) + 1;
-        for (int i = 0; i < numTasks; i++) {
-            tasks[i] = new Task(this, state, state.getMaxNumTasksPerNeighborhood()*id + i);
-        }
-
-
+        tasks = new Bag();
     }
 
 
     public void step(SimState simState) {
-        // here we decide if we create a new task and we cleanup the finished ones
-        for (int i = 0; i < numTasks; i++) {
-            Task t = tasks[i];
-            t.step();
-        }
+        // here we decide if we create a new task
+        generateTasks();
 
     }
 
@@ -53,6 +43,18 @@ public class Neighborhood implements Steppable{
 
     @Override
     public String toString() {
-        return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")" + " numTasks = " + numTasks;
+        return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")" + " numTasks = " + tasks.size();
+    }
+
+    public void generateTasks() {
+        while (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
+            // generate a new task
+            tasks.add(new Task(this, state));
+        }
+
+    }
+
+    public void finishedTask(Task task) {
+        tasks.remove(task);
     }
 }

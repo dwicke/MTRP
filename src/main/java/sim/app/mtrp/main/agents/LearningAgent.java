@@ -22,13 +22,13 @@ public class LearningAgent extends Agent {
     double pLearningRate = .2; // set to .2 originally
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
-    int numTasks;
+    int numNeighborhoods;
 
     public LearningAgent(MTRP state, int id) {
         super(state, id);
-        numTasks = state.getNumNeighborhoods()*state.getMaxNumTasksPerNeighborhood();
-        pTable = new QTable(numTasks, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
-        tTable = new QTable(numTasks, 1, tLearningRate, tDiscountBeta, state.random, 10.0, 0.0);
+        numNeighborhoods = state.getNumNeighborhoods();
+        pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
+        tTable = new QTable(numNeighborhoods, 1, tLearningRate, tDiscountBeta, state.random, 10.0, 0.0);
 
     }
 
@@ -88,7 +88,7 @@ public class LearningAgent extends Agent {
     }
 
     public void learn(double reward) {
-        epsilonChooseRandomTask *= (1.0 - (1.0 / (double)this.numTasks));
+        epsilonChooseRandomTask *= (1.0 - (1.0 / (double)this.numNeighborhoods));
 
 
         pTable.update(curJob.getId(), 0, reward);

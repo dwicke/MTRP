@@ -44,13 +44,11 @@ public class MTRP extends SimState {
     public double maxCostPerResource = 20.0; // for each type of resource we get the price and set it for all of the depos
 
     public double fuelCost = 1.0;
-    public int maxNumTasksPerNeighborhood = 6; // task == customer
-    public int maxJobLength = 10; // change...
+    public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
     public int maxNumResourcesPerJob = numResourceTypes * 2;
 
 
     // bondsman params:
-
     public double basebounty = 100;
     public double increment = 1.0;
 
@@ -280,20 +278,12 @@ public class MTRP extends SimState {
         this.fuelCost = fuelCost;
     }
 
-    public int getMaxNumTasksPerNeighborhood() {
-        return maxNumTasksPerNeighborhood;
+    public void setTimestepsTilNextTask(int timestepsTilNextTask) {
+        this.timestepsTilNextTask = timestepsTilNextTask;
     }
 
-    public void setMaxNumTasksPerNeighborhood(int maxNumTasksPerNeighborhood) {
-        this.maxNumTasksPerNeighborhood = maxNumTasksPerNeighborhood;
-    }
-
-    public int getMaxJobLength() {
-        return maxJobLength;
-    }
-
-    public void setMaxJobLength(int maxJobLength) {
-        this.maxJobLength = maxJobLength;
+    public int getTimestepsTilNextTask() {
+        return timestepsTilNextTask;
     }
 
     public int getMaxNumResourcesPerJob() {

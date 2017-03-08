@@ -9,18 +9,18 @@ import sim.util.MutableDouble2D;
 public class Task {
     private static final long serialVersionUID = 1;
 
+    protected static int taskIDGenerator = 0;
+
     Neighborhood neighborhood;
     MTRP state;
     int id; // unique id
     Double2D location;
     Job job;
-    boolean finished = false;
-    int respawnTime = 0;
-    int maxRespawnTime = 20;
     double timeNotFinished = 0;
 
-    public Task(Neighborhood neighborhood, MTRP state, int id) {
-        this.id = id;
+    public Task(Neighborhood neighborhood, MTRP state) {
+        this.id = taskIDGenerator;
+        taskIDGenerator++;// increment every new task.
         this.neighborhood = neighborhood;
         this.state = state;
         double x = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getX();
@@ -33,12 +33,6 @@ public class Task {
 
     }
 
-    public void step() {
-        if (getFinished() && respawnTime-- == 0) {
-            finished = false;
-            job.reset();
-        }
-    }
 
 
     public Double2D getLocation() {
@@ -47,8 +41,7 @@ public class Task {
 
 
     public void incrementBounty() {
-        if (!finished)
-            job.incrementBounty();
+        job.incrementBounty();
     }
 
     public double getBounty() {
@@ -68,22 +61,14 @@ public class Task {
     }
 
     public void setFinished() {
-        finished = true;
-        respawnTime = state.random.nextInt(maxRespawnTime);
-        timeNotFinished = 0.0;
-
-    }
-    public boolean getFinished() {
-        return finished;
+        state.getTaskPlane().remove(this);
+        neighborhood.finishedTask(this);
     }
 
     public void incrementTimeNotFinished() {
-        if (!finished) {
             timeNotFinished++;
-        }
     }
     public double getTimeNotFinished() {
-
         return timeNotFinished;
     }
 }

@@ -63,10 +63,11 @@ public class MTRPWithUI extends GUIState {
         }
 
         tasksPortrayal.setField(myState.taskPlane);
-        for (Object o: myState.getTaskPlane().getAllObjects()) {
-            Task t = (Task) o;
-            tasksPortrayal.setPortrayalForObject(t, new MovablePortrayal2D(new TaskPortrayal(t)));
-        }
+        tasksPortrayal.setPortrayalForAll(new MovablePortrayal2D(new TaskPortrayal()));
+//        for (Object o: myState.getTaskPlane().getAllObjects()) {
+//            Task t = (Task) o;
+//            tasksPortrayal.setPortrayalForObject(t, new MovablePortrayal2D(new TaskPortrayal(t)));
+//        }
 
         deposPortrayal.setField(myState.depoPlane);
         for (Depo d: myState.getDepos()) {
