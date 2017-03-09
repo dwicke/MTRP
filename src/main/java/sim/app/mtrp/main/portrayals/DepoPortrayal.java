@@ -11,12 +11,7 @@ import java.awt.*;
  */
 public class DepoPortrayal extends OvalPortrayal2D {
 
-    Depo model;
 
-
-    public DepoPortrayal(Depo model) {
-        this.model = model;
-    }
 
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {

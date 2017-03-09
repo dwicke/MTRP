@@ -55,7 +55,12 @@ public class LearningAgent extends Agent {
 
             // otherwise just pick it using real method
             Task[] tasks = (Task[]) closestWithinRange.toArray(new Task[closestWithinRange.size()]);
-
+            Task chosenTask = null;
+            double curMax = 0.0;
+            if (curJob != null) {
+                chosenTask = curJob.getTask();
+                curMax = (chosenTask.getBounty() * pTable.getQValue(chosenTask.getNeighborhood().getId(), 0) - getCost(chosenTask)) / getNumTimeStepsFromLocation(chosenTask.getLocation());
+            }
             for (Task t : tasks) {
 
                 /*
@@ -65,19 +70,24 @@ public class LearningAgent extends Agent {
                     - getTotalOperatingCostsSinceLastPayment())
                  */
 
-                /*
-                double value = pTable.getQValue(t.getId(), 1) * (projectedReward() ;
+                double value = (pTable.getQValue(t.getNeighborhood().getId(), 0) * t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
                 if (value > curMax) {
-
-                }*/
+                    chosenTask = t;
+                    curMax = value;
+                }
             }
 
-            return null;// no
+            return chosenTask;
 
         } else {
-            return curJob.getTask();// don't change
+            return curJob.getTask();
         }
 
+    }
+
+
+    double getCost(Task t) {
+        return getNumTimeStepsFromLocation(t.getLocation()) * getClosestDepo().getFuelCost();
     }
 
 
@@ -91,7 +101,17 @@ public class LearningAgent extends Agent {
         epsilonChooseRandomTask *= (1.0 - (1.0 / (double)this.numNeighborhoods));
 
 
-        pTable.update(curJob.getId(), 0, reward);
+        pTable.update(curJob.getTask().getNeighborhood().getId(), 0, reward);
         pTable.oneUpdate(oneUpdateGamma);
+    }
+
+    public String getPTable() {
+
+        return pTable.getQTableAsString();
+    }
+
+    @Override
+    public String toString() {
+        return "Agent id:" + this.id + " ptable: " + pTable.getQTableAsString();
     }
 }

@@ -13,8 +13,7 @@ public abstract class Agent implements Steppable {
     private static final long serialVersionUID = 1;
 
     protected MTRP state;
-    int id;
-    protected double fuelCapacity;
+    protected int id;
     protected double curFuel;
     protected double bounty;
     protected int resourcesQuantities[];
@@ -35,7 +34,6 @@ public abstract class Agent implements Steppable {
         resourcesQuantities = new int[state.getNumResourceTypes()];
         bounty = state.getStartFunds();
         curFuel = state.getFuelCapacity();
-        fuelCapacity = state.getFuelCapacity();
         curTotalNumResources = 0;
         // pick a random depo and start there
         Depo startDepo = state.getDepos()[state.random.nextInt(state.getDepos().length)];
@@ -74,11 +72,11 @@ public abstract class Agent implements Steppable {
 
         if (dist == 0.0) {
             // I am! so check if i need fuel or resources
-            if (curFuel < fuelCapacity) {
+            if (curFuel < state.getFuelCapacity()) {
                 // so buy fuel, note that fuel price is 1-to-1 cost
                 // buy whatever I can
-                double fuelBought = Math.min(bounty, fuelCapacity - curFuel);
-                bounty -= fuelBought;
+                double fuelBought = Math.min(bounty / nearestDepo.getFuelCost(), state.getFuelCapacity() - curFuel);
+                bounty -= fuelBought * nearestDepo.getFuelCost();
                 curFuel += fuelBought;
                 didAction = true;
             } else {

@@ -16,7 +16,7 @@ public class Task {
     int id; // unique id
     Double2D location;
     Job job;
-    double timeNotFinished = 0;
+    int timeNotFinished = 0;
 
     public Task(Neighborhood neighborhood, MTRP state) {
         this.id = taskIDGenerator;
@@ -68,7 +68,7 @@ public class Task {
     public void incrementTimeNotFinished() {
             timeNotFinished++;
     }
-    public double getTimeNotFinished() {
+    public int getTimeNotFinished() {
         return timeNotFinished;
     }
 }

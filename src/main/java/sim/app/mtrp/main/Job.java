@@ -13,7 +13,6 @@ public class Job {
     Agent curWorker;
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
     double currentBounty;
-    double probJobSucess;
     boolean isAvailable;
 
 
@@ -23,8 +22,6 @@ public class Job {
         this.id = id;
         this.state = state;
         this.task = task;
-
-        probJobSucess = 1.0 / (double) 10;
         // now setup the job
         reset();
     }
@@ -90,7 +87,7 @@ public class Job {
 
     public boolean doWork() {
         // geometric distribution.
-        return state.random.nextDouble() <= probJobSucess;
+        return state.random.nextDouble() <= (1.0 / state.jobLength);
     }
 
     public void finish() {

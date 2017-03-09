@@ -55,4 +55,8 @@ public class Depo implements Steppable{
     public int getID() {
         return id;
     }
+
+    public double getFuelCost() {
+        return state.getFuelCost();
+    }
 }

@@ -46,6 +46,9 @@ public class MTRP extends SimState {
     public double fuelCost = 1.0;
     public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
     public int maxNumResourcesPerJob = numResourceTypes * 2;
+    public double jobLength;
+    public double taskLocStdDev = 5.0; // this is the same as what we used in the original paper.
+
 
 
     // bondsman params:
@@ -62,7 +65,7 @@ public class MTRP extends SimState {
     public Continuous2D taskPlane;
     public Continuous2D depoPlane;
 
-    public double taskLocStdDev = 5.0; // this is the same as what we used in the original paper.
+
 
 
     public MTRP(long seed) {
@@ -286,6 +289,14 @@ public class MTRP extends SimState {
         return timestepsTilNextTask;
     }
 
+    public double getJobLength() {
+        return jobLength;
+    }
+
+    public void setJobLength(double jobLength) {
+        this.jobLength = jobLength;
+    }
+
     public int getMaxNumResourcesPerJob() {
         return maxNumResourcesPerJob;
     }
@@ -315,4 +326,15 @@ public class MTRP extends SimState {
         if (bondsman == null) { return 0.0;}
         return bondsman.getTotalTime();
     }
+
+    public double getTotalOutstandingBounty() {
+        if (bondsman == null) { return 0.0;}
+        return bondsman.getTotalOutstandingBounty();
+    }
+
+    public int getNumberOfAvailableTasks() {
+        if (bondsman == null) { return 0;}
+        return bondsman.getAvailableTasks().length;
+    }
+
 }

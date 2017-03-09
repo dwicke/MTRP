@@ -17,6 +17,8 @@ public class Neighborhood implements Steppable{
     Double2D meanLocation;
     Bag tasks;
 
+    int totalTime, count;
+
 
 
 
@@ -55,6 +57,12 @@ public class Neighborhood implements Steppable{
     }
 
     public void finishedTask(Task task) {
+        totalTime += task.timeNotFinished;
+        count++;
         tasks.remove(task);
+    }
+
+    public int getId() {
+        return id;
     }
 }
