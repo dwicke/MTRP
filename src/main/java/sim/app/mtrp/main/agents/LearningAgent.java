@@ -39,52 +39,46 @@ public class LearningAgent extends Agent {
             // then someone beat me to it so learn
             learn(0.0);
         }
-
         if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
-
-            Bag closestWithinRange = getTasksWithinRange();
-
-            if (closestWithinRange.size() == 0) {
-                return null; // need to go for resources.
-            }
-
-            // epsilon random pick task
-            if (state.random.nextDouble() < epsilonChooseRandomTask) {
-                return (Task) closestWithinRange.get(state.random.nextInt(closestWithinRange.size()));
-            }
-
-            // otherwise just pick it using real method
-            Task[] tasks = (Task[]) closestWithinRange.toArray(new Task[closestWithinRange.size()]);
-            Task chosenTask = null;
-            double curMax = 0.0;
-            if (curJob != null) {
-                chosenTask = curJob.getTask();
-                curMax = (chosenTask.getBounty() * pTable.getQValue(chosenTask.getNeighborhood().getId(), 0) - getCost(chosenTask)) / getNumTimeStepsFromLocation(chosenTask.getLocation());
-            }
-            for (Task t : tasks) {
-
-                /*
-
-                (getPValue(curChosenTask) *
-                    (getPotentialReward(curChosenTask, timeOnTask) - getProspectiveCosts(curChosenTask) - getProspectiveOperatingCosts(curChosenTask, timeOnTask))
-                    - getTotalOperatingCostsSinceLastPayment())
-                 */
-
-                double value = (pTable.getQValue(t.getNeighborhood().getId(), 0) * t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
-                if (value > curMax) {
-                    chosenTask = t;
-                    curMax = value;
-                }
-            }
-
-            return chosenTask;
-
+            return getBestTask(getTasksWithinRange());
         } else {
             return curJob.getTask();
         }
 
     }
 
+    public Task getBestTask(Bag bagOfTasks) {
+        if (bagOfTasks.size() == 0) {
+            return null; // need to go for resources.
+        }
+
+        // epsilon random pick task
+        if (state.random.nextDouble() < epsilonChooseRandomTask) {
+            return (Task) bagOfTasks.get(state.random.nextInt(bagOfTasks.size()));
+        }
+
+        // otherwise just pick it using real method
+        Task[] tasks = (Task[]) bagOfTasks.toArray(new Task[bagOfTasks.size()]);
+        Task chosenTask = null;
+        double curMax = 0.0;
+        if (curJob != null) {
+            chosenTask = curJob.getTask();
+            curMax = getUtility(chosenTask);
+        }
+        for (Task t : tasks) {
+
+            double value = getUtility(t);
+            if (value > curMax) {
+                chosenTask = t;
+                curMax = value;
+            }
+        }
+        return chosenTask;
+    }
+
+    double getUtility(Task t) {
+        return (pTable.getQValue(t.getNeighborhood().getId(), 0) * t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+    }
 
     double getCost(Task t) {
         return getNumTimeStepsFromLocation(t.getLocation()) * getClosestDepo().getFuelCost();

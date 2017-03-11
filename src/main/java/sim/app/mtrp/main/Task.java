@@ -1,5 +1,6 @@
 package sim.app.mtrp.main;
 
+import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
@@ -17,6 +18,8 @@ public class Task {
     Double2D location;
     Job job;
     int timeNotFinished = 0;
+    Bag committedAgents;
+    Bag blackList; // agents who are not allowed to go after this task
 
     public Task(Neighborhood neighborhood, MTRP state) {
         this.id = taskIDGenerator;
@@ -30,7 +33,8 @@ public class Task {
         state.getTaskPlane().setObjectLocation(this, location);
         // now generate the job
         job = new Job(this, state, id);// can easily make this an array then later...
-
+        committedAgents = new Bag();
+        blackList = new Bag();
     }
 
 
@@ -70,5 +74,25 @@ public class Task {
     }
     public int getTimeNotFinished() {
         return timeNotFinished;
+    }
+
+    public Bag getCommittedAgents() {
+        return committedAgents;
+    }
+    public void amCommitted(Agent a) {
+        if (!committedAgents.contains(a))
+            committedAgents.add(a);
+    }
+
+    public void decommit(Agent a) {
+        committedAgents.remove(a);
+    }
+
+    public Bag getBlackList() {
+        return blackList;
+    }
+
+    public void blacklistAgent(Agent ag) {
+        blackList.add(ag);
     }
 }

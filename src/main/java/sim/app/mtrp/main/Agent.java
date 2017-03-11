@@ -102,7 +102,7 @@ public abstract class Agent implements Steppable {
         if (!amWorking && needResources) {
             // resources take priority over traveling to a task
             curDestination = nearestDepo.location;
-            curJob = null; // not going after a job so free it up
+            decommitTask();
 
         } else {
             Task nextTask = getAvailableTask();
@@ -111,14 +111,20 @@ public abstract class Agent implements Steppable {
                 // this means that within my range i can't actually get to any tasks that are available
                 // so go to the depo
                 curDestination = nearestDepo.location;
-                curJob = null;
+                decommitTask();
+
             } else {
                 curDestination = nextTask.getLocation();
+                decommitTask();
                 curJob = nextTask.job;
             }
         }
 
 
+    }
+
+    public void decommitTask() {
+        curJob = null; // not going after a job so free it up
     }
 
     /**
@@ -129,7 +135,7 @@ public abstract class Agent implements Steppable {
     public Bag getTasksWithinRange() {
         Task[] tasks = state.getBondsman().getAvailableTasks();
         if (tasks.length == 0) {
-            state.printlnSynchronized("NO TASKS!");
+            //state.printlnSynchronized("NO TASKS!");
         }
         Bag closestWithinRange = new Bag();
 
@@ -193,7 +199,7 @@ public abstract class Agent implements Steppable {
     public Task[] getAvailableTasksInRange() {
         Task[] tasks = state.getBondsman().getAvailableTasks();
         if (tasks.length == 0) {
-            state.printlnSynchronized("NO TASKS!");
+            //state.printlnSynchronized("NO TASKS!");
         }
         // so now pick the nearest one and go for it!
         Bag closestWithinRange = new Bag();
@@ -283,7 +289,7 @@ public abstract class Agent implements Steppable {
         curJob = null;
     }
 
-    protected int getNumTimeStepsFromLocation(Double2D dest) {
+    public int getNumTimeStepsFromLocation(Double2D dest) {
         return (int) Math.floor((curLocation.distance(dest))/state.stepsize);
     }
 
@@ -299,5 +305,9 @@ public abstract class Agent implements Steppable {
 
     public Job getCurJob() {
         return curJob;
+    }
+
+    public int getId() {
+        return id;
     }
 }

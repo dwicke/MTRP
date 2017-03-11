@@ -337,4 +337,10 @@ public class MTRP extends SimState {
         return bondsman.getAvailableTasks().length;
     }
 
+    public double getAverageOutstandingBounty() {
+        if (bondsman == null) { return 0.0;}
+        return bondsman.getTotalOutstandingBounty() / (double)bondsman.getAvailableTasks().length;
+    }
+
+
 }
