@@ -17,6 +17,8 @@ public class AgentFactory {
             return new LearningAgent(state, id);
         } else if (type == 2) {
             return new BribingAgent(state, id);
+        } else if (type == 3) {
+            return new AuctionAgent(state, id);
         }
         return null;
     }
