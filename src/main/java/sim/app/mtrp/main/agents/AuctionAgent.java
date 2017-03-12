@@ -17,6 +17,10 @@ public class AuctionAgent extends LearningAgent {
     @Override
     public Task getAvailableTask() {
 
+        if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
+            // then someone beat me to it so learn
+            learn(0.0);
+        }
 
         if (curJob == null) {
 
@@ -47,6 +51,7 @@ public class AuctionAgent extends LearningAgent {
             for (int i = 0; i < state.agents.length; i++) {
                 valuations[i] = ((AuctionAgent)state.agents[i]).getEvaluations(availableTasks);// agent id corresponds to agent's index.
             }
+
             //Task[] availableTasks = state.bondsman.getAvailableTasks();
 
             for (int i = 0; i < availableTasks.length; i++) {
@@ -59,8 +64,8 @@ public class AuctionAgent extends LearningAgent {
                     valuations = getNewValuations(valuations, max);
                 }
             }
-            System.err.println("ERRRR  no task found for agent " + getId());
-            printValuations(valuations);
+            //System.err.println("ERRRR  no task found for agent " + getId());
+            //printValuations(valuations);
 
             // There is a case in which if everyone values the tasks equally
             // that given 4 agents and 6 tasks that the agents won't get assigned
@@ -94,6 +99,18 @@ public class AuctionAgent extends LearningAgent {
         return curJob.getTask();
     }
 
+    @Override
+    public void decommitTask() {
+        if (curJob != null)
+            curJob.getTask().decommit(this);
+        super.decommitTask();
+
+    }
+
+    @Override
+    double getUtility(Task t) {
+        return (t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+    }
 
     public double[] getEvaluations(Task[] availTasks) {
         double[] valuations = new double[availTasks.length];
