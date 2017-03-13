@@ -17,11 +17,6 @@ public class AuctionAgent extends LearningAgent {
     @Override
     public Task getAvailableTask() {
 
-        if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
-            // then someone beat me to it so learn
-            learn(0.0);
-        }
-
         if (curJob == null) {
 
             // so here do the auction!
@@ -36,7 +31,8 @@ public class AuctionAgent extends LearningAgent {
             // remove that agent's valuations by setting all of its valuations to -Max
             // then set all of the agent valuations for that task to -MAX
 
-            Task[] availTasks = state.bondsman.getAvailableTasks();
+            // DO i look at all of the task? or just those in the range of me?  i think just those in range.
+            Task[] availTasks = getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
             Bag nonCommitedTasks = new Bag();
             for (Task t : availTasks) {
                 if (t.getCommittedAgents().size() == 0) {
@@ -58,7 +54,7 @@ public class AuctionAgent extends LearningAgent {
                 AgentTaskPair max = getAssignment(valuations);
                 if (max != null) {
                     if (max.agentID == this.getId()) {
-                        availableTasks[max.taskID].amCommitted(this);
+
                         return availableTasks[max.taskID];
                     }
                     valuations = getNewValuations(valuations, max);
@@ -85,18 +81,19 @@ public class AuctionAgent extends LearningAgent {
 
             if (availableTasks.length > 0) {
                 Task chosenTask = availableTasks[state.random.nextInt(availableTasks.length)];
-                chosenTask.amCommitted(this);
                 //state.printlnSynchronized("picked randomly task" + chosenTask.);
                 return chosenTask;
             }
-
-
-
 
             return null;
         }
 
         return curJob.getTask();
+    }
+
+    @Override
+    public void commitTask(Task t) {
+        t.amCommitted(this);
     }
 
     @Override

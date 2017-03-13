@@ -117,11 +117,14 @@ public abstract class Agent implements Steppable {
                 curDestination = nextTask.getLocation();
                 decommitTask();
                 curJob = nextTask.job;
+                commitTask(nextTask);
             }
         }
 
 
     }
+
+    public void commitTask(Task t) {}
 
     public void decommitTask() {
         curJob = null; // not going after a job so free it up
@@ -309,5 +312,10 @@ public abstract class Agent implements Steppable {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "my ID " + id + " curJob = " + curJob;
     }
 }

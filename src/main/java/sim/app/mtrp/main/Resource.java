@@ -6,22 +6,14 @@ package sim.app.mtrp.main;
 public class Resource implements java.io.Serializable {
     private static final long serialVersionUID = 1;
 
-
-
-    public enum Type {
-        PIPE,
-        SEAL,
-        FLAP;
-    }
-
     double buyPrice;
     double buybackPrice;
 
     double curQuantity;
     double quantity;
-    Type resourceType;
+    int resourceType;
 
-    public Resource(Type resourceType, double quantity, double buyPrice, double buybackPrice) {
+    public Resource(int resourceType, double quantity, double buyPrice, double buybackPrice) {
         this.resourceType = resourceType;
         this.quantity = quantity;
         this.curQuantity = quantity;
@@ -32,6 +24,6 @@ public class Resource implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return resourceType.name() + " curQuantity/quantity: " + curQuantity + "/" + quantity;
+        return resourceType + " curQuantity/quantity: " + curQuantity + "/" + quantity;
     }
 }

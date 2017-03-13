@@ -28,6 +28,7 @@ public class Depo implements Steppable{
 
         location = new Double2D(x, y);
         state.getDepoPlane().setObjectLocation(this, location);
+        /*
         resources = new Resource[state.numResourceTypes];
         if (state.numResourceTypes > Resource.Type.values().length) throw new AssertionError("The number of MTRP.numResourceTypes is more than the number of Resource.Type");
         int i = 0;
@@ -38,14 +39,13 @@ public class Depo implements Steppable{
                 i++;
             }
         }
+        */
 
     }
 
     public void step(SimState simState) {
         // replenish the supplies
-        for (Resource r: resources) {
 
-        }
     }
 
     public Resource[] getResources() {

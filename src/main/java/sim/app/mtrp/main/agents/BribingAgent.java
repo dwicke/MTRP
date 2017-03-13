@@ -65,18 +65,22 @@ public class BribingAgent extends LearningAgent {
                         if (secondBest != null) {
 
                             chosenTask = secondBest;// no, this really should be recursive...
-                            chosenTask.amCommitted(this);
+
                         }
                         return chosenTask;
                     }
 
                 }
-                if (chosenTask != null)
-                    chosenTask.amCommitted(this);
+
             }
         }
         return chosenTask;
 
+    }
+
+    @Override
+    public void commitTask(Task t) {
+        t.amCommitted(this);
     }
 
     @Override
@@ -99,6 +103,13 @@ public class BribingAgent extends LearningAgent {
             // well if no other task is available to me then sure you can have it as long as I get as much for it as I would have gotten if i would have continued
             // to go after it.
             return getUtility(curJob.getTask()) * getNumTimeStepsFromLocation(curJob.getTask().getLocation());
+        }
+        if (curJob == null) {
+            state.printlnSynchronized("I am agent id = " + getId() + " supposedly commited to task id = " + t.getId() + " but curJob = " + curJob);
+            state.printlnSynchronized("Agent ids commited to task " + t.getId());
+            for (int i = 0; i < t.getCommittedAgents().size(); i++) {
+                state.printlnSynchronized("id = " + t.getCommittedAgents().get(i).toString());
+            }
         }
         // so now get the difference of the utility
         return (getUtility(curJob.getTask()) - getUtility(secondBestTask)) * getNumTimeStepsFromLocation(secondBestTask.getLocation());

@@ -35,9 +35,13 @@ public class LearningAgent extends Agent {
     @Override
     public Task getAvailableTask() {
 
+
         if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
             // then someone beat me to it so learn
             learn(0.0);
+            curJob.getTask().decommit(this);// must decommit.
+            // and set curJob to null
+            curJob = null;
         }
         if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
             return getBestTask(getTasksWithinRange());
@@ -77,7 +81,7 @@ public class LearningAgent extends Agent {
     }
 
     double getUtility(Task t) {
-        return (pTable.getQValue(t.getNeighborhood().getId(), 0) * t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        return (pTable.getQValue(t.getNeighborhood().getId(), 0) *  t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
     }
 
     double getCost(Task t) {
@@ -106,6 +110,6 @@ public class LearningAgent extends Agent {
 
     @Override
     public String toString() {
-        return "Agent id:" + this.id + " ptable: " + pTable.getQTableAsString();
+        return "Agent id:" + this.id + " curJob: " + curJob + " ptable: " + pTable.getQTableAsString();
     }
 }

@@ -349,4 +349,10 @@ public class MTRP extends SimState {
     public double getTaskLocStdDev() {
         return taskLocStdDev;
     }
+
+    public double getTasksPerAgent() {
+        if (bondsman == null) { return 0.0;}
+        return (double)bondsman.getAvailableTasks().length / (double) agents.length;
+    }
+
 }
