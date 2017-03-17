@@ -19,6 +19,10 @@ public class AgentFactory {
             return new BribingAgent(state, id);
         } else if (type == 3) {
             return new AuctionAgent(state, id);
+        } else if (type == 4) {
+            return new FirstComeFirstServe(state, id);
+        } else if (type == 5) {
+            return new NearestFirst(state, id);
         }
         return null;
     }

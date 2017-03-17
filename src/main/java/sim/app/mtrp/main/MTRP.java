@@ -27,7 +27,7 @@ public class MTRP extends SimState {
     // agent params:
 
     public int agentType = 0;
-    public int maxCarrySize = 16;
+    public int maxCarrySize = 100;
     public double startFunds = 100;
     public double fuelCapacity = 1000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
@@ -42,13 +42,16 @@ public class MTRP extends SimState {
 
     public int numResourceTypes = 3; // fuel is not a resource included here.
     public double maxCostPerResource = 20.0; // for each type of resource we get the price and set it for all of the depos
+    public int maxMeanResourcesNeededForType = numResourceTypes * 2; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
     public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
-    public int maxNumResourcesPerJob = numResourceTypes * 2;
-    public double jobLength;
-    public double taskLocStdDev = 5.0; // this is the same as what we used in the original paper.
 
+    public int jobLength = 15; // the max mean job length (the mean is picked randomly from zero to this max)
+    public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
+    public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
+    public double meanDistBetweenNeighborhoods = 30.0; // this is the average distance between any two neighborhoods
+    public int numJobTypes = 20; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:
@@ -60,6 +63,7 @@ public class MTRP extends SimState {
     public Agent agents[];
     public Depo depos[];
     public Neighborhood neighborhoods[];
+    public Job jobPrototypes[];
 
     public Continuous2D agentPlane;
     public Continuous2D taskPlane;
@@ -89,11 +93,27 @@ public class MTRP extends SimState {
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
 
+        jobPrototypes = new Job[numJobTypes];
+        // create the job prototypes
+        for (int i = 0; i < numJobTypes; i++) {
+            jobPrototypes[i] = new Job(this, i);
+
+        }
+
 
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
+        Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
         // First create the neighborhoods.  Use the mean location as the location for the depos
         for (int i = 0; i < numNeighborhoods; i++) {
+            // create neighborhoods some distance appart
+            Neighborhood n = new Neighborhood(this, i);
+            // add it to the plane
+
+            while (neighborhoodPlane.getNeighborsExactlyWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() > 0) {
+                n = new Neighborhood(this, i);
+            }
+            neighborhoodPlane.setObjectLocation(n, n.meanLocation);
             neighborhoods[i] = new Neighborhood(this, i);
             // schedule it
             schedule.scheduleRepeating(Schedule.EPOCH, order, neighborhoods[i]);
@@ -293,17 +313,11 @@ public class MTRP extends SimState {
         return jobLength;
     }
 
-    public void setJobLength(double jobLength) {
+    public void setJobLength(int jobLength) {
         this.jobLength = jobLength;
     }
 
-    public int getMaxNumResourcesPerJob() {
-        return maxNumResourcesPerJob;
-    }
 
-    public void setMaxNumResourcesPerJob(int maxNumResourcesPerJob) {
-        this.maxNumResourcesPerJob = maxNumResourcesPerJob;
-    }
 
     public double getBasebounty() {
         return basebounty;
@@ -326,6 +340,7 @@ public class MTRP extends SimState {
         if (bondsman == null) { return 0.0;}
         return bondsman.getTotalTime();
     }
+
 
     public double getTotalOutstandingBounty() {
         if (bondsman == null) { return 0.0;}

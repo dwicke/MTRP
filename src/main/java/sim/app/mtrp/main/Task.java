@@ -21,18 +21,17 @@ public class Task {
     Bag committedAgents;
     Bag blackList; // agents who are not allowed to go after this task
 
-    public Task(Neighborhood neighborhood, MTRP state) {
+    public Task(Neighborhood neighborhood, MTRP state, Double2D location) {
         this.id = taskIDGenerator;
         taskIDGenerator++;// increment every new task.
         this.neighborhood = neighborhood;
         this.state = state;
-        double x = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getX();
-        double y = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getY();
-        location = new Double2D(x,y);
+
+        this.location = location;
         // add it to the continuous2d
-        state.getTaskPlane().setObjectLocation(this, location);
+        state.getTaskPlane().setObjectLocation(this, this.location);
         // now generate the job
-        job = new Job(this, state, id);// can easily make this an array then later...
+        job = state.jobPrototypes[state.random.nextInt(state.numJobTypes)].buildJob(state,this, id);
         committedAgents = new Bag();
         blackList = new Bag();
     }
@@ -94,5 +93,9 @@ public class Task {
 
     public void blacklistAgent(Agent ag) {
         blackList.add(ag);
+    }
+
+    public Job getJob() {
+        return job;
     }
 }

@@ -81,7 +81,8 @@ public class LearningAgent extends Agent {
     }
 
     double getUtility(Task t) {
-        return (pTable.getQValue(t.getNeighborhood().getId(), 0) *  t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        //return (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        return (pTable.getQValue(t.getNeighborhood().getId(), 0) *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / getNumTimeStepsFromLocation(t.getLocation());
     }
 
     double getCost(Task t) {

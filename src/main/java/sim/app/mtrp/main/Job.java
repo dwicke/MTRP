@@ -14,10 +14,23 @@ public class Job implements java.io.Serializable  {
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
     double currentBounty;
     boolean isAvailable;
+    int meanJobLength;
 
+    private Job() {}
 
+    public Job(MTRP state, int id) {
+        // create the prototype
+        this.id = id;
+        this.meanJobLength = state.random.nextInt(state.jobLength);
+        // now the mean resources:
+        resourcesNeeded = new int[state.getNumResourceTypes()];
+        for (int i = 0; i < state.numResourceTypes; i++) {
+            resourcesNeeded[i] = state.random.nextInt(state.maxMeanResourcesNeededForType);
+        }
 
+    }
 
+/*
     public Job(Task task, MTRP state, int id) {
         this.id = id;
         this.state = state;
@@ -37,6 +50,33 @@ public class Job implements java.io.Serializable  {
             numResource--;
         }
     }
+*/
+
+    /**
+     * builds a job from this prototypical job
+     * @param state
+     * @param task
+     * @param id
+     * @return
+     */
+    public Job buildJob(MTRP state, Task task, int id) {
+        Job job = new Job();
+
+        job.id = id;
+        job.task = task;
+        job.resourcesNeeded = new int[this.resourcesNeeded.length];
+        job.isAvailable = true;
+        job.currentBounty = state.basebounty;
+        job.state = state;
+        for (int i = 0; i < this.resourcesNeeded.length; i++) {
+            while(state.random.nextDouble() > (1.0 / (double) this.resourcesNeeded[i])) {
+                job.resourcesNeeded[i]++;
+            }
+        }
+        job.meanJobLength = this.meanJobLength;
+        return job;
+    }
+
 
     public Task getTask() {
         return task;
@@ -72,7 +112,7 @@ public class Job implements java.io.Serializable  {
     }
 
     public void incrementBounty() {
-        currentBounty++;
+        currentBounty += state.getIncrement();
     }
 
     public boolean getIsAvailable() {
@@ -85,9 +125,12 @@ public class Job implements java.io.Serializable  {
         isAvailable = false;
     }
 
+
+
     public boolean doWork() {
         // geometric distribution.
-        return state.random.nextDouble() <= (1.0 / state.jobLength);
+
+        return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
     }
 
     public void finish() {

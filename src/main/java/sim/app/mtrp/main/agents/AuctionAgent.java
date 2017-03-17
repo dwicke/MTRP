@@ -32,13 +32,7 @@ public class AuctionAgent extends LearningAgent {
             // then set all of the agent valuations for that task to -MAX
 
             // DO i look at all of the task? or just those in the range of me?  i think just those in range.
-            Task[] availTasks = getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
-            Bag nonCommitedTasks = new Bag();
-            for (Task t : availTasks) {
-                if (t.getCommittedAgents().size() == 0) {
-                    nonCommitedTasks.add(t);
-                }
-            }
+            Bag nonCommitedTasks = getNonCommittedTasks();
             Task[] availableTasks = (Task[]) nonCommitedTasks.toArray(new Task[nonCommitedTasks.size()]);
 
             double[][] valuations = new double[state.agents.length][availableTasks.length];
@@ -91,6 +85,18 @@ public class AuctionAgent extends LearningAgent {
         return curJob.getTask();
     }
 
+
+    public Bag getNonCommittedTasks() {
+        Task[] availTasks = getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
+        Bag nonCommitedTasks = new Bag();
+        for (Task t : availTasks) {
+            if (t.getCommittedAgents().size() == 0) {
+                nonCommitedTasks.add(t);
+            }
+        }
+        return nonCommitedTasks;
+    }
+
     @Override
     public void commitTask(Task t) {
         t.amCommitted(this);
@@ -106,7 +112,8 @@ public class AuctionAgent extends LearningAgent {
 
     @Override
     double getUtility(Task t) {
-        return (t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        return (t.getBounty() + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        //return (t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
     }
 
     public double[] getEvaluations(Task[] availTasks) {

@@ -72,7 +72,7 @@ public abstract class Agent implements Steppable {
 
         if (dist == 0.0) {
             // I am! so check if i need fuel or resources
-            if (curFuel < state.getFuelCapacity()) {
+            if (curFuel < state.getFuelCapacity() && bounty > 0) {
                 // so buy fuel, note that fuel price is 1-to-1 cost
                 // buy whatever I can
                 double fuelBought = Math.min(bounty / nearestDepo.getFuelCost(), state.getFuelCapacity() - curFuel);
@@ -97,8 +97,8 @@ public abstract class Agent implements Steppable {
         // if not working
         // first analyze my resources and decide if I need to go to a depo
         // only need resources if not at a task and predict that can't do any task with current resources
-        needResources = ((curFuel - dist) < fuelEpsilon); // this will ensure we do not go outside the fuel range.
-
+        needResources = ((curFuel - dist) <= fuelEpsilon); // this will ensure we do not go outside the fuel range due to error in floating point precision
+        //state.printlnSynchronized("Agent = " + id + "cur fuel = " + curFuel +  " dist = " + dist + " needResources = " + needResources);
         if (!amWorking && needResources) {
             // resources take priority over traveling to a task
             curDestination = nearestDepo.location;
@@ -169,7 +169,7 @@ public abstract class Agent implements Steppable {
         if (closestWithinRange == null) {
             for (Depo d : depos) {
                 double dist = getNumTimeStepsFromLocation(d.location);
-                state.printlnSynchronized("curfuel = " + curFuel + " dist = " + dist);
+                state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
             }
         }
 
@@ -178,26 +178,7 @@ public abstract class Agent implements Steppable {
     }
 
 
-    public Task getClosetAvailableTask() {
-        Task[] tasks = state.getBondsman().getAvailableTasks();
-        // so now pick the nearest one and go for it!
-        Task closestWithinRange = null;
-        double curMinDist = Double.MAX_VALUE;
 
-
-        for (Task t : tasks) {
-            double dist = getNumTimeStepsFromLocation(t.location);
-            if (dist < this.curFuel && dist < curMinDist) {
-                curMinDist = dist;
-                closestWithinRange = t;
-            }
-        }
-        if (closestWithinRange != null) {
-            curJob = closestWithinRange.job;
-            curDestination = closestWithinRange.getLocation();
-        }
-        return closestWithinRange;
-    }
 
     public Task[] getAvailableTasksInRange() {
         Task[] tasks = state.getBondsman().getAvailableTasks();
@@ -233,16 +214,20 @@ public abstract class Agent implements Steppable {
         // therefore if I move (3/5*.7) in the x direction and (4/5*.7) in the y direction I will end up only going .7
         // so do that. essentially normalizing on the euclidean distance.
         if (curFuel > 0) {
-            double dis = curLocation.distance(curDestination);
-            if (Math.abs(dis) < state.stepsize) // might need to account for some error here eventually...
+            double numTimeSteps = getNumTimeStepsFromLocation(curDestination);
+            if (numTimeSteps == 0) // might need to account for some error here eventually...
                 return false; // don't move already at destination.
+            double dis = curLocation.distance(curDestination);
             double dx = curDestination.getX() - curLocation.getX();
             dx = dx / dis * state.getStepsize();
 
             double dy = curDestination.getY() - curLocation.getY();
             dy = dy / dis * state.getStepsize();
 
+            //Double2D oldLoc = curLocation;
             curLocation = new Double2D(curLocation.getX() + dx, curLocation.getY() + dy);
+            //state.printlnSynchronized("Agent = " + id + " distance traveled = " + curLocation.distance(oldLoc));
+
             // now travel there!
             state.getAgentPlane().setObjectLocation(this, curLocation);
             curFuel--;
@@ -271,7 +256,7 @@ public abstract class Agent implements Steppable {
             // check if at task?
             if (curJob != null) {
                 double dist = getNumTimeStepsFromLocation(curJob.task.getLocation());
-                if (Math.abs(dist) < state.stepsize) {
+                if (dist == 0) {
                     // then I'm at the task!
                     curJob.claimWork(this);
                     amWorking = true;
@@ -294,6 +279,10 @@ public abstract class Agent implements Steppable {
 
     public int getNumTimeStepsFromLocation(Double2D dest) {
         return (int) Math.floor((curLocation.distance(dest))/state.stepsize);
+    }
+
+    public int getNumTimeStepsFromLocation(Double2D dest, Double2D src) {
+        return (int) Math.floor((src.distance(dest))/state.stepsize);
     }
 
 
