@@ -51,6 +51,22 @@ public class Bondsman implements Steppable {
         return (double) totalTime / (double) totalCount;
     }
 
+    public double getTotalBounty() {
+        double totalBounty = 0.0;
+        for (Neighborhood n : state.neighborhoods) {
+            totalBounty += n.totalBounty;
+        }
+        return totalBounty;
+    }
+
+    public double getCount() {
+        double count = 0.0;
+        for (Neighborhood n : state.neighborhoods) {
+            count += n.count;
+        }
+        return count;
+    }
+
     public double getTotalOutstandingBounty() {
         double totalBounty = 0.0;
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){

@@ -9,6 +9,7 @@ public class Job implements java.io.Serializable  {
     Task task;
     MTRP state;
     int id;
+    int jobType;
 
     Agent curWorker;
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
@@ -30,27 +31,6 @@ public class Job implements java.io.Serializable  {
 
     }
 
-/*
-    public Job(Task task, MTRP state, int id) {
-        this.id = id;
-        this.state = state;
-        this.task = task;
-        // now setup the job
-        reset();
-    }
-
-    public final void reset() {
-        isAvailable = true;
-        currentBounty = state.basebounty;
-
-        resourcesNeeded = new int[state.getNumResourceTypes()];
-        int numResource = state.random.nextInt(state.getMaxNumResourcesPerJob());
-        while (numResource != 0) {
-            resourcesNeeded[state.random.nextInt(resourcesNeeded.length)]++;
-            numResource--;
-        }
-    }
-*/
 
     /**
      * builds a job from this prototypical job
@@ -61,7 +41,7 @@ public class Job implements java.io.Serializable  {
      */
     public Job buildJob(MTRP state, Task task, int id) {
         Job job = new Job();
-
+        job.jobType = this.id;
         job.id = id;
         job.task = task;
         job.resourcesNeeded = new int[this.resourcesNeeded.length];
@@ -77,6 +57,10 @@ public class Job implements java.io.Serializable  {
         return job;
     }
 
+
+    public int getJobType() {
+        return jobType;
+    }
 
     public Task getTask() {
         return task;

@@ -15,10 +15,9 @@ import sim.util.Bag;
  */
 public class LearningAgent extends Agent {
 
-    QTable pTable, tTable; // ptable probability of getting to the task
+    QTable pTable; // ptable probability of getting to the task
     double oneUpdateGamma = .001;
-    double tLearningRate = .75; // set to .1 originally (should be at .9 though...)
-    double tDiscountBeta = .1; // not used...
+
     double pLearningRate = .2; // set to .2 originally
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
@@ -28,7 +27,6 @@ public class LearningAgent extends Agent {
         super(state, id);
         numNeighborhoods = state.getNumNeighborhoods();
         pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
-        tTable = new QTable(numNeighborhoods, 1, tLearningRate, tDiscountBeta, state.random, 10.0, 0.0);
 
     }
 

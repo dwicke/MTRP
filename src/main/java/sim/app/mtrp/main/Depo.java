@@ -28,18 +28,13 @@ public class Depo implements Steppable{
 
         location = new Double2D(x, y);
         state.getDepoPlane().setObjectLocation(this, location);
-        /*
+
         resources = new Resource[state.numResourceTypes];
-        if (state.numResourceTypes > Resource.Type.values().length) throw new AssertionError("The number of MTRP.numResourceTypes is more than the number of Resource.Type");
-        int i = 0;
-        for (Resource.Type type: Resource.Type.values()) {
-            if (i < resources.length) { // only do up to the number of resources I specify.
-                resources[i] = new Resource(type, state.random.nextInt(state.getDepoCapacity()),
+        for (int i = 0; i < state.numResourceTypes; i++) {
+                resources[i] = new Resource(i, state.random.nextInt(state.getDepoCapacity()),
                         state.random.nextDouble() * state.getMaxCostPerResource(), state.random.nextDouble() * state.getMaxCostPerResource());
-                i++;
-            }
         }
-        */
+
 
     }
 
@@ -58,5 +53,13 @@ public class Depo implements Steppable{
 
     public double getFuelCost() {
         return state.getFuelCost();
+    }
+
+    public double getResourceCost(int resourceID) {
+        return resources[resourceID].buyPrice;
+    }
+
+    public double getResourceBuyBackPrice(int resourceID) {
+        return resources[resourceID].buybackPrice;
     }
 }

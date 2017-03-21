@@ -142,12 +142,16 @@ public abstract class Agent implements Steppable {
         }
         Bag closestWithinRange = new Bag();
 
-
         for (Task t : tasks) {
             double dist = getNumTimeStepsFromLocation(t.getLocation());
-            if (dist < this.curFuel) {
-                closestWithinRange.add(t);
+            Depo d = getClosestDepo(t.getLocation());
+            if (d != null) {
+                double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
+                if (dist < (this.curFuel + distToDepo)) {
+                    closestWithinRange.add(t);
+                }
             }
+
         }
         return closestWithinRange;
     }
@@ -166,12 +170,36 @@ public abstract class Agent implements Steppable {
                 closestWithinRange = d;
             }
         }
-        if (closestWithinRange == null) {
+        /*if (closestWithinRange == null) {
             for (Depo d : depos) {
                 double dist = getNumTimeStepsFromLocation(d.location);
                 state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
             }
+        }*/
+
+        return closestWithinRange;
+
+    }
+
+    public Depo getClosestDepo(Double2D loc) {
+        Depo[] depos = state.getDepos();
+        Depo closestWithinRange = null;
+        double curMinDist = Double.MAX_VALUE;
+
+        for (Depo d : depos) {
+            double dist = getNumTimeStepsFromLocation(d.location, loc);
+
+            if (dist <= this.curFuel && dist < curMinDist) {
+                curMinDist = dist;
+                closestWithinRange = d;
+            }
         }
+        /*if (closestWithinRange == null) {
+            for (Depo d : depos) {
+                double dist = getNumTimeStepsFromLocation(d.location, loc);
+                state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
+            }
+        }*/
 
         return closestWithinRange;
 

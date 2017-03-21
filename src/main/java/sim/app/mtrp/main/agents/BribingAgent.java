@@ -112,15 +112,15 @@ public class BribingAgent extends LearningAgent {
             }
         }
         // so now get the difference of the utility
-        return (getUtility(curJob.getTask()) - getUtility(secondBestTask)) * getNumTimeStepsFromLocation(secondBestTask.getLocation());
+        return getUtility(curJob.getTask()) * getNumTimeStepsFromLocation(curJob.getTask().getLocation()) - getUtility(secondBestTask) * getNumTimeStepsFromLocation(secondBestTask.getLocation());
 
     }
     public Task getSecondBestTask() {
         Job tempJob = curJob;
         curJob = null;
         Bag tasksInRange = getTasksWithinRange();
-        if (tempJob != null)
-            tasksInRange.remove(tempJob.getTask());
+        tasksInRange.remove(tempJob.getTask());
+
         Task secondBestTask = getBestTask(tasksInRange);
         curJob = tempJob;// return the job back so that I don't not do it if I don't get the bribe!
         return secondBestTask;

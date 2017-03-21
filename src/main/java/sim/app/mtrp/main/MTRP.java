@@ -110,9 +110,11 @@ public class MTRP extends SimState {
             Neighborhood n = new Neighborhood(this, i);
             // add it to the plane
 
+            /*
             while (neighborhoodPlane.getNeighborsExactlyWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() > 0) {
                 n = new Neighborhood(this, i);
             }
+            */
             neighborhoodPlane.setObjectLocation(n, n.meanLocation);
             neighborhoods[i] = new Neighborhood(this, i);
             // schedule it
@@ -369,5 +371,7 @@ public class MTRP extends SimState {
         if (bondsman == null) { return 0.0;}
         return (double)bondsman.getAvailableTasks().length / (double) agents.length;
     }
+
+
 
 }
