@@ -31,8 +31,8 @@ public class LearningWithResources extends LearningAgent {
     public LearningWithResources(MTRP state, int id) {
         super(state, id);
         resources = new QTable[state.numJobTypes];
-        for (QTable table : resources) {
-            table = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType, 0);
+        for (int i = 0; i < resources.length; i++) {
+            resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType, 0);
         }
         tTable = new QTable(state.numJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
         jobSuccess = new QTable[state.numNeighborhoods];
@@ -62,6 +62,7 @@ public class LearningWithResources extends LearningAgent {
      * @param depo
      */
     public void buyResources(Depo depo) {
+
 
     }
 
