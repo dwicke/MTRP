@@ -40,7 +40,8 @@ public class Depo implements Steppable{
 
     public void step(SimState simState) {
         // replenish the supplies
-
+        for (Resource r : resources)
+            r.replenish();
     }
 
     public Resource[] getResources() {
@@ -61,5 +62,17 @@ public class Depo implements Steppable{
 
     public double getResourceBuyBackPrice(int resourceID) {
         return resources[resourceID].buybackPrice;
+    }
+
+    public double buyBack(int resourceType, int quantity) {
+        return resources[resourceType].buyBack(quantity);
+    }
+
+    public double buy(int resourceType, int numShouldBuy) {
+        return resources[resourceType].buy(numShouldBuy);
+    }
+
+    public Double2D getLocation() {
+        return location;
     }
 }

@@ -9,11 +9,12 @@ public class Resource implements java.io.Serializable {
     double buyPrice;
     double buybackPrice;
 
-    double curQuantity;
-    double quantity;
+    int curQuantity;
+    int quantity;
     int resourceType;
+    double revenue = 0.0;
 
-    public Resource(int resourceType, double quantity, double buyPrice, double buybackPrice) {
+    public Resource(int resourceType, int quantity, double buyPrice, double buybackPrice) {
         this.resourceType = resourceType;
         this.quantity = quantity;
         this.curQuantity = quantity;
@@ -21,6 +22,34 @@ public class Resource implements java.io.Serializable {
         this.buyPrice = buyPrice;
     }
 
+    public void replenish() {
+        curQuantity = quantity;
+    }
+
+
+    public int getResourceType() {
+        return resourceType;
+    }
+
+    public double buyBack(int quantityBack) {
+        revenue -= quantityBack * buybackPrice;
+        curQuantity += quantityBack;
+        return quantityBack * buybackPrice;
+    }
+
+    public double buy(int quantityBuying) {
+        revenue += quantityBuying * buyPrice;
+        curQuantity -= quantityBuying;
+        return quantityBuying * buyPrice;
+    }
+
+    public double getCurQuantity() {
+        return curQuantity;
+    }
+
+    public double getRevenue() {
+        return revenue;
+    }
 
     @Override
     public String toString() {

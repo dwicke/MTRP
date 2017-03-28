@@ -71,22 +71,34 @@ public abstract class Agent implements Steppable {
 
 
         if (dist == 0.0) {
-            // I am! so check if i need fuel or resources
-            if (curFuel < state.getFuelCapacity() && bounty > 0) {
-                // so buy fuel, note that fuel price is 1-to-1 cost
-                // buy whatever I can
-                double fuelBought = Math.min(bounty / nearestDepo.getFuelCost(), state.getFuelCapacity() - curFuel);
-                bounty -= fuelBought * nearestDepo.getFuelCost();
-                curFuel += fuelBought;
-                didAction = true;
-            } else {
-                // need to figure out how to buy resources correctly...
-                didAction = false;
-            }
-
+            didAction = buyResources(nearestDepo);
         }
 
         return didAction;
+    }
+
+    public boolean buyResources(Depo nearestDepo) {
+        return buyFuel(nearestDepo) || buySellTaskResources(nearestDepo);
+
+    }
+
+    public boolean buyFuel(Depo nearestDepo) {
+        // I am! so check if i need fuel or resources
+        if (curFuel < state.getFuelCapacity() && bounty > 0) {
+            // so buy fuel, note that fuel price is 1-to-1 cost
+            // buy whatever I can
+            double fuelBought = Math.min(bounty / nearestDepo.getFuelCost(), state.getFuelCapacity() - curFuel);
+            bounty -= fuelBought * nearestDepo.getFuelCost();
+            curFuel += fuelBought;
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public boolean buySellTaskResources(Depo nearestDepo) {
+        return false;
     }
 
 
@@ -285,13 +297,19 @@ public abstract class Agent implements Steppable {
             if (curJob != null) {
                 double dist = getNumTimeStepsFromLocation(curJob.task.getLocation());
                 if (dist == 0) {
-                    // then I'm at the task!
-                    curJob.claimWork(this);
-                    amWorking = true;
+                    claimWork();
                 }
             }
         }
 
+    }
+
+    /**
+     * can overide this to learn the resources needed for particular jobs
+     */
+    public void claimWork() {
+        // then I'm at the task!
+        amWorking = curJob.claimWork(this);
     }
 
 
