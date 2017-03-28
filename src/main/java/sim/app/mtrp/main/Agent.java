@@ -71,6 +71,7 @@ public abstract class Agent implements Steppable {
 
 
         if (dist == 0.0) {
+            state.printlnSynchronized("Agent id " + id + "is at a depo..." + dist + " agent location = " + curLocation + " depo location " + nearestDepo.location);
             didAction = buyResources(nearestDepo);
         }
 
@@ -105,11 +106,12 @@ public abstract class Agent implements Steppable {
     public void pickDestination() {
 
         Depo nearestDepo = getClosestDepo();
-        double dist = getNumTimeStepsFromLocation(nearestDepo.location);
+
         // if not working
         // first analyze my resources and decide if I need to go to a depo
         // only need resources if not at a task and predict that can't do any task with current resources
-        needResources = ((curFuel - dist) <= fuelEpsilon); // this will ensure we do not go outside the fuel range due to error in floating point precision
+        needResources = checkNeedResources(nearestDepo);
+
         //state.printlnSynchronized("Agent = " + id + "cur fuel = " + curFuel +  " dist = " + dist + " needResources = " + needResources);
         if (!amWorking && needResources) {
             // resources take priority over traveling to a task
@@ -134,6 +136,11 @@ public abstract class Agent implements Steppable {
         }
 
 
+    }
+
+    public boolean checkNeedResources(Depo nearestDepo) {
+        double dist = getNumTimeStepsFromLocation(nearestDepo.location);
+        return ((curFuel - dist) <= fuelEpsilon); // this will ensure we do not go outside the fuel range due to error in floating point precision
     }
 
     public void commitTask(Task t) {}
@@ -266,6 +273,7 @@ public abstract class Agent implements Steppable {
 
             //Double2D oldLoc = curLocation;
             curLocation = new Double2D(curLocation.getX() + dx, curLocation.getY() + dy);
+            //state.printlnSynchronized("CurLocation for agent  " + id + " is = " + curLocation);
             //state.printlnSynchronized("Agent = " + id + " distance traveled = " + curLocation.distance(oldLoc));
 
             // now travel there!
@@ -352,5 +360,9 @@ public abstract class Agent implements Steppable {
     @Override
     public String toString() {
         return "my ID " + id + " curJob = " + curJob;
+    }
+
+    public double getBounty() {
+        return bounty;
     }
 }

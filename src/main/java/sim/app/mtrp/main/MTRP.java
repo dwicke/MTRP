@@ -42,7 +42,7 @@ public class MTRP extends SimState {
 
     public int numResourceTypes = 3; // fuel is not a resource included here.
     public double maxCostPerResource = 20.0; // for each type of resource we get the price and set it for all of the depos
-    public int maxMeanResourcesNeededForType = numResourceTypes * 2; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
+    public int maxMeanResourcesNeededForType = numResourceTypes; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
     public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
@@ -51,7 +51,7 @@ public class MTRP extends SimState {
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = 30.0; // this is the average distance between any two neighborhoods
-    public int numJobTypes = 20; // a job type is the average job length and the average number of resources needed for each type of resource.
+    public int numJobTypes = 5; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:
@@ -372,6 +372,11 @@ public class MTRP extends SimState {
         return (double)bondsman.getAvailableTasks().length / (double) agents.length;
     }
 
+    public void setNumJobTypes(int numJobTypes) {
+        this.numJobTypes = numJobTypes;
+    }
 
-
+    public int getNumJobTypes() {
+        return numJobTypes;
+    }
 }

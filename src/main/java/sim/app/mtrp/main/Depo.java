@@ -31,7 +31,7 @@ public class Depo implements Steppable{
 
         resources = new Resource[state.numResourceTypes];
         for (int i = 0; i < state.numResourceTypes; i++) {
-                resources[i] = new Resource(i, state.random.nextInt(state.getDepoCapacity()),
+                resources[i] = new Resource(i, state.getDepoCapacity(),
                         state.random.nextDouble() * state.getMaxCostPerResource(), state.random.nextDouble() * state.getMaxCostPerResource());
         }
 

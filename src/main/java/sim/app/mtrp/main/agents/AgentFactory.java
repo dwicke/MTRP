@@ -23,6 +23,8 @@ public class AgentFactory {
             return new FirstComeFirstServe(state, id);
         } else if (type == 5) {
             return new NearestFirst(state, id);
+        } else if (type == 6) {
+            return new SimpleLearningWithResources(state, id);
         }
         return null;
     }
