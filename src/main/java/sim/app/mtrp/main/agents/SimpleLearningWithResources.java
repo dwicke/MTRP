@@ -16,7 +16,7 @@ public class SimpleLearningWithResources extends LearningAgent {
     QTable resources[]; // for each element in the array corresponds to the job type and within the job type we must learn the number of resources that are expected of each type
     QTable tTable; // for each type of job we learn the
     QTable resourceUsage; // these are the estimates on the needed resources in my bag!
-    double resourceLearningRate = .9;
+    double resourceLearningRate = .1;
     double tLearningRate = .75; // set to .1 originally (should be at .9 though...) tried .75
     double tDiscountBeta = .1; // not used...
 
@@ -116,8 +116,10 @@ public class SimpleLearningWithResources extends LearningAgent {
             // first learn the resources that have been used during a trip and reset
             for (int i = 0; i < resourcesUsed.length; i++) {
                 resourceUsage.update(i, 0, resourcesUsed[i]);
+                state.printlnSynchronized("Resource [" + i + "] used = " + resourcesUsed[i] + " resource Usage = " + resourceUsage.getQValue(i,0));
                 resourcesUsed[i] = 0; // reset
             }
+            resourceUsage.oneUpdate(oneUpdateGamma);
         }
 
         // first go through and sell off the resources I don't want so as to have the capital to purchase all resources do need.
@@ -135,8 +137,13 @@ public class SimpleLearningWithResources extends LearningAgent {
         // now go in and buy up them resources!
         for (Resource r : nearestDepo.getResources()) {
             int numShouldBuy = Math.min((int) r.getCurQuantity(), (int) Math.min(bounty / nearestDepo.getResourceCost(r.getResourceType()), (int) Math.round(resourceUsage.getQValue(r.getResourceType(), 0)) - myResources[r.getResourceType()]));
-            state.printlnSynchronized("Agent id " + id + " buying resouce " + r.getResourceType()  + " of quantity " + numShouldBuy + " qval = " + resourceUsage.getQValue(r.getResourceType(), 0));
+
+
             if (numShouldBuy > 0) {
+                state.printlnSynchronized("Agent id " + id + " buying resouce " + r.getResourceType()  + " of quantity " + numShouldBuy + " qval = " + resourceUsage.getQValue(r.getResourceType(), 0));
+                while (numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()) > bounty) {
+                    numShouldBuy--;
+                }
                 bounty -= nearestDepo.buy(r.getResourceType(), numShouldBuy);
                 myResources[r.getResourceType()] += numShouldBuy;
                 failedJob = null;// reset failed job because I've now bought resources
@@ -158,10 +165,11 @@ public class SimpleLearningWithResources extends LearningAgent {
             for (int i = 0; i < resourcesNeeded.length; i++) {
                 // you spend all the resources you have even if you find out that you don't have enough.  the idea is that
                 // it is a geometric distribution.
-                myResources[i] = Math.max(0, myResources[i] - resourcesNeeded[i]);
+
                 if (myResources[i] - resourcesNeeded[i] < 0) {
                     amWorking = false;
                 }
+                myResources[i] = Math.max(0, myResources[i] - resourcesNeeded[i]);
                 resources[curJob.getJobType()].update(i, 0, resourcesNeeded[i]);
                 resourcesUsed[i] += resourcesNeeded[i]; // even though i might not have actually had them I still would have used them had I had them
                 updatedResourceUsage = false;
