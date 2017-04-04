@@ -41,7 +41,7 @@ public class MTRP extends SimState {
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
     public int numResourceTypes = 3; // fuel is not a resource included here.
-    public double maxCostPerResource = 5.0; // for each type of resource we get the price and set it for all of the depos
+    public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
     public int maxMeanResourcesNeededForType = numResourceTypes; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;

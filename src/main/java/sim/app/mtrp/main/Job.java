@@ -51,7 +51,7 @@ public class Job implements java.io.Serializable  {
         for (int i = 0; i < this.resourcesNeeded.length; i++) {
             while(state.random.nextDouble() > (1.0 / (double) this.resourcesNeeded[i])) {
                 job.resourcesNeeded[i]++;
-                job.currentBounty += state.maxCostPerResource*2;
+                //job.currentBounty += state.maxCostPerResource*2;
             }
         }
         job.meanJobLength = this.meanJobLength;

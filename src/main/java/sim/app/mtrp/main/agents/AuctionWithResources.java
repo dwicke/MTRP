@@ -13,7 +13,7 @@ import sim.app.mtrp.main.util.QTable;
  *
  * Created by drew on 3/21/17.
  */
-public class SimpleLearningWithResources extends BribingAgent {
+public class AuctionWithResources extends AuctionAgent {
     QTable jobSuccess[];
     QTable resources[]; // for each element in the array corresponds to the job type and within the job type we must learn the number of resources that are expected of each type
     QTable tTable; // for each type of job we learn the
@@ -28,13 +28,13 @@ public class SimpleLearningWithResources extends BribingAgent {
     boolean updatedResourceUsage = true; // initially true since well we haven't actually done anything
 
     Job failedJob = null;
-    final Logger logger = (Logger) LoggerFactory.getLogger(SimpleLearningWithResources.class);
+    final Logger logger = (Logger) LoggerFactory.getLogger(AuctionWithResources.class);
     private int completedTasks = 0;
     private int numFailedTasks = 0;
     private int numJumpship = 0;
 
 
-    public SimpleLearningWithResources(MTRP state, int id) {
+    public AuctionWithResources(MTRP state, int id) {
         super(state, id);
         resources = new QTable[state.numJobTypes];
         for (int i = 0; i < resources.length; i++) {

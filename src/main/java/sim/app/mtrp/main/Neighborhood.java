@@ -49,7 +49,7 @@ public class Neighborhood implements Steppable{
     }
 
     public void generateTasks() {
-        while (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
+        if (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
             // generate a new task
             // first generate its coordinates
             //double x = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getX();

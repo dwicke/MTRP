@@ -25,6 +25,8 @@ public class AgentFactory {
             return new NearestFirst(state, id);
         } else if (type == 6) {
             return new SimpleLearningWithResources(state, id);
+        } else if (type == 7) {
+            return new AuctionWithResources(state, id);
         }
         return null;
     }
