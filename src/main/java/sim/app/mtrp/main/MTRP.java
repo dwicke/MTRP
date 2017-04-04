@@ -27,7 +27,7 @@ public class MTRP extends SimState {
     // agent params:
 
     public int agentType = 0;
-    public int maxCarrySize = 100;
+    public int maxCarrySizePerResource = 100; // number of each type of resource I can carry
     public double startFunds = 100;
     public double fuelCapacity = 1000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
@@ -37,11 +37,11 @@ public class MTRP extends SimState {
     // neighborhood params:
 
     public int numDepos = 2;
-    public int depoCapacity = 20; // how many resources of each type can the depo carry
+    public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
     public int numResourceTypes = 3; // fuel is not a resource included here.
-    public double maxCostPerResource = 20.0; // for each type of resource we get the price and set it for all of the depos
+    public double maxCostPerResource = 5.0; // for each type of resource we get the price and set it for all of the depos
     public int maxMeanResourcesNeededForType = numResourceTypes; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
@@ -51,7 +51,7 @@ public class MTRP extends SimState {
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = 30.0; // this is the average distance between any two neighborhoods
-    public int numJobTypes = 5; // a job type is the average job length and the average number of resources needed for each type of resource.
+    public int numJobTypes = 3; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:
@@ -231,12 +231,12 @@ public class MTRP extends SimState {
         this.simHeight = simHeight;
     }
 
-    public int getMaxCarrySize() {
-        return maxCarrySize;
+    public int getMaxCarrySizePerResource() {
+        return maxCarrySizePerResource;
     }
 
-    public void setMaxCarrySize(int maxCarrySize) {
-        this.maxCarrySize = maxCarrySize;
+    public void setMaxCarrySizePerResource(int maxCarrySizePerResource) {
+        this.maxCarrySizePerResource = maxCarrySizePerResource;
     }
 
     public double getStartFunds() {

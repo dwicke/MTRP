@@ -1,5 +1,6 @@
 package sim.app.mtrp.main;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -27,6 +28,8 @@ public abstract class Agent implements Steppable {
     Depo curDepo;
 
 
+    final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
+
 
     public Agent(MTRP state, int id) {
         this.state = state;
@@ -52,6 +55,7 @@ public abstract class Agent implements Steppable {
         // 3. work on a job
         // and we always pick a destination
 
+
         boolean didAction = buySellResources();
         // I need to know where I should go
         pickDestination();
@@ -71,7 +75,7 @@ public abstract class Agent implements Steppable {
 
 
         if (dist == 0.0) {
-            state.printlnSynchronized("Agent id " + id + "is at a depo..." + dist + " agent location = " + curLocation + " depo location " + nearestDepo.location);
+            //state.printlnSynchronized("Agent id " + id + "is at a depo..." + dist + " agent location = " + curLocation + " depo location " + nearestDepo.location);
             didAction = buyResources(nearestDepo);
         }
 
@@ -139,6 +143,10 @@ public abstract class Agent implements Steppable {
     }
 
     public boolean checkNeedResources(Depo nearestDepo) {
+        return checkNeedFuel(nearestDepo);
+    }
+
+    public boolean checkNeedFuel(Depo nearestDepo) {
         double dist = getNumTimeStepsFromLocation(nearestDepo.location);
         return ((curFuel - dist) <= fuelEpsilon); // this will ensure we do not go outside the fuel range due to error in floating point precision
     }

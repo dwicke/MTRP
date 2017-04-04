@@ -18,6 +18,7 @@ public class BribingAgent extends LearningAgent {
     }
 
 
+
     @Override
     public Task getAvailableTask() {
         Task chosenTask = super.getAvailableTask();
