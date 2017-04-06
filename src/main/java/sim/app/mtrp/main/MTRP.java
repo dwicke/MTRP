@@ -86,6 +86,7 @@ public class MTRP extends SimState {
     @Override
     public void start() {
         super.start();
+        this.random.setSeed(this.seed()); // need to fix this in Mason proper...  need this here for running from terminal multiple times
         // here we go!
 
 

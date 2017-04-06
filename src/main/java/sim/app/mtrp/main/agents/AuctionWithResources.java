@@ -67,7 +67,8 @@ public class AuctionWithResources extends AuctionAgent {
             return t;
         }
 
-        if (t != null && getTravelConfidence(t) > 0.75)
+
+        if (t != null /* && getTravelConfidence(t) > 0.75*/)
         {
             if (curJob != null && t.getId() != curJob.getTask().getId()) {
                 numJumpship++;
@@ -152,7 +153,7 @@ public class AuctionWithResources extends AuctionAgent {
     @Override
     public boolean buySellTaskResources(Depo nearestDepo) {
         boolean didAction = false;
-        logger.debug("Num tasks completed {} num failed {} numJumpship {}", completedTasks, numFailedTasks, numJumpship);
+        //logger.debug("Num tasks completed {} num failed {} numJumpship {}", completedTasks, numFailedTasks, numJumpship);
         completedTasks = 0;
         numFailedTasks = 0;
         numJumpship = 0;
@@ -193,7 +194,7 @@ public class AuctionWithResources extends AuctionAgent {
             if (numShouldBuy > 0) {
                 //logger.debug("Agent id " + id + " buying resouce " + r.getResourceType()  + " of quantity " + numShouldBuy + " qval = " + resourceUsage.getQValue(r.getResourceType(), 0));
 
-                logger.debug("Agent id {} buying resource type {} quant {} total price = {} my bounty = {}", id, r.getResourceType(), numShouldBuy, numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()), bounty);
+                //logger.debug("Agent id {} buying resource type {} quant {} total price = {} my bounty = {}", id, r.getResourceType(), numShouldBuy, numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()), bounty);
                 while (numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()) > bounty) {
                     numShouldBuy--;
                 }

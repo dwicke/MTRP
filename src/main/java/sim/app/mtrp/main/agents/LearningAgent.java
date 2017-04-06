@@ -15,9 +15,13 @@ import sim.util.Bag;
  */
 public class LearningAgent extends Agent {
 
+    QTable jobSuccess[];
+    QTable tTable; // for each type of job we learn the
     QTable pTable; // ptable probability of getting to the task
     double oneUpdateGamma = .001;
-
+    double tLearningRate = .75; // set to .1 originally (should be at .9 though...) tried .75
+    double tDiscountBeta = .1; // not used...
+    double jLearningRate = .75;
     double pLearningRate = .2; // set to .2 originally
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
@@ -27,7 +31,11 @@ public class LearningAgent extends Agent {
         super(state, id);
         numNeighborhoods = state.getNumNeighborhoods();
         pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
-
+        tTable = new QTable(state.numJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
+        jobSuccess = new QTable[state.numNeighborhoods];
+        for (int i = 0; i < jobSuccess.length; i++) {
+            jobSuccess[i]  = new QTable(state.numJobTypes, 1, jLearningRate, tDiscountBeta, state.random, 1.0, 0.0);
+        }
     }
 
     @Override
@@ -41,8 +49,15 @@ public class LearningAgent extends Agent {
             // and set curJob to null
             curJob = null;
         }
-        if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
-            return getBestTask(getTasksWithinRange());
+        // AHHHH I was not letting the agent jump ship
+        if (!amWorking /*&& (curJob == null || !curJob.getIsAvailable())*/) {
+            Task bestT = getBestTask(getTasksWithinRange());
+            if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
+                // then I'm jumping ship and need to decommit and maybe learn too...
+                curJob.getTask().decommit(this);// must decommit.
+                // TODO: consider learning after jumping ship
+            }
+            return bestT;
         } else {
             return curJob.getTask();
         }
@@ -80,7 +95,8 @@ public class LearningAgent extends Agent {
 
     double getUtility(Task t) {
         //return (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
-        return (pTable.getQValue(t.getNeighborhood().getId(), 0) *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / getNumTimeStepsFromLocation(t.getLocation());
+        double confidence = jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
+        return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / getNumTimeStepsFromLocation(t.getLocation());
     }
 
     double getCost(Task t) {
@@ -95,11 +111,16 @@ public class LearningAgent extends Agent {
     }
 
     public void learn(double reward) {
-        epsilonChooseRandomTask *= (1.0 - (1.0 / (double)this.numNeighborhoods));
-
+        if (reward == 1.0) {
+            epsilonChooseRandomTask *= (1.0 - (1.0 / (double) this.numNeighborhoods));
+        }
 
         pTable.update(curJob.getTask().getNeighborhood().getId(), 0, reward);
         pTable.oneUpdate(oneUpdateGamma);
+
+        jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
+        jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);
+
     }
 
     public String getPTable() {

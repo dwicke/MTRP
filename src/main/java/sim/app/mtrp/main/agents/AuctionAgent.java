@@ -112,7 +112,9 @@ public class AuctionAgent extends LearningAgent {
 
     @Override
     double getUtility(Task t) {
-        return (t.getBounty() + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        // they are successful at all jobs so don't multiply by ptable
+        return (getNumTimeStepsFromLocation(t.getLocation()) + t.getBounty() + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+        //return (t.getBounty() + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation()); // this is what i had... didn't include time to get to task...
         //return (t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
     }
 

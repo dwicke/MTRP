@@ -13,14 +13,11 @@ import sim.app.mtrp.main.util.QTable;
  *
  * Created by drew on 3/21/17.
  */
-public class SimpleLearningWithResources extends BribingAgent {
-    QTable jobSuccess[];
+public class SimpleLearningWithResources extends LearningAgent {
     QTable resources[]; // for each element in the array corresponds to the job type and within the job type we must learn the number of resources that are expected of each type
-    QTable tTable; // for each type of job we learn the
+
     QTable resourceUsage; // these are the estimates on the needed resources in my bag!
     double resourceLearningRate = .9;
-    double tLearningRate = .75; // set to .1 originally (should be at .9 though...) tried .75
-    double tDiscountBeta = .1; // not used...
 
     int myResources[];
 
@@ -38,13 +35,9 @@ public class SimpleLearningWithResources extends BribingAgent {
         super(state, id);
         resources = new QTable[state.numJobTypes];
         for (int i = 0; i < resources.length; i++) {
-            //resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType, 1);
-            resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, 0);
-        }
-        tTable = new QTable(state.numJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
-        jobSuccess = new QTable[state.numNeighborhoods];
-        for (int i = 0; i < jobSuccess.length; i++) {
-            jobSuccess[i]  = new QTable(state.numJobTypes, 1, tLearningRate, tDiscountBeta, state.random, 1.0, 0.0);
+            // TODO: figure out what i should do here
+            resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType, 1);
+            //resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, 0);
         }
         // TODO: might want to learn based on which depo I'm at
         resourceUsage = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType * 5, state.maxMeanResourcesNeededForType);
@@ -63,6 +56,7 @@ public class SimpleLearningWithResources extends BribingAgent {
 
         Task t = super.getAvailableTask();
 
+        // rethink this!!!!
         if (amWorking) {
             return t;
         }
@@ -81,14 +75,7 @@ public class SimpleLearningWithResources extends BribingAgent {
         return null;
     }
 
-    @Override
-    public void learn(double reward) {
-        super.learn(reward);
 
-        jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
-        jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);
-        completedTasks++;
-    }
 
     @Override
     double getUtility(Task t) {
@@ -152,7 +139,7 @@ public class SimpleLearningWithResources extends BribingAgent {
     @Override
     public boolean buySellTaskResources(Depo nearestDepo) {
         boolean didAction = false;
-        logger.debug("Num tasks completed {} num failed {} numJumpship {}", completedTasks, numFailedTasks, numJumpship);
+        //logger.debug("Num tasks completed {} num failed {} numJumpship {}", completedTasks, numFailedTasks, numJumpship);
         completedTasks = 0;
         numFailedTasks = 0;
         numJumpship = 0;
@@ -193,7 +180,7 @@ public class SimpleLearningWithResources extends BribingAgent {
             if (numShouldBuy > 0) {
                 //logger.debug("Agent id " + id + " buying resouce " + r.getResourceType()  + " of quantity " + numShouldBuy + " qval = " + resourceUsage.getQValue(r.getResourceType(), 0));
 
-                logger.debug("Agent id {} buying resource type {} quant {} total price = {} my bounty = {}", id, r.getResourceType(), numShouldBuy, numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()), bounty);
+                //logger.debug("Agent id {} buying resource type {} quant {} total price = {} my bounty = {}", id, r.getResourceType(), numShouldBuy, numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()), bounty);
                 while (numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()) > bounty) {
                     numShouldBuy--;
                 }

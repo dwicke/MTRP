@@ -42,7 +42,7 @@ public class StatsPublisher implements Steppable {
             numWritten++;
             if (numWritten == SimState.totalNumJobs) {
                 // then I'll be the one to take care of the writting out to the file
-                File file = new File(directoryName + "/" + System.currentTimeMillis() + ".bounties");
+                File file = new File(directoryName + "/" + System.currentTimeMillis() + "_" + board.getAgentType() + ".bounties");
                 file.getParentFile().mkdirs();
                 try {
                     PrintWriter writer = new PrintWriter(file, "UTF-8");
@@ -50,7 +50,9 @@ public class StatsPublisher implements Steppable {
                         double sum = 0.0;
                         for (int j = 0; j < stats.length; j++) {
                             sum += stats[j][i];
+                            //writer.print(stats[j][i] + " ");
                         }
+                        //writer.println("");
                         writer.println(sum/(double) stats.length);
                     }
                     writer.close();
@@ -66,7 +68,11 @@ public class StatsPublisher implements Steppable {
     public void step(SimState state) {
 
         if (state.schedule.getSteps() < maxNumSteps) {
-            stats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalTime();
+            if (stats[(int)board.job()] == null) {
+                System.out.println("OHHH Nooo " + (int)board.job());
+                stats[(int)board.job()] = new double[(int)maxNumSteps];
+            }
+            stats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
         }
 
     }
