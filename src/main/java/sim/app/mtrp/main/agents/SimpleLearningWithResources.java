@@ -35,9 +35,9 @@ public class SimpleLearningWithResources extends LearningAgent {
         super(state, id);
         resources = new QTable[state.numJobTypes];
         for (int i = 0; i < resources.length; i++) {
-            // TODO: figure out what i should do here
-            resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType, 1);
-            //resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, 0);
+            // TODO: figure out what i should do here i think it needs to be zero otherwise i might think i don't have enough resources to do any task
+            //resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType, 1);
+            resources[i] = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, 0);
         }
         // TODO: might want to learn based on which depo I'm at
         resourceUsage = new QTable(state.getNumResourceTypes(), 1, resourceLearningRate, 0.0, state.random, state.maxMeanResourcesNeededForType * 5, state.maxMeanResourcesNeededForType);
@@ -90,7 +90,8 @@ public class SimpleLearningWithResources extends LearningAgent {
         //double travelConf = getTravelConfidence(t);
         //double expectedDistTravel = (1 - travelConf) * getNumTimeStepsFromLocation(t.getLocation()) + travelConf * getNumTimeStepsFromLocation(nearestDepo.getLocation());
         //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / expectedDistTravel;
-        double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + + state.getJobLength());
+        //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
+        double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
         //state.printlnSynchronized("task id = " + t.getId() + " utility = " + util + " cost = " + getCost(t));
 
         return util;
@@ -276,6 +277,8 @@ public class SimpleLearningWithResources extends LearningAgent {
         */
         return needResources;
     }
+
+
 
     @Override
     public void decommitTask() {

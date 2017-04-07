@@ -104,7 +104,7 @@ public class AuctionWithResources extends AuctionAgent {
         //double travelConf = getTravelConfidence(t);
         //double expectedDistTravel = (1 - travelConf) * getNumTimeStepsFromLocation(t.getLocation()) + travelConf * getNumTimeStepsFromLocation(nearestDepo.getLocation());
         //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / expectedDistTravel;
-        double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + + state.getJobLength());
+        double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
         //state.printlnSynchronized("task id = " + t.getId() + " utility = " + util + " cost = " + getCost(t));
 
         return util;
