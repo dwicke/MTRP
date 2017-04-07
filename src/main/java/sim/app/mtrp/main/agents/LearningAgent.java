@@ -59,6 +59,8 @@ public class LearningAgent extends Agent {
             amWorking = false;
             curJob.getTask().decommit(this);// must decommit.
             // TODO: consider learning after jumping ship
+
+
         }
         return bestT;
         /*
@@ -109,7 +111,10 @@ public class LearningAgent extends Agent {
         //return (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
         double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
         //return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / getNumTimeStepsFromLocation(t.getLocation());
-        return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / getNumTimeStepsFromLocation(t.getLocation());
+
+        double numSteps = getNumTimeStepsFromLocation(t.getLocation()) + Math.max(0, tTable.getQValue(t.getJob().getJobType(), 0) - getNumTimeStepsWorking());
+
+        return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / numSteps;
 
         //return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
 
@@ -138,7 +143,7 @@ public class LearningAgent extends Agent {
         jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);
 
 
-        //tTable.update(curJob.getJobType(), 0, );
+        tTable.update(curJob.getJobType(), 0, getNumTimeStepsWorking());
 
     }
 

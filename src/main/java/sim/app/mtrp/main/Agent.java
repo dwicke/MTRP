@@ -26,6 +26,7 @@ public abstract class Agent implements Steppable {
     boolean needResources;
     double fuelEpsilon = 2; // min amount of fuel
     Depo curDepo;
+    int numTimeStepsWorking = 0;
 
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -174,7 +175,8 @@ public abstract class Agent implements Steppable {
             Depo d = getClosestDepo(t.getLocation());
             if (d != null) {
                 double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
-                if (dist < (this.curFuel + distToDepo)) {
+                //if (dist < (this.curFuel + distToDepo)) {
+                if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel ) {
                     closestWithinRange.add(t);
                 }
             }
@@ -304,8 +306,10 @@ public abstract class Agent implements Steppable {
         if (amWorking) {
             // then continue to work
             // see if done the task
+            numTimeStepsWorking++;
             if (curJob.doWork()) {
                 finishTask();
+                numTimeStepsWorking = 0;
             }
 
         } else {
@@ -314,6 +318,7 @@ public abstract class Agent implements Steppable {
                 double dist = getNumTimeStepsFromLocation(curJob.task.getLocation());
                 if (dist == 0) {
                     claimWork();
+                    numTimeStepsWorking = 0;
                 }
             }
         }
@@ -372,5 +377,9 @@ public abstract class Agent implements Steppable {
 
     public double getBounty() {
         return bounty;
+    }
+
+    public int getNumTimeStepsWorking() {
+        return numTimeStepsWorking;
     }
 }
