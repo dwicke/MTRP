@@ -59,7 +59,7 @@ public class LearningAgent extends Agent {
             amWorking = false;
             curJob.getTask().decommit(this);// must decommit.
             // TODO: consider learning after jumping ship
-
+            state.printlnSynchronized("I am jumping ship!");
 
         }
         return bestT;
@@ -79,12 +79,14 @@ public class LearningAgent extends Agent {
     }
 
     public Task getBestTask(Bag bagOfTasks) {
-        if (bagOfTasks.size() == 0) {
+        if (bagOfTasks.size() == 0 && curJob == null) {
             return null; // need to go for resources.
+        } else if (bagOfTasks.size() == 0 && curJob != null) {
+            return curJob.getTask();
         }
 
         // epsilon random pick task
-        if (state.random.nextDouble() < epsilonChooseRandomTask) {
+        if (state.random.nextDouble() < epsilonChooseRandomTask && bagOfTasks.size() > 0) {
             return (Task) bagOfTasks.get(state.random.nextInt(bagOfTasks.size()));
         }
 
