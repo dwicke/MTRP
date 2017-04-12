@@ -16,13 +16,14 @@ public class Job implements java.io.Serializable  {
     double currentBounty;
     boolean isAvailable;
     int meanJobLength;
+    int countWork = 0;
 
     private Job() {}
 
     public Job(MTRP state, int id) {
         // create the prototype
         this.id = id;
-        this.meanJobLength = state.random.nextInt(state.jobLength);
+        this.meanJobLength = state.jobLength;//state.random.nextInt(state.jobLength);
         // now the mean resources:
         resourcesNeeded = new int[state.getNumResourceTypes()];
         for (int i = 0; i < state.numResourceTypes; i++) {
@@ -127,6 +128,7 @@ public class Job implements java.io.Serializable  {
     public void leaveWork(Agent agent) {
         curWorker = null;
         isAvailable = true;
+        countWork = 0;
     }
 
 
@@ -134,7 +136,16 @@ public class Job implements java.io.Serializable  {
     public boolean doWork() {
         // geometric distribution.
 
-        return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
+        //return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
+
+
+        countWork++;
+        boolean a = countWork >= this.meanJobLength;
+        if (a) {
+            countWork = 0;
+        }
+        return a;
+
     }
 
     public void finish() {

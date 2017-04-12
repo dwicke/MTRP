@@ -29,6 +29,8 @@ public class StatsPublisher implements Steppable {
 
     private static int numWritten = 0;
     private static double[][] stats = new double[(int)SimState.totalNumJobs][];
+    private static long[] seeds = new long[(int)SimState.totalNumJobs];
+
     private static Object mutex = new Object();
 
     public StatsPublisher(MTRP a, long maxNumSteps, String dir) {
@@ -47,15 +49,21 @@ public class StatsPublisher implements Steppable {
                 file.getParentFile().mkdirs();
                 try {
                     PrintWriter writer = new PrintWriter(file, "UTF-8");
+
+                    for (int job = 0; job < stats.length; job++) {
+                        writer.println(stats[job][((int)maxNumSteps - 1)] + " " + seeds[job]);
+                    }
+
+                    /*
                     for (int i = ((int)maxNumSteps - 1); i < maxNumSteps; i++) {
                         double sum = 0.0;
                         for (int j = 0; j < stats.length; j++) {
                             sum += stats[j][i];
-                            writer.print(stats[j][i] + " ");
+                            writer.println(stats[j][i] + " " + board.seed());
                         }
-                        writer.println("");
+                        //writer.println("");
 
-                       /* double average = sum / (double) stats.length;
+                        double average = sum / (double) stats.length;
                         double sd = 0;
                         for (int k = 0; k < stats.length; k++)
                         {
@@ -63,8 +71,9 @@ public class StatsPublisher implements Steppable {
                         }
                         double standardDeviation = Math.sqrt(sd);
                         writer.println(average + " " + standardDeviation);
-                        */
+
                     }
+                    */
                     writer.close();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -81,8 +90,10 @@ public class StatsPublisher implements Steppable {
             if (stats[(int)board.job()] == null) {
                 System.out.println("OHHH Nooo " + (int)board.job());
                 stats[(int)board.job()] = new double[(int)maxNumSteps];
+
             }
             stats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
+            seeds[(int)board.job()] = board.seed();
         }
 
     }

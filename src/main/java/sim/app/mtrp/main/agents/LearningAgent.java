@@ -50,12 +50,18 @@ public class LearningAgent extends Agent {
             // and set curJob to null
             curJob = null;
         }
-        // AHHHH I was not letting the agent jump ship
 
+        if (amWorking) {
+            // consider letting the agent jump ship here if they need to...
+            return curJob.getTask();
+        }
+
+        // let the agent jumpship if they have not made it to the job yet.
         Task bestT = getBestTask(getTasksWithinRange());
 
-        if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
+        if (!amWorking && curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
             // then I'm jumping ship and need to decommit and maybe learn too...
+            // can't decommit if working on the task!
             curJob.leaveWork(this);
             amWorking = false;
             curJob.getTask().decommit(this);// must decommit.

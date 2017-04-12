@@ -4,6 +4,7 @@ import sim.app.mtrp.main.agents.AgentFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 
 /**
@@ -50,7 +51,7 @@ public class MTRP extends SimState {
     public int jobLength = 15; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
-    public double meanDistBetweenNeighborhoods = 30.0; // this is the average distance between any two neighborhoods
+    public double meanDistBetweenNeighborhoods = 15.0; // this is the average distance between any two neighborhoods
     public int numJobTypes = 3; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
@@ -105,19 +106,28 @@ public class MTRP extends SimState {
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
         Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
+        Double2D[] locations = new Double2D[4];
+        locations[0] = new Double2D(0,0);
+        locations[1] = new Double2D(30,0);
+        locations[2] = new Double2D(0,30);
+        locations[3] = new Double2D(30,30);
+
+
         // First create the neighborhoods.  Use the mean location as the location for the depos
         for (int i = 0; i < numNeighborhoods; i++) {
             // create neighborhoods some distance appart
             Neighborhood n = new Neighborhood(this, i);
             // add it to the plane
-
             /*
-            while (neighborhoodPlane.getNeighborsExactlyWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() > 0) {
+            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != i) {
                 n = new Neighborhood(this, i);
             }
             */
-            neighborhoodPlane.setObjectLocation(n, n.meanLocation);
-            neighborhoods[i] = new Neighborhood(this, i);
+            //neighborhoodPlane.setObjectLocation(n, n.meanLocation);
+            n.setMeanLocation(locations[i]);
+            neighborhoodPlane.setObjectLocation(n, locations[i]);
+
+            neighborhoods[i] = n;//new Neighborhood(this, i);
             // schedule it
             schedule.scheduleRepeating(Schedule.EPOCH, order, neighborhoods[i]);
             order++;

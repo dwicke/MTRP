@@ -43,13 +43,18 @@ public class Neighborhood implements Steppable{
         return meanLocation;
     }
 
+    public void setMeanLocation(Double2D meanLocation) {
+        this.meanLocation = meanLocation;
+    }
+
     @Override
     public String toString() {
         return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")" + " numTasks = " + tasks.size();
     }
 
     public void generateTasks() {
-        if (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
+        //if (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
+        if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
             // generate a new task
             // first generate its coordinates
             //double x = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getX();
