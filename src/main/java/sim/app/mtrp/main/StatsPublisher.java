@@ -6,6 +6,7 @@ package sim.app.mtrp.main;
  * and open the template in the editor.
  */
 
+import org.apache.commons.math3.stat.inference.TTest;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -46,14 +47,23 @@ public class StatsPublisher implements Steppable {
                 file.getParentFile().mkdirs();
                 try {
                     PrintWriter writer = new PrintWriter(file, "UTF-8");
-                    for (int i = 0; i < maxNumSteps; i++) {
+                    for (int i = ((int)maxNumSteps - 1); i < maxNumSteps; i++) {
                         double sum = 0.0;
                         for (int j = 0; j < stats.length; j++) {
                             sum += stats[j][i];
-                            //writer.print(stats[j][i] + " ");
+                            writer.print(stats[j][i] + " ");
                         }
-                        //writer.println("");
-                        writer.println(sum/(double) stats.length);
+                        writer.println("");
+
+                       /* double average = sum / (double) stats.length;
+                        double sd = 0;
+                        for (int k = 0; k < stats.length; k++)
+                        {
+                            sd += Math.pow(stats[k][i] - average, 2) / stats.length;
+                        }
+                        double standardDeviation = Math.sqrt(sd);
+                        writer.println(average + " " + standardDeviation);
+                        */
                     }
                     writer.close();
                 } catch (Exception e) {

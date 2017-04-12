@@ -97,7 +97,8 @@ public abstract class Agent implements Steppable {
             bounty -= fuelBought * nearestDepo.getFuelCost();
             curFuel += fuelBought;
             return true;
-        } else {
+        }
+        else {
             return false;
         }
 
@@ -175,7 +176,6 @@ public abstract class Agent implements Steppable {
             Depo d = getClosestDepo(t.getLocation());
             if (d != null) {
                 double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
-                //if (dist < (this.curFuel + distToDepo)) {
                 if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel ) {
                     closestWithinRange.add(t);
                 }
@@ -187,27 +187,7 @@ public abstract class Agent implements Steppable {
 
 
     public Depo getClosestDepo() {
-        Depo[] depos = state.getDepos();
-        Depo closestWithinRange = null;
-        double curMinDist = Double.MAX_VALUE;
-
-        for (Depo d : depos) {
-            double dist = getNumTimeStepsFromLocation(d.location);
-
-            if (dist <= this.curFuel && dist < curMinDist) {
-                curMinDist = dist;
-                closestWithinRange = d;
-            }
-        }
-        /*if (closestWithinRange == null) {
-            for (Depo d : depos) {
-                double dist = getNumTimeStepsFromLocation(d.location);
-                state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
-            }
-        }*/
-
-        return closestWithinRange;
-
+        return getClosestDepo(curLocation);
     }
 
     public Depo getClosestDepo(Double2D loc) {
@@ -236,25 +216,6 @@ public abstract class Agent implements Steppable {
 
 
 
-
-    public Task[] getAvailableTasksInRange() {
-        Task[] tasks = state.getBondsman().getAvailableTasks();
-        if (tasks.length == 0) {
-            //state.printlnSynchronized("NO TASKS!");
-        }
-        // so now pick the nearest one and go for it!
-        Bag closestWithinRange = new Bag();
-
-
-        for (Task t : tasks) {
-            double dist = getNumTimeStepsFromLocation(t.location);
-            if (dist < this.curFuel) {
-                closestWithinRange.add(t);
-            }
-        }
-
-        return (Task[]) closestWithinRange.toArray(new Task[closestWithinRange.size()]);
-    }
 
 
 

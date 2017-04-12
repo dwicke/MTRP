@@ -1,5 +1,6 @@
 package sim.app.mtrp.main.agents;
 
+import sim.app.mtrp.main.Depo;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.util.Bag;
@@ -87,7 +88,8 @@ public class AuctionAgent extends LearningAgent {
 
 
     public Bag getNonCommittedTasks() {
-        Task[] availTasks = getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
+        Bag closestWithinRange = getTasksWithinRange();
+        Task[] availTasks = (Task[]) closestWithinRange.toArray(new Task[closestWithinRange.size()]);//getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
         Bag nonCommitedTasks = new Bag();
         for (Task t : availTasks) {
             if (t.getCommittedAgents().size() == 0) {
@@ -110,14 +112,14 @@ public class AuctionAgent extends LearningAgent {
 
     }
 
-    @Override
-    double getUtility(Task t) {
-        // they are successful at all jobs so don't multiply by ptable
-        //return (getNumTimeStepsFromLocation(t.getLocation()) + t.getBounty() + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
-        return (getNumTimeStepsFromLocation(t.getLocation()) + t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
 
-        //return (t.getBounty() + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation()); // this is what i had... didn't include time to get to task...
-        //return (t.getBounty() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
+
+    double getCost(Task t) {
+        Depo closestDepo = getClosestDepo(t.getLocation());
+        if (closestDepo == null) {
+            return Double.POSITIVE_INFINITY; // can't get to a depo from here! this is the case if i'm being asked what I'd bid for it.
+        }
+        return getNumTimeStepsFromLocation(t.getLocation()) * closestDepo.getFuelCost();
     }
 
     public double[] getEvaluations(Task[] availTasks) {

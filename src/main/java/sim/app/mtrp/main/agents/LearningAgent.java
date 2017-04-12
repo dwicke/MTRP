@@ -1,6 +1,7 @@
 package sim.app.mtrp.main.agents;
 
 import sim.app.mtrp.main.Agent;
+import sim.app.mtrp.main.Depo;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
@@ -22,7 +23,7 @@ public class LearningAgent extends Agent {
     double tLearningRate = .75; // set to .1 originally (should be at .9 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .75;
-    double pLearningRate = .2; // set to .2 originally
+    double pLearningRate = .75;//.2; // set to .2 originally
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
     int numNeighborhoods;
@@ -59,7 +60,6 @@ public class LearningAgent extends Agent {
             amWorking = false;
             curJob.getTask().decommit(this);// must decommit.
             // TODO: consider learning after jumping ship
-            state.printlnSynchronized("I am jumping ship!");
 
         }
         return bestT;
@@ -110,20 +110,14 @@ public class LearningAgent extends Agent {
     }
 
     double getUtility(Task t) {
-        //return (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t)) / getNumTimeStepsFromLocation(t.getLocation());
         double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
-        //return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / getNumTimeStepsFromLocation(t.getLocation());
-
         double numSteps = getNumTimeStepsFromLocation(t.getLocation()) + Math.max(0, tTable.getQValue(t.getJob().getJobType(), 0) - getNumTimeStepsWorking());
-
         return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / numSteps;
-
-        //return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
-
     }
 
     double getCost(Task t) {
-        return getNumTimeStepsFromLocation(t.getLocation()) * getClosestDepo().getFuelCost();
+        // closest depo will never be null because we only consider tasks that are within distance of a depo
+        return getNumTimeStepsFromLocation(t.getLocation()) * getClosestDepo(t.getLocation()).getFuelCost();
     }
 
 
