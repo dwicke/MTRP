@@ -20,10 +20,10 @@ public class LearningAgent extends Agent {
     QTable tTable; // for each type of job we learn the
     QTable pTable; // ptable probability of getting to the task
     double oneUpdateGamma = .001;
-    double tLearningRate = .75; // set to .1 originally (should be at .9 though...) tried .75
+    double tLearningRate = .95; // set to .1 originally (should be at .9 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .75;
-    double pLearningRate = .75;//.2; // set to .2 originally
+    double pLearningRate = .95;//.2; // set to .2 originally
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
     int numNeighborhoods;
@@ -51,21 +51,28 @@ public class LearningAgent extends Agent {
             curJob = null;
         }
 
-        if (amWorking) {
-            // consider letting the agent jump ship here if they need to...
-            return curJob.getTask();
-        }
+//        if (amWorking) {
+//            // consider letting the agent jump ship here if they need to...
+//            return curJob.getTask();
+//        }
 
         // let the agent jumpship if they have not made it to the job yet.
         Task bestT = getBestTask(getTasksWithinRange());
 
-        if (!amWorking && curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
+        if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
             // then I'm jumping ship and need to decommit and maybe learn too...
             // can't decommit if working on the task!
+            // now check if i should change tasks.  I don't want to be swapping tasks if the distance is essentially zero and i was working on it already
+
+            // TODO: consider learning after jumping ship
+            if (bestT != null && amWorking == true) { // maybe do this if we were working and not otherwise...???
+                state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " jumpingship to task id = " + bestT.getJob().getId() + " with utility " + getUtility(bestT) + " from task id " + curJob.getId() + " with utility " + getUtility(curJob.getTask()));
+                jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, 0.5);
+            }
+
             curJob.leaveWork(this);
             amWorking = false;
             curJob.getTask().decommit(this);// must decommit.
-            // TODO: consider learning after jumping ship
 
         }
         return bestT;
@@ -117,8 +124,15 @@ public class LearningAgent extends Agent {
 
     double getUtility(Task t) {
         double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
-        double numSteps = getNumTimeStepsFromLocation(t.getLocation()) + Math.max(0, tTable.getQValue(t.getJob().getJobType(), 0) - getNumTimeStepsWorking());
-        return (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / numSteps;
+
+        double timeWorking = 0;
+        if (curJob != null && curJob.getTask().getId() == t.getId()) {
+            timeWorking = getNumTimeStepsWorking();
+        }
+        double numSteps = getNumTimeStepsFromLocation(t.getLocation()) + Math.max(0, tTable.getQValue(t.getJob().getJobType(), 0) - timeWorking);
+        double utility = (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / numSteps;
+        //state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " task id = " + t.getId() + " confidence, numsteps, utility " + confidence + ", " + numSteps + ", " + utility);
+        return utility;
     }
 
     double getCost(Task t) {
@@ -139,7 +153,7 @@ public class LearningAgent extends Agent {
         }
 
         pTable.update(curJob.getTask().getNeighborhood().getId(), 0, reward);
-        pTable.oneUpdate(oneUpdateGamma);
+        //pTable.oneUpdate(oneUpdateGamma);
 
         jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
         jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);

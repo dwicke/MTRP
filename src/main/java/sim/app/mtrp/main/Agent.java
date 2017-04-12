@@ -269,6 +269,7 @@ public abstract class Agent implements Steppable {
             // see if done the task
             numTimeStepsWorking++;
             if (curJob.doWork()) {
+                //state.printlnSynchronized("agent " + id + " Finished task id = " + curJob.getId());
                 finishTask();
                 numTimeStepsWorking = 0;
             }

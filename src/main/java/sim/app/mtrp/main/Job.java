@@ -148,6 +148,10 @@ public class Job implements java.io.Serializable  {
 
     }
 
+    public int getCountWork() {
+        return countWork;
+    }
+
     public void finish() {
         task.setFinished();
     }
