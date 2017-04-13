@@ -113,6 +113,12 @@ public class AuctionAgent extends LearningAgent {
     }
 
 
+    double getUtility(Task t) {
+
+        // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
+        double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
+        return util;
+    }
 
     double getCost(Task t) {
         Depo closestDepo = getClosestDepo(t.getLocation());
