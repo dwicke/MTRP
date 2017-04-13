@@ -123,8 +123,8 @@ public class MTRP extends SimState {
                 n = new Neighborhood(this, i);
             }
             */
-            //neighborhoodPlane.setObjectLocation(n, n.meanLocation);
-            n.setMeanLocation(locations[i]);
+            neighborhoodPlane.setObjectLocation(n, n.meanLocation);
+            //n.setMeanLocation(locations[i]);
             neighborhoodPlane.setObjectLocation(n, locations[i]);
 
             neighborhoods[i] = n;//new Neighborhood(this, i);

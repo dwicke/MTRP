@@ -22,8 +22,8 @@ public class LearningAgent extends Agent {
     double oneUpdateGamma = .001;
     double tLearningRate = .95; // set to .1 originally (should be at .9 though...) tried .75
     double tDiscountBeta = .1; // not used...
-    double jLearningRate = .75;
-    double pLearningRate = .95;//.2; // set to .2 originally
+    double jLearningRate = .55;
+    double pLearningRate = .75;//.2; // set to .2 originally
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
     int numNeighborhoods;
@@ -66,8 +66,8 @@ public class LearningAgent extends Agent {
 
             // TODO: consider learning after jumping ship
             if (bestT != null && amWorking == true) { // maybe do this if we were working and not otherwise...???
-                state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " jumpingship to task id = " + bestT.getJob().getId() + " with utility " + getUtility(bestT) + " from task id " + curJob.getId() + " with utility " + getUtility(curJob.getTask()));
-                jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, 0.5);
+                //state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " jumpingship to task id = " + bestT.getJob().getId() + " with utility " + getUtility(bestT) + " from task id " + curJob.getId() + " with utility " + getUtility(curJob.getTask()));
+                //jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, 0.5);
             }
 
             curJob.leaveWork(this);
@@ -100,7 +100,8 @@ public class LearningAgent extends Agent {
 
         // epsilon random pick task
         if (state.random.nextDouble() < epsilonChooseRandomTask && bagOfTasks.size() > 0) {
-            return (Task) bagOfTasks.get(state.random.nextInt(bagOfTasks.size()));
+            Task randTask = (Task) bagOfTasks.get(state.random.nextInt(bagOfTasks.size()));
+            return randTask;
         }
 
         // otherwise just pick it using real method
@@ -110,6 +111,9 @@ public class LearningAgent extends Agent {
         if (curJob != null) {
             chosenTask = curJob.getTask();
             curMax = getUtility(chosenTask);
+            if (Double.isInfinite(curMax)) {
+                return chosenTask;
+            }
         }
         for (Task t : tasks) {
 
@@ -124,15 +128,19 @@ public class LearningAgent extends Agent {
 
     double getUtility(Task t) {
         double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
+//
+//        double timeWorking = 0;
+//        if (curJob != null && curJob.getTask().getId() == t.getId()) {
+//            timeWorking = getNumTimeStepsWorking();
+//        }
+//        double numSteps = getNumTimeStepsFromLocation(t.getLocation()) + Math.max(0, tTable.getQValue(t.getJob().getJobType(), 0) - timeWorking);
+//        double utility = (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / numSteps;
+//        //state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " task id = " + t.getId() + " confidence, numsteps, utility " + confidence + ", " + numSteps + ", " + utility);
+//        return utility;
 
-        double timeWorking = 0;
-        if (curJob != null && curJob.getTask().getId() == t.getId()) {
-            timeWorking = getNumTimeStepsWorking();
-        }
-        double numSteps = getNumTimeStepsFromLocation(t.getLocation()) + Math.max(0, tTable.getQValue(t.getJob().getJobType(), 0) - timeWorking);
-        double utility = (confidence *  (t.getBounty() + getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) / numSteps;
-        //state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " task id = " + t.getId() + " confidence, numsteps, utility " + confidence + ", " + numSteps + ", " + utility);
-        return utility;
+        // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
+        double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
+        return util;
     }
 
     double getCost(Task t) {
@@ -156,7 +164,7 @@ public class LearningAgent extends Agent {
         //pTable.oneUpdate(oneUpdateGamma);
 
         jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
-        jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);
+        //jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);
 
 
         tTable.update(curJob.getJobType(), 0, getNumTimeStepsWorking());

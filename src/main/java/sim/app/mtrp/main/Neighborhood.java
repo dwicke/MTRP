@@ -57,8 +57,8 @@ public class Neighborhood implements Steppable{
         if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
             // generate a new task
             // first generate its coordinates
-            //double x = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getX();
-            //double y = state.random.nextGaussian() * state.taskLocStdDev + neighborhood.meanLocation.getY();
+            //double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
+            //double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
             // generate the x and y coordinates within the bounding area of the neighborhood
             double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
             double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;

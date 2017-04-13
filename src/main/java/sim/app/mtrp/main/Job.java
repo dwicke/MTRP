@@ -136,16 +136,15 @@ public class Job implements java.io.Serializable  {
     public boolean doWork() {
         // geometric distribution.
 
-        //return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
+        return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
 
 
-        countWork++;
-        boolean a = countWork >= this.meanJobLength;
-        if (a) {
-            countWork = 0;
-        }
-        return a;
-
+//        countWork++;
+//        boolean a = countWork >= this.meanJobLength;
+//        if (a) {
+//            countWork = 0;
+//        }
+//        return a;
     }
 
     public int getCountWork() {
