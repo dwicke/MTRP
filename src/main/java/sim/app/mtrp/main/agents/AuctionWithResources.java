@@ -93,8 +93,6 @@ public class AuctionWithResources extends AuctionAgent {
 
     @Override
     double getUtility(Task t) {
-        // P(N)*P(J|N) (N - neighborhood, J - job) we are calculating bayes
-        double confidenceSuccess = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
 
         /*
         Depo nearestDepo = getClosestDepo(t.getLocation()); // TODO should i look at the depo closest to me or the task... i think the task.  also i might have to ignore the fuel left...
@@ -104,7 +102,7 @@ public class AuctionWithResources extends AuctionAgent {
         //double travelConf = getTravelConfidence(t);
         //double expectedDistTravel = (1 - travelConf) * getNumTimeStepsFromLocation(t.getLocation()) + travelConf * getNumTimeStepsFromLocation(nearestDepo.getLocation());
         //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / expectedDistTravel;
-        double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
+        double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
         //state.printlnSynchronized("task id = " + t.getId() + " utility = " + util + " cost = " + getCost(t));
 
         return util;
@@ -123,7 +121,7 @@ public class AuctionWithResources extends AuctionAgent {
     }
     
 
-    /*
+
     double getCost(Task t) {
         // we have a more complicated cost function because we learn the expected number of resources needed
 
@@ -142,8 +140,7 @@ public class AuctionWithResources extends AuctionAgent {
         return   ( (1 - travelConf) * getNumTimeStepsFromLocation(t.getLocation()) * nearestDepo.getFuelCost() ) +
                 (travelConf * ( nearestDepo.getFuelCost() * getNumTimeStepsFromLocation(nearestDepo.getLocation()) + getNumTimeStepsFromLocation(t.getLocation(), nearestDepo.getLocation()) + resourceCostEstimated)) + resourceTotalOverallCost;
     }
-
-*/
+    
 
     /**
      * Buy and sell resources from the depo passed

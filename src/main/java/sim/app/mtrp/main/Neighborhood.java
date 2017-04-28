@@ -5,6 +5,8 @@ import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Double2D;
 
+import java.util.ArrayList;
+
 /**
  * Created by drew on 2/20/17.
  */
@@ -15,9 +17,9 @@ public class Neighborhood implements Steppable{
     int id;
 
     Double2D meanLocation;
-    Bag tasks;
+    ArrayList<Task> tasks;
 
-    int totalTime, count, totalBounty;
+    int totalTime, count, totalBounty, totalNumTasksGenerated;
 
 
 
@@ -29,7 +31,7 @@ public class Neighborhood implements Steppable{
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
         meanLocation = new Double2D(state.random.nextDouble(true,true)*state.simWidth, state.random.nextDouble(true,true)*state.simHeight);
         // then generate the initial tasks locations
-        tasks = new Bag();
+        tasks = new ArrayList<Task>();
     }
 
 
@@ -53,8 +55,8 @@ public class Neighborhood implements Steppable{
     }
 
     public void generateTasks() {
-        //if (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
-        if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+        if (state.random.nextDouble() <  (1.0 / (double) state.timestepsTilNextTask)) {
+        //if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
             // generate a new task
             // first generate its coordinates
             //double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
@@ -62,8 +64,8 @@ public class Neighborhood implements Steppable{
             // generate the x and y coordinates within the bounding area of the neighborhood
             double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
             double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
-
             tasks.add(new Task(this, state, new Double2D(x, y)));
+            totalNumTasksGenerated++;
         }
 
     }
@@ -77,5 +79,22 @@ public class Neighborhood implements Steppable{
 
     public int getId() {
         return id;
+    }
+
+    public int getTotalNumTasksGenerated() {
+        return totalNumTasksGenerated;
+    }
+
+
+    public Task[] getTasksWithNoCommittedAgents() {
+        Bag availTasks = new Bag();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (((Task)tasks.get(i)).getCommittedAgents().isEmpty()) {
+                availTasks.add(tasks.get(i));
+            }
+        }
+
+        return (Task[]) availTasks.toArray(new Task[availTasks.size()]);
+
     }
 }

@@ -19,6 +19,7 @@ public class Task {
     Job job;
     int timeNotFinished = 0;
     Bag committedAgents;
+    boolean finished = false;
     Bag blackList; // agents who are not allowed to go after this task
 
     public Task(Neighborhood neighborhood, MTRP state, Double2D location) {
@@ -66,6 +67,11 @@ public class Task {
     public void setFinished() {
         state.getTaskPlane().remove(this);
         neighborhood.finishedTask(this);
+        finished = true;
+    }
+
+    public boolean getFinished() {
+        return finished;
     }
 
     public void incrementTimeNotFinished() {

@@ -71,6 +71,8 @@ public class MTRP extends SimState {
     public Continuous2D depoPlane;
 
 
+    //public TaskMaster master;
+
 
 
     public MTRP(long seed) {
@@ -148,6 +150,12 @@ public class MTRP extends SimState {
         bondsman = new Bondsman(this);
         schedule.scheduleRepeating(Schedule.EPOCH, order, bondsman);
         order++;
+
+        // create the task master
+//        master = new TaskMaster(this);
+//        schedule.scheduleRepeating(Schedule.EPOCH, order, master);
+//        order++;
+
 
         // create the agents
         agents = new Agent[numAgents];
@@ -322,15 +330,13 @@ public class MTRP extends SimState {
         return timestepsTilNextTask;
     }
 
-    public double getJobLength() {
+    public int getJobLength() {
         return jobLength;
     }
 
     public void setJobLength(int jobLength) {
         this.jobLength = jobLength;
     }
-
-
 
     public double getBasebounty() {
         return basebounty;
@@ -365,6 +371,18 @@ public class MTRP extends SimState {
         return bondsman.getAvailableTasks().length;
     }
 
+    public int getNumTasksOnBoard() {
+        if (bondsman == null) { return 0;}
+        return bondsman.getTotalTasksGenerated();
+    }
+
+    public double getNumTasksCompleted() {
+        if (bondsman == null) { return 0;}
+        return bondsman.getCount();
+    }
+
+
+
     public double getAverageOutstandingBounty() {
         if (bondsman == null) { return 0.0;}
         return bondsman.getTotalOutstandingBounty() / (double)bondsman.getAvailableTasks().length;
@@ -390,4 +408,14 @@ public class MTRP extends SimState {
     public int getNumJobTypes() {
         return numJobTypes;
     }
+
+    public void setTaskLocLength(double taskLocLength) {
+        this.taskLocLength = taskLocLength;
+    }
+
+    public double getTaskLocLength() {
+        return taskLocLength;
+    }
+
+
 }

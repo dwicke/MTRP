@@ -49,11 +49,6 @@ public class SimpleLearningWithResources extends LearningAgent {
     @Override
     public Task getAvailableTask() {
 
-        // TODO:
-        // really I need to check if someone else has beaten me to a job...???
-        // if so then learn not to do that particular type of job
-        // ... figure out how...
-
         Task t = super.getAvailableTask();
 
         // rethink this!!!!
@@ -66,11 +61,13 @@ public class SimpleLearningWithResources extends LearningAgent {
             if (curJob != null && t.getId() != curJob.getTask().getId()) {
                 numJumpship++;
             }
+            state.printlnSynchronized("time step: " + state.schedule.getSteps() + " Going with Conf  = " + getTravelConfidence(t) + " for task = " + t.getId() + " utility " + getUtility(t));
+
             return t;
         }
 
         if (t != null) {
-            state.printlnSynchronized("Conf  = " + getTravelConfidence(t) + " for task = " + t.getId());
+            state.printlnSynchronized("time step: " + state.schedule.getSteps() + "Conf  = " + getTravelConfidence(t) + " for task = " + t.getId() + " utility " + getUtility(t));
         }
         return null;
     }
@@ -110,7 +107,7 @@ public class SimpleLearningWithResources extends LearningAgent {
     }
     
 
-    /*
+
     double getCost(Task t) {
         // we have a more complicated cost function because we learn the expected number of resources needed
 
@@ -130,7 +127,7 @@ public class SimpleLearningWithResources extends LearningAgent {
                 (travelConf * ( nearestDepo.getFuelCost() * getNumTimeStepsFromLocation(nearestDepo.getLocation()) + getNumTimeStepsFromLocation(t.getLocation(), nearestDepo.getLocation()) + resourceCostEstimated)) + resourceTotalOverallCost;
     }
 
-*/
+
 
     /**
      * Buy and sell resources from the depo passed
@@ -238,6 +235,8 @@ public class SimpleLearningWithResources extends LearningAgent {
 
         if (curJob == null) {
             Task bestTask = getBestTask(getTasksWithinRange());
+            if (bestTask != null)
+                state.printlnSynchronized("time step: " + state.schedule.getSteps() + "Best job id = " + bestTask.getJob().getId() + " confidence = " + getTravelConfidence(bestTask) + " failed Job = "  + failedJob);
             if (bestTask == null) {
                 needResources = true;
             } else if (bestTask != null && getTravelConfidence(bestTask) < .75) {

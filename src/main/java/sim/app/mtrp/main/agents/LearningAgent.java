@@ -39,9 +39,7 @@ public class LearningAgent extends Agent {
         }
     }
 
-    @Override
-    public Task getAvailableTask() {
-
+    public Task getAvailableTask(Bag tasks) {
 
         if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
             // then someone beat me to it so learn
@@ -57,7 +55,7 @@ public class LearningAgent extends Agent {
 //        }
 
         // let the agent jumpship if they have not made it to the job yet.
-        Task bestT = getBestTask(getTasksWithinRange());
+        Task bestT = getBestTask(tasks);
 
         if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
             // then I'm jumping ship and need to decommit and maybe learn too...
@@ -88,7 +86,11 @@ public class LearningAgent extends Agent {
         } else {
             return curJob.getTask();
         }*/
+    }
 
+    @Override
+    public Task getAvailableTask() {
+        return getAvailableTask(getTasksWithinRange());
     }
 
     public Task getBestTask(Bag bagOfTasks) {

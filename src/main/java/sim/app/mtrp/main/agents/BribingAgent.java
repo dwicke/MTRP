@@ -19,6 +19,7 @@ public class BribingAgent extends LearningAgent {
 
 
 
+
     @Override
     public Task getAvailableTask() {
         Task chosenTask = super.getAvailableTask();
@@ -45,16 +46,25 @@ public class BribingAgent extends LearningAgent {
 
                     // check if i'm willing to pay the bribe!
                     double modifiedUtility = (getUtility(chosenTask) * getNumTimeStepsFromLocation(chosenTask.getLocation()) - totalBribeAmount) / getNumTimeStepsFromLocation(chosenTask.getLocation());
+
+
                     Bag tasksInRange = getTasksWithinRange();
                     tasksInRange.remove(chosenTask);
-                    Task secondBest = getBestTask(tasksInRange);
-
+                    Task secondBest;
+                    if (tasksInRange.size() > 1) {
+                        secondBest = getAvailableTask(tasksInRange);
+                    } else {
+                        secondBest = getBestTask(tasksInRange);
+                    }
 
                     double secondBestUtility = 0.0;
                     if (secondBest != null) {
-                        secondBestUtility = (getUtility(secondBest) * getNumTimeStepsFromLocation(secondBest.getLocation())) / getNumTimeStepsFromLocation(secondBest.getLocation());
+                        secondBestUtility = getUtility(secondBest);
                     }
-                    if (modifiedUtility >= secondBestUtility) {
+                    //state.printlnSynchronized("Total Bribe amount = " + totalBribeAmount + " for task id = " + chosenTask.getId() + " utility = " + getUtility(chosenTask) + " modified utility with bribe = " + modifiedUtility + " second best utility = " + secondBestUtility);
+
+
+                    if (modifiedUtility > secondBestUtility) {
                         // then pay the bribes!
                         for (Agent a : ag) {
                             if ((a instanceof BribingAgent) && a.getId() != this.getId() && a.getNumTimeStepsFromLocation(chosenTask.getLocation()) <= getNumTimeStepsFromLocation(chosenTask.getLocation())) {
@@ -68,7 +78,6 @@ public class BribingAgent extends LearningAgent {
                             chosenTask = secondBest;// no, this really should be recursive...
 
                         }
-                        return chosenTask;
                     }
 
                 }
@@ -100,20 +109,25 @@ public class BribingAgent extends LearningAgent {
     public double getBribeAmount(Task t) {
         // need to clear out the current job so as to get the second best job
         Task secondBestTask = getSecondBestTask();
+
+//        if (curJob == null) {
+//            state.printlnSynchronized("!!!!!!!!!!!!!!!!!!!I am agent id = " + getId() + " supposedly commited to task id = " + t.getId() + " but curJob = " + curJob);
+//            state.printlnSynchronized("Agent ids commited to task " + t.getId());
+//            for (int i = 0; i < t.getCommittedAgents().size(); i++) {
+//                state.printlnSynchronized("id = " + t.getCommittedAgents().get(i).toString());
+//            }
+//        }
+        double curJobUtil = curJob.getTask().getBounty()+ getNumTimeStepsFromLocation(curJob.getTask().getLocation());
+
         if (secondBestTask == null) {
             // well if no other task is available to me then sure you can have it as long as I get as much for it as I would have gotten if i would have continued
             // to go after it.
-            return getUtility(curJob.getTask()) * getNumTimeStepsFromLocation(curJob.getTask().getLocation());
+            return curJobUtil;//getUtility(curJob.getTask()) * getNumTimeStepsFromLocation(curJob.getTask().getLocation());
         }
-        if (curJob == null) {
-            state.printlnSynchronized("I am agent id = " + getId() + " supposedly commited to task id = " + t.getId() + " but curJob = " + curJob);
-            state.printlnSynchronized("Agent ids commited to task " + t.getId());
-            for (int i = 0; i < t.getCommittedAgents().size(); i++) {
-                state.printlnSynchronized("id = " + t.getCommittedAgents().get(i).toString());
-            }
-        }
+
         // so now get the difference of the utility
-        return getUtility(curJob.getTask()) * getNumTimeStepsFromLocation(curJob.getTask().getLocation()) - getUtility(secondBestTask) * getNumTimeStepsFromLocation(secondBestTask.getLocation());
+        double secondBestUtil = secondBestTask.getBounty()+ getNumTimeStepsFromLocation(secondBestTask.getLocation());
+        return curJobUtil - secondBestUtil;
 
     }
     public Task getSecondBestTask() {

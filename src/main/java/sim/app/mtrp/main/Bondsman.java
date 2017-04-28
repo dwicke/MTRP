@@ -75,6 +75,13 @@ public class Bondsman implements Steppable {
         }
         return count;
     }
+    public int getTotalTasksGenerated() {
+        int count = 0;
+        for (Neighborhood n : state.neighborhoods) {
+            count += n.getTotalNumTasksGenerated();
+        }
+        return count;
+    }
 
     public double getTotalOutstandingBounty() {
         double totalBounty = 0.0;
@@ -83,4 +90,7 @@ public class Bondsman implements Steppable {
         }
         return totalBounty;
     }
+
+
+
 }
