@@ -27,7 +27,10 @@ public class AgentFactory {
             return new SimpleLearningWithResources(state, id);
         } else if (type == 7) {
             return new AuctionWithResources(state, id);
-        } /*else if (type == 8) {
+        } else if (type == 8) {
+            return new LeaningAgentWithJumpship(state, id);
+        }
+        /*else if (type == 9) {
             return new ACOAgent(state, id);
         }*/
         return null;
