@@ -23,7 +23,7 @@ public class Job implements java.io.Serializable  {
     public Job(MTRP state, int id) {
         // create the prototype
         this.id = id;
-        this.meanJobLength = state.jobLength;//state.random.nextInt(state.jobLength);
+        this.meanJobLength = state.random.nextInt(state.jobLength); //state.jobLength;
         // now the mean resources:
         resourcesNeeded = new int[state.getNumResourceTypes()];
         for (int i = 0; i < state.numResourceTypes; i++) {
@@ -106,17 +106,6 @@ public class Job implements java.io.Serializable  {
     }
 
     public boolean claimWork(Agent worker) {
-        // check if the agent has enough resources
-//        for (int i = 0; i < resourcesNeeded.length; i++) {
-//            if (worker.resourcesQuantities[i] < resourcesNeeded[i]) {
-//                return false;
-//            }
-//        }
-//
-//        // now since the agent has enough resources remove them
-//        for (int i = 0; i < resourcesNeeded.length; i++) {
-//            worker.resourcesQuantities[i] -= resourcesNeeded[i];
-//        }
 
 
         curWorker = worker;
