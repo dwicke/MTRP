@@ -31,6 +31,9 @@ public class Task {
         this.location = location;
         // add it to the continuous2d
         state.getTaskPlane().setObjectLocation(this, this.location);
+
+        //state.printlnSynchronized("Task id: " + id + " location " + location + " discretized: " + state.getTaskPlane().discretize(location,5));
+
         // now generate the job
         job = state.jobPrototypes[state.random.nextInt(state.numJobTypes)].buildJob(state,this, id);
         committedAgents = new Bag();

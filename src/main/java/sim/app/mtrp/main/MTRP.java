@@ -71,7 +71,7 @@ public class MTRP extends SimState {
     public Continuous2D depoPlane;
 
 
-    //public TaskMaster master;
+    public TaskMaster master;
 
 
 
@@ -107,12 +107,12 @@ public class MTRP extends SimState {
 
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
-        Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
-        Double2D[] locations = new Double2D[4];
-        locations[0] = new Double2D(50,50);
-        locations[1] = new Double2D(100,50);
-        locations[2] = new Double2D(50,100);
-        locations[3] = new Double2D(100, 100);
+        //Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
+//        Double2D[] locations = new Double2D[4];
+//        locations[0] = new Double2D(50,50);
+//        locations[1] = new Double2D(100,50);
+//        locations[2] = new Double2D(50,100);
+//        locations[3] = new Double2D(100, 100);
 
 
         // First create the neighborhoods.  Use the mean location as the location for the depos
@@ -125,9 +125,9 @@ public class MTRP extends SimState {
                 n = new Neighborhood(this, i);
             }
             */
-            neighborhoodPlane.setObjectLocation(n, n.meanLocation);
+            //neighborhoodPlane.setObjectLocation(n, n.meanLocation);
             //n.setMeanLocation(locations[i]);
-            neighborhoodPlane.setObjectLocation(n, locations[i]);
+            //neighborhoodPlane.setObjectLocation(n, locations[i]);
 
             neighborhoods[i] = n;//new Neighborhood(this, i);
             // schedule it
@@ -152,9 +152,11 @@ public class MTRP extends SimState {
         order++;
 
         // create the task master
-//        master = new TaskMaster(this);
-//        schedule.scheduleRepeating(Schedule.EPOCH, order, master);
-//        order++;
+        if (agentType == AgentFactory.ACO.ordinal()) {
+            master = new TaskMaster(this);
+            schedule.scheduleRepeating(Schedule.EPOCH, order, master);
+            order++;
+        }
 
 
         // create the agents

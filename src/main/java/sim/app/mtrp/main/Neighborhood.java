@@ -18,6 +18,7 @@ public class Neighborhood implements Steppable{
 
     Double2D meanLocation;
     ArrayList<Task> tasks;
+    Task newTask;
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
@@ -64,8 +65,16 @@ public class Neighborhood implements Steppable{
             // generate the x and y coordinates within the bounding area of the neighborhood
             double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
             double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
-            tasks.add(new Task(this, state, new Double2D(x, y)));
+            // generate them within the view
+            //double x = (state.random.nextDouble(true, true) * state.getSimWidth());
+            //double y = (state.random.nextDouble(true, true) * state.getSimHeight());
+
+
+            newTask = new Task(this, state, new Double2D(x, y));
+            tasks.add(newTask);
             totalNumTasksGenerated++;
+        }else {
+            newTask = null;
         }
 
     }
