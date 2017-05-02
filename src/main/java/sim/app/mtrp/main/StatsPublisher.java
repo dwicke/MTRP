@@ -28,7 +28,8 @@ public class StatsPublisher implements Steppable {
 
 
     private static int numWritten = 0;
-    private static double[][] stats = new double[(int)SimState.totalNumJobs][];
+    private static double[][] bountyStats = new double[(int)SimState.totalNumJobs][];
+    private static double[][] timeStats = new double[(int)SimState.totalNumJobs][];
     private static long[] seeds = new long[(int)SimState.totalNumJobs];
 
     private static Object mutex = new Object();
@@ -37,7 +38,8 @@ public class StatsPublisher implements Steppable {
         this.board = a;
         this.maxNumSteps = maxNumSteps;
         directoryName = dir;
-        stats[(int)a.job()] = new double[(int)maxNumSteps];
+        bountyStats[(int)a.job()] = new double[(int)maxNumSteps];
+        timeStats[(int)a.job()] = new double[(int)maxNumSteps];
     }
 
     public void finish() {
@@ -60,8 +62,8 @@ public class StatsPublisher implements Steppable {
                 try {
                     PrintWriter writer = new PrintWriter(file, "UTF-8");
 
-                    for (int job = 0; job < stats.length; job++) {
-                        writer.println(stats[job][((int)maxNumSteps - 1)] + " " + seeds[job]);
+                    for (int job = 0; job < bountyStats.length; job++) {
+                        writer.println(bountyStats[job][((int)maxNumSteps - 1)] + " " + timeStats[job][((int)maxNumSteps - 1)]  + " " + seeds[job]);
                     }
 
                     /*
@@ -97,12 +99,19 @@ public class StatsPublisher implements Steppable {
     public void step(SimState state) {
 
         if (state.schedule.getSteps() < maxNumSteps) {
-            if (stats[(int)board.job()] == null) {
+            if (bountyStats[(int)board.job()] == null) {
                 System.out.println("OHHH Nooo " + (int)board.job());
-                stats[(int)board.job()] = new double[(int)maxNumSteps];
+                bountyStats[(int)board.job()] = new double[(int)maxNumSteps];
 
             }
-            stats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
+            if (timeStats[(int)board.job()] == null) {
+                System.out.println("OHHH Nooo " + (int)board.job());
+                timeStats[(int)board.job()] = new double[(int)maxNumSteps];
+
+            }
+            timeStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalTime();//board.getTotalOutstandingBounty();
+            bountyStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
+
             seeds[(int)board.job()] = board.seed();
         }
 
