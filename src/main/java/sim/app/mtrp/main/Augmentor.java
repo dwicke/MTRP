@@ -1,0 +1,75 @@
+package sim.app.mtrp.main;
+
+import sim.engine.SimState;
+import sim.engine.Steppable;
+
+import java.util.*;
+
+/**
+ * Created by drew on 5/1/17.
+ */
+public class Augmentor implements Steppable {
+
+    MTRP state;
+    TreeSet<Integer> ids = new TreeSet<Integer>();
+    Map<Agent, Integer> deadAgents = new HashMap<Agent, Integer>();
+    ArrayList<Agent> aliveAgents = null;
+
+    public Augmentor(MTRP state) {
+        this.state = state;
+    }
+
+    public void step(SimState simState) {
+
+        if (state.isHasEmergentJob()) {
+            if ((state.schedule.getSteps() % state.getNumstepsEmergentJob()) == 0) {
+                state.printlnSynchronized("Made an emergent task!");
+                Task newTask = state.getNeighborhoods()[state.random.nextInt(state.numNeighborhoods)].makeTask();
+                newTask.setJob(state.jobPrototypes[state.numJobTypes + state.random.nextInt(state.numEmergentJobTypes)].buildJob(state, newTask, newTask.getId()));
+            }
+        }
+        if (state.isHasUnexpectedlyHardJobs()) {
+            if (state.random.nextDouble() <  (1.0 / ((double) state.timestepsTilNextTask * 10.0))) {
+                Task randTask = ((Task) state.getTaskPlane().getAllObjects().get(state.random.nextInt(state.getTaskPlane().getAllObjects().size())));
+                if (!ids.contains(randTask.getId())) {
+                    ids.add(randTask.getId());
+                    int prevMeanJobLength = randTask.getJob().getMeanJobLength();
+                    randTask.getJob().setMeanJobLength(randTask.getJob().getMeanJobLength() * 5);
+                    state.printlnSynchronized("Made task " + randTask.getId() + " job length = " + randTask.getJob().getMeanJobLength() + " previously was = " + prevMeanJobLength);
+
+                }
+            }
+        }
+        if (state.isShouldDie()) {
+            if (state.getAgents() != null && aliveAgents == null) {
+                aliveAgents = new ArrayList<Agent>();
+                for (int i = 0; i < state.getAgents().length; i++) {
+                    aliveAgents.add(state.getAgents()[i]);
+                }
+            }
+            if ((state.schedule.getSteps() % state.getNumstepsDead()) == 0) {
+                Agent agentDied = aliveAgents.remove(state.random.nextInt(aliveAgents.size()));
+                agentDied.setDied(true);
+                deadAgents.put(agentDied, 0);
+            }
+
+            Iterator<Map.Entry<Agent, Integer>> setIterator = deadAgents.entrySet().iterator();
+            for (; setIterator.hasNext();) {
+                Map.Entry<Agent, Integer> a = setIterator.next();
+                deadAgents.put(a.getKey(), a.getValue() + 1);
+
+                if (a.getValue() == 20000) {
+                    setIterator.remove();
+                    // and put back to life!
+                    aliveAgents.add(a.getKey());
+                    a.getKey().setDied(false);
+                }
+            }
+
+
+        }
+    }
+
+
+
+}

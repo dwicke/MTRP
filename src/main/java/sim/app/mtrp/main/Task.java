@@ -35,12 +35,14 @@ public class Task {
         //state.printlnSynchronized("Task id: " + id + " location " + location + " discretized: " + state.getTaskPlane().discretize(location,5));
 
         // now generate the job
-        job = state.jobPrototypes[state.random.nextInt(state.numJobTypes)].buildJob(state,this, id);
+        job = state.jobPrototypes[state.random.nextInt(state.numJobTypes - state.numEmergentJobTypes)].buildJob(state,this, id);
         committedAgents = new Bag();
         blackList = new Bag();
     }
 
-
+    public void setJob(Job job) {
+        this.job = job;
+    }
 
     public Double2D getLocation() {
         return location;

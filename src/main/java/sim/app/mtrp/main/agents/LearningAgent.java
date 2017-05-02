@@ -32,10 +32,10 @@ public class LearningAgent extends Agent {
         super(state, id);
         numNeighborhoods = state.getNumNeighborhoods();
         pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
-        tTable = new QTable(state.numJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
+        tTable = new QTable(state.numJobTypes + state.numEmergentJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
         jobSuccess = new QTable[state.numNeighborhoods];
         for (int i = 0; i < jobSuccess.length; i++) {
-            jobSuccess[i]  = new QTable(state.numJobTypes, 1, jLearningRate, tDiscountBeta, state.random, 1.0, 0.0);
+            jobSuccess[i]  = new QTable(state.numJobTypes + state.numEmergentJobTypes, 1, jLearningRate, tDiscountBeta, state.random, 1.0, 0.0);
         }
     }
 

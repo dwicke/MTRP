@@ -27,6 +27,7 @@ public abstract class Agent implements Steppable {
     double fuelEpsilon = 2; // min amount of fuel
     Depo curDepo;
     int numTimeStepsWorking = 0;
+    boolean died = false;
 
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -56,6 +57,9 @@ public abstract class Agent implements Steppable {
         // 3. work on a job
         // and we always pick a destination
 
+        if (died) {
+            return;
+        }
 
         boolean didAction = buySellResources();
         // I need to know where I should go
@@ -343,5 +347,9 @@ public abstract class Agent implements Steppable {
 
     public int getNumTimeStepsWorking() {
         return numTimeStepsWorking;
+    }
+
+    public void setDied(boolean died) {
+        this.died = died;
     }
 }

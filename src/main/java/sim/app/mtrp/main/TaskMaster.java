@@ -34,6 +34,7 @@ public class TaskMaster implements Steppable {
     int discretization = 30;
     Grid grid;
 
+
     public TaskMaster(MTRP state) {
         this.state = state;
         grid = new Grid(discretization, state.getSimWidth(), state.getSimHeight(), tourLength);
@@ -46,7 +47,7 @@ public class TaskMaster implements Steppable {
 
         for (Neighborhood n : state.getNeighborhoods()) {
             if (n.newTask != null)
-                grid.addNewTask(n.newTask);
+                grid.addNewTasks((Task[])n.newTask.toArray());
         }
         grid.updateQueue();
 

@@ -20,7 +20,7 @@ public class Job implements java.io.Serializable  {
 
     private Job() {}
 
-    public Job(MTRP state, int id) {
+    public Job(MTRP state, int id, double baseBounty) {
         // create the prototype
         this.id = id;
         this.meanJobLength = state.random.nextInt(state.jobLength); //state.jobLength;
@@ -29,6 +29,7 @@ public class Job implements java.io.Serializable  {
         for (int i = 0; i < state.numResourceTypes; i++) {
             resourcesNeeded[i] = state.random.nextInt(state.maxMeanResourcesNeededForType);
         }
+        this.currentBounty = baseBounty;
 
     }
 
@@ -47,7 +48,7 @@ public class Job implements java.io.Serializable  {
         job.task = task;
         job.resourcesNeeded = new int[this.resourcesNeeded.length];
         job.isAvailable = true;
-        job.currentBounty = state.basebounty;
+        job.currentBounty = this.currentBounty;
         job.state = state;
         for (int i = 0; i < this.resourcesNeeded.length; i++) {
             while(state.random.nextDouble() > (1.0 / (double) this.resourcesNeeded[i])) {
@@ -142,5 +143,13 @@ public class Job implements java.io.Serializable  {
 
     public void finish() {
         task.setFinished();
+    }
+
+    public int getMeanJobLength() {
+        return meanJobLength;
+    }
+
+    public void setMeanJobLength(int meanJobLength) {
+        this.meanJobLength = meanJobLength;
     }
 }

@@ -34,6 +34,19 @@ public class MTRP extends SimState {
     public double stepsize = 0.7; // this is the max distance I can travel in one step
 
 
+    // Augmentor stuff
+    public Augmentor augmentor;
+    public boolean shouldDie = false;
+    public int numstepsDead = 30000; // an agent is removed
+    public boolean hasEmergentJob = false; // job type with base bounty of 2000 appears every 20000 steps
+    public int numEmergentJobTypes = 1;
+    public int numstepsEmergentJob = 20000;
+    public double emergentBounty = 2000;
+    public boolean hasUnexpectedlyHardJobs = false; // the length of the job increases by some factor
+
+
+
+
 
     // neighborhood params:
 
@@ -97,11 +110,15 @@ public class MTRP extends SimState {
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
 
-        jobPrototypes = new Job[numJobTypes];
+        jobPrototypes = new Job[numJobTypes + numEmergentJobTypes];
         // create the job prototypes
         for (int i = 0; i < numJobTypes; i++) {
-            jobPrototypes[i] = new Job(this, i);
+            jobPrototypes[i] = new Job(this, i, basebounty);
 
+        }
+
+        for (int i = numJobTypes; i < (numJobTypes + numEmergentJobTypes); i++) {
+            jobPrototypes[i] = new Job(this, i, emergentBounty);
         }
 
 
@@ -157,6 +174,13 @@ public class MTRP extends SimState {
             schedule.scheduleRepeating(Schedule.EPOCH, order, master);
             order++;
         }
+
+        // create the augementor
+        augmentor = new Augmentor(this);
+        schedule.scheduleRepeating(Schedule.EPOCH, order, augmentor);
+        order++;
+
+
 
 
         // create the agents
@@ -419,5 +443,51 @@ public class MTRP extends SimState {
         return taskLocLength;
     }
 
+    public int getNumEmergentJobTypes() {
+        return numEmergentJobTypes;
+    }
 
+    public int getNumstepsDead() {
+        return numstepsDead;
+    }
+
+    public int getNumstepsEmergentJob() {
+        return numstepsEmergentJob;
+    }
+
+    public boolean isHasEmergentJob() {
+        return hasEmergentJob;
+    }
+
+    public boolean isHasUnexpectedlyHardJobs() {
+        return hasUnexpectedlyHardJobs;
+    }
+
+    public boolean isShouldDie() {
+        return shouldDie;
+    }
+
+    public void setNumstepsEmergentJob(int numstepsEmergentJob) {
+        this.numstepsEmergentJob = numstepsEmergentJob;
+    }
+
+    public void setHasEmergentJob(boolean hasEmergentJob) {
+        this.hasEmergentJob = hasEmergentJob;
+    }
+
+    public void setShouldDie(boolean shouldDie) {
+        this.shouldDie = shouldDie;
+    }
+
+    public void setHasUnexpectedlyHardJobs(boolean hasUnexpectedlyHardJobs) {
+        this.hasUnexpectedlyHardJobs = hasUnexpectedlyHardJobs;
+    }
+
+    public void setNumEmergentJobTypes(int numEmergentJobTypes) {
+        this.numEmergentJobTypes = numEmergentJobTypes;
+    }
+
+    public void setNumstepsDead(int numstepsDead) {
+        this.numstepsDead = numstepsDead;
+    }
 }
