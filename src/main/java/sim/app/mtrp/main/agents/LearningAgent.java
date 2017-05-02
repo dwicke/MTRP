@@ -134,7 +134,7 @@ public class LearningAgent extends Agent {
         }
 
         pTable.update(curJob.getTask().getNeighborhood().getId(), 0, reward);
-        //pTable.oneUpdate(oneUpdateGamma);
+        pTable.oneUpdate(oneUpdateGamma);
 
         jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
         //jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);

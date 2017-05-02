@@ -23,20 +23,22 @@ public class Augmentor implements Steppable {
 
         if (state.isHasEmergentJob()) {
             if ((state.schedule.getSteps() % state.getNumstepsEmergentJob()) == 0) {
-                state.printlnSynchronized("Made an emergent task!");
+                //state.printlnSynchronized("Made an emergent task!");
                 Task newTask = state.getNeighborhoods()[state.random.nextInt(state.numNeighborhoods)].makeTask();
                 newTask.setJob(state.jobPrototypes[state.numJobTypes + state.random.nextInt(state.numEmergentJobTypes)].buildJob(state, newTask, newTask.getId()));
             }
         }
         if (state.isHasUnexpectedlyHardJobs()) {
             if (state.random.nextDouble() <  (1.0 / ((double) state.timestepsTilNextTask * 10.0))) {
-                Task randTask = ((Task) state.getTaskPlane().getAllObjects().get(state.random.nextInt(state.getTaskPlane().getAllObjects().size())));
-                if (!ids.contains(randTask.getId())) {
-                    ids.add(randTask.getId());
-                    int prevMeanJobLength = randTask.getJob().getMeanJobLength();
-                    randTask.getJob().setMeanJobLength(randTask.getJob().getMeanJobLength() * 5);
-                    state.printlnSynchronized("Made task " + randTask.getId() + " job length = " + randTask.getJob().getMeanJobLength() + " previously was = " + prevMeanJobLength);
+                if (state.getTaskPlane().getAllObjects().size() > 0) {
+                    Task randTask = ((Task) state.getTaskPlane().getAllObjects().get(state.random.nextInt(state.getTaskPlane().getAllObjects().size())));
+                    if (!ids.contains(randTask.getId())) {
+                        ids.add(randTask.getId());
+                        int prevMeanJobLength = randTask.getJob().getMeanJobLength();
+                        randTask.getJob().setMeanJobLength(randTask.getJob().getMeanJobLength() * 5);
+                        //state.printlnSynchronized("Made task " + randTask.getId() + " job length = " + randTask.getJob().getMeanJobLength() + " previously was = " + prevMeanJobLength);
 
+                    }
                 }
             }
         }

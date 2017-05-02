@@ -45,7 +45,17 @@ public class StatsPublisher implements Steppable {
             numWritten++;
             if (numWritten == SimState.totalNumJobs) {
                 // then I'll be the one to take care of the writting out to the file
-                File file = new File(directoryName + "/" + System.currentTimeMillis() + "_" + board.getAgentType() + ".bounties");
+
+                File file = null;
+                if (board.isShouldDie()) {
+                    file = new File(directoryName + "/" + board + "_" + board.getAgentType()  + ".death.bounties");
+                } else if (board.isHasUnexpectedlyHardJobs()) {
+                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".hardjob.bounties");
+                } else if (board.isHasEmergentJob()) {
+                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".emergentjob.bounties");
+                } else {
+                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".regular.bounties");
+                }
                 file.getParentFile().mkdirs();
                 try {
                     PrintWriter writer = new PrintWriter(file, "UTF-8");

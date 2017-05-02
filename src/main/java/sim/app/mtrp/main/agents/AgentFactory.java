@@ -18,7 +18,7 @@ public enum AgentFactory {
 
 
     public static Agent buildAgent(MTRP state, int id, int type) {
-        state.printlnSynchronized("random ordinal" + RANDOM.ordinal());
+        //state.printlnSynchronized("random ordinal" + RANDOM.ordinal());
         if (type == RANDOM.ordinal()) {
             return new RandomAgent(state, id);
         } else if (type == LEARNING_NO_JUMP.ordinal()) {
