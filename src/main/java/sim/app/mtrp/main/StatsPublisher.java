@@ -55,6 +55,8 @@ public class StatsPublisher implements Steppable {
                     file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".hardjob.bounties");
                 } else if (board.isHasEmergentJob()) {
                     file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".emergentjob.bounties");
+                } else if (board.isHasSuddenTaskIncrease()) {
+                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".suddentasks.bounties");
                 } else {
                     file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".regular.bounties");
                 }

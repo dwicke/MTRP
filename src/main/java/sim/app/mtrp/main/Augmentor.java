@@ -14,6 +14,9 @@ public class Augmentor implements Steppable {
     TreeSet<Integer> ids = new TreeSet<Integer>();
     Map<Agent, Integer> deadAgents = new HashMap<Agent, Integer>();
     ArrayList<Agent> aliveAgents = null;
+    Neighborhood inDisaster = null;
+    int disasterCount = -1;
+    double previousRate = 0;
 
     public Augmentor(MTRP state) {
         this.state = state;
@@ -68,6 +71,26 @@ public class Augmentor implements Steppable {
                 }
             }
 
+        }
+
+        // now what if a neighborhood started producing tasks at a much higher rate
+        if (state.isHasSuddenTaskIncrease()) {
+            if (state.schedule.getSteps() % state.getDisasterStep() == 0) {
+                // then start the disaster!
+                inDisaster = state.getNeighborhoods()[state.random.nextInt(state.getNeighborhoods().length)];
+                previousRate = inDisaster.getTimestepsTilNextTask();
+                inDisaster.setTimestepsTilNextTask(state.getNewRate());
+                disasterCount = 0;
+            }
+            if (disasterCount >= 0) {
+                disasterCount++;
+                if (disasterCount % state.getDisasterLength() == 0) {
+                    // disaster ended!
+                    disasterCount = -1;
+                    inDisaster.setTimestepsTilNextTask(previousRate);
+                    inDisaster = null;
+                }
+            }
 
         }
     }

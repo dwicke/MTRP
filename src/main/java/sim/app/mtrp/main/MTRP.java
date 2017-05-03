@@ -4,7 +4,6 @@ import sim.app.mtrp.main.agents.AgentFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
-import sim.util.Double2D;
 
 
 /**
@@ -44,6 +43,10 @@ public class MTRP extends SimState {
     public double emergentBounty = 2000;
     public boolean hasUnexpectedlyHardJobs = false; // the length of the job increases by some factor
 
+    public boolean hasSuddenTaskIncrease = false;
+    public double newRate = 15;
+    public int disasterLength = 2000;
+    public int disasterStep = 50000;
 
 
 
@@ -489,5 +492,37 @@ public class MTRP extends SimState {
 
     public void setNumstepsDead(int numstepsDead) {
         this.numstepsDead = numstepsDead;
+    }
+
+    public boolean isHasSuddenTaskIncrease() {
+        return hasSuddenTaskIncrease;
+    }
+
+    public void setHasSuddenTaskIncrease(boolean hasSuddenTaskIncrease) {
+        this.hasSuddenTaskIncrease = hasSuddenTaskIncrease;
+    }
+
+    public double getNewRate() {
+        return newRate;
+    }
+
+    public void setNewRate(double newRate) {
+        this.newRate = newRate;
+    }
+
+    public int getDisasterLength() {
+        return disasterLength;
+    }
+
+    public void setDisasterLength(int disasterLength) {
+        this.disasterLength = disasterLength;
+    }
+
+    public int getDisasterStep() {
+        return disasterStep;
+    }
+
+    public void setDisasterStep(int disasterStep) {
+        this.disasterStep = disasterStep;
     }
 }
