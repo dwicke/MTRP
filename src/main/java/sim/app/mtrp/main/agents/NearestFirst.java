@@ -18,8 +18,11 @@ public class NearestFirst extends LearningAgent {
 
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
-
-        return -getCost(t);
+        if (t.getNeighborhood().getId() == getId()) {
+            return -getCost(t);
+        } else {
+            return Double.NEGATIVE_INFINITY;
+        }
     }
 
     // need this here because of the fact that utility is negative so am using negative

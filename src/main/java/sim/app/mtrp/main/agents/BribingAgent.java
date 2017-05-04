@@ -12,7 +12,7 @@ import sim.util.Bag;
  * particular tasks.
  * Created by drew on 3/11/17.
  */
-public class BribingAgent extends LearningAgent {
+public class BribingAgent extends LearningAgentWithJumpship {
     public BribingAgent(MTRP state, int id) {
         super(state, id);
     }

@@ -36,7 +36,7 @@ public enum AgentFactory {
         } else if (type == AUCTION_RESOURCES.ordinal()) {
             return new AuctionWithResources(state, id);
         } else if (type == LEARNING_JUMP.ordinal()) {
-            return new LeaningAgentWithJumpship(state, id);
+            return new LearningAgentWithJumpship(state, id);
         } else if (type == ACO.ordinal()) {
             return new ACOAgent(state, id);
         }

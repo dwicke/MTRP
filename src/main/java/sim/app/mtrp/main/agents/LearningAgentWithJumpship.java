@@ -7,8 +7,8 @@ import sim.util.Bag;
 /**
  * Created by drew on 4/28/17.
  */
-public class LeaningAgentWithJumpship extends LearningAgent {
-    public LeaningAgentWithJumpship(MTRP state, int id) {
+public class LearningAgentWithJumpship extends LearningAgent {
+    public LearningAgentWithJumpship(MTRP state, int id) {
         super(state, id);
     }
 
