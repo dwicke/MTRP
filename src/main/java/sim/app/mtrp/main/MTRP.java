@@ -31,6 +31,7 @@ public class MTRP extends SimState {
     public double startFunds = 100;
     public double fuelCapacity = 1000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
+    public double thresholdToSignal = 5;
 
 
     // Augmentor stuff
@@ -171,12 +172,7 @@ public class MTRP extends SimState {
         schedule.scheduleRepeating(Schedule.EPOCH, order, bondsman);
         order++;
 
-        // create the task master
-        if (agentType == AgentFactory.ACO.ordinal()) {
-            master = new TaskMaster(this);
-            schedule.scheduleRepeating(Schedule.EPOCH, order, master);
-            order++;
-        }
+
 
         // create the augementor
         augmentor = new Augmentor(this);
@@ -524,5 +520,13 @@ public class MTRP extends SimState {
 
     public void setDisasterStep(int disasterStep) {
         this.disasterStep = disasterStep;
+    }
+
+    public double getThresholdToSignal() {
+        return thresholdToSignal;
+    }
+
+    public void setThresholdToSignal(double thresholdToSignal) {
+        this.thresholdToSignal = thresholdToSignal;
     }
 }

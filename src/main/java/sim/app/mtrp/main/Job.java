@@ -13,6 +13,8 @@ public class Job implements java.io.Serializable  {
 
     Agent curWorker;
     int resourcesNeeded[]; // index maps to the resource type and the value is the number of that type of resource.
+    int signals[];
+    int totalSignals = 0;
     double currentBounty;
     boolean isAvailable;
     int meanJobLength;
@@ -30,7 +32,6 @@ public class Job implements java.io.Serializable  {
             resourcesNeeded[i] = state.random.nextInt(state.maxMeanResourcesNeededForType);
         }
         this.currentBounty = baseBounty;
-
     }
 
 
@@ -50,6 +51,7 @@ public class Job implements java.io.Serializable  {
         job.isAvailable = true;
         job.currentBounty = this.currentBounty;
         job.state = state;
+        job.signals = new int[state.numAgents];;
         for (int i = 0; i < this.resourcesNeeded.length; i++) {
             while(state.random.nextDouble() > (1.0 / (double) this.resourcesNeeded[i])) {
                 job.resourcesNeeded[i]++;
@@ -119,6 +121,7 @@ public class Job implements java.io.Serializable  {
         curWorker = null;
         isAvailable = true;
         countWork = 0;
+        unsignal(agent);
     }
 
 
@@ -151,5 +154,27 @@ public class Job implements java.io.Serializable  {
 
     public void setMeanJobLength(int meanJobLength) {
         this.meanJobLength = meanJobLength;
+    }
+
+    public void signal(Agent agent) {
+        if (signals[agent.getId()] == 0) {
+            totalSignals++;
+            signals[agent.getId()] = 1;
+        }
+    }
+
+    public void unsignal(Agent agent) {
+        if (signals[agent.getId()] == 1) {
+            totalSignals--;
+            signals[agent.getId()] = 0;
+        }
+    }
+
+    public boolean isSignaled(Agent agent) {
+
+        return signals[agent.getId()] == 1;
+    }
+    public boolean noSignals() {
+        return totalSignals == 0;
     }
 }

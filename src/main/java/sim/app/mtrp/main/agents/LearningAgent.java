@@ -100,7 +100,7 @@ public class LearningAgent extends Agent {
     }
 
     double getUtility(Task t) {
-        double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
+        double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) /* * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0)*/;
 //
 //        double timeWorking = 0;
 //        if (curJob != null && curJob.getTask().getId() == t.getId()) {

@@ -30,7 +30,7 @@ import static tsp.isula.sample.AcoTspWithIsula.getAntColony;
 public class TaskMaster implements Steppable {
 
     MTRP state;
-    int tourLength = 20;
+    int tourLength = 5;
     int discretization = 30;
     Grid grid;
 
@@ -47,7 +47,7 @@ public class TaskMaster implements Steppable {
 
         for (Neighborhood n : state.getNeighborhoods()) {
             if (n.newTask != null)
-                grid.addNewTasks((Task[])n.newTask.toArray());
+                grid.addNewTasks(n.newTask.toArray(new Task[n.newTask.size()]));
         }
         grid.updateQueue();
 
