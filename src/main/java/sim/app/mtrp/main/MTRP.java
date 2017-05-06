@@ -1,9 +1,14 @@
 package sim.app.mtrp.main;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import sim.app.mtrp.main.agents.AgentFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -15,8 +20,12 @@ public class MTRP extends SimState {
     private static final long serialVersionUID = 1;
     private static String[] myArgs;
 
+    @Parameter
+    private List<String> parameters = new ArrayList<String>();
 
     public int numAgents = 4;
+
+    @Parameter(names={"--numNeighborhoods", "-n"})
     public int numNeighborhoods = 4;
     public int simWidth = 100;
     public int simHeight = 100;
@@ -26,28 +35,19 @@ public class MTRP extends SimState {
 
     // agent params:
 
+    @Parameter(names={"--agentType", "-a"})
     public int agentType = 0;
+
     public int maxCarrySizePerResource = 100; // number of each type of resource I can carry
     public double startFunds = 100;
     public double fuelCapacity = 1000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
+
+    @Parameter(names={"--thresholdToSignal", "-t"})
     public double thresholdToSignal = 5;
 
 
-    // Augmentor stuff
-    public Augmentor augmentor;
-    public boolean shouldDie = false;
-    public int numstepsDead = 30000; // an agent is removed
-    public boolean hasEmergentJob = false; // job type with base bounty of 2000 appears every 20000 steps
-    public int numEmergentJobTypes = 1;
-    public int numstepsEmergentJob = 20000;
-    public double emergentBounty = 2000;
-    public boolean hasUnexpectedlyHardJobs = false; // the length of the job increases by some factor
 
-    public boolean hasSuddenTaskIncrease = false;
-    public double newRate = 15;
-    public int disasterLength = 2000;
-    public int disasterStep = 50000;
 
 
 
@@ -63,6 +63,8 @@ public class MTRP extends SimState {
     public int maxMeanResourcesNeededForType = numResourceTypes; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
+
+    @Parameter(names={"--timestepsTilNextTask", "-s"})
     public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     public int jobLength = 15; // the max mean job length (the mean is picked randomly from zero to this max)
@@ -73,6 +75,7 @@ public class MTRP extends SimState {
 
 
     // bondsman params:
+    @Parameter(names={"--basebounty", "-b"})
     public double basebounty = 100;
     public double increment = 1.0;
 
@@ -90,7 +93,29 @@ public class MTRP extends SimState {
 
     public TaskMaster master;
 
+    // Augmentor stuff
+    public Augmentor augmentor;
+    @Parameter(names={"--shouldDie", "-d"})
+    public boolean shouldDie = false;
+    public int numstepsDead = 30000; // an agent is removed
 
+    @Parameter(names={"--hasEmergentJob", "-e"})
+    public boolean hasEmergentJob = false; // job type with base bounty of 2000 appears every 20000 steps
+    public int numEmergentJobTypes = 1;
+    public int numstepsEmergentJob = 20000;
+    public double emergentBounty = 2000;
+
+    @Parameter(names={"--hasUnexpectedlyHardJobs", "-u"})
+    public boolean hasUnexpectedlyHardJobs = false; // the length of the job increases by some factor
+
+    @Parameter(names={"--hasSuddenTaskIncrease", "-i"})
+    public boolean hasSuddenTaskIncrease = false;
+    public double newRate = timestepsTilNextTask / 2;
+    public int disasterLength = 2000;
+    public int disasterStep = 50000;
+
+    @Parameter(names={"--directory", "-y"})
+    public String directory = "/home/drew/tmp";
 
     public MTRP(long seed) {
         super(seed);
@@ -109,6 +134,24 @@ public class MTRP extends SimState {
         this.random.setSeed(this.seed()); // need to fix this in Mason proper...  need this here for running from terminal multiple times
         // here we go!
 
+        if (this.myArgs != null) {
+            // remove the first
+            String[] newArgs = new String[myArgs.length - 8];
+            int j =0 ;
+            for (int i =8 ; i < myArgs.length; i++) {
+                newArgs[j] = myArgs[i];
+                j++;
+            }
+            JCommander.newBuilder()
+                    .addObject(this)
+                    .build()
+                    .parse(newArgs);
+
+
+        }
+
+
+        printlnSynchronized("Has unexpectedlyHardJobs!! " + hasUnexpectedlyHardJobs);
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
@@ -191,7 +234,7 @@ public class MTRP extends SimState {
         }
 
         // create the stat publisher
-        statsPublisher = new StatsPublisher(this, 200000, "/home/drew/tmp");
+        statsPublisher = new StatsPublisher(this, 200000, directory);
         schedule.scheduleRepeating(Schedule.EPOCH, order, statsPublisher);
     }
 
