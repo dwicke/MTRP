@@ -54,6 +54,7 @@ public class MTRP extends SimState {
 
     // neighborhood params:
 
+    @Parameter(names={"--numDepos", "-nd"})
     public int numDepos = 2;
     public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
