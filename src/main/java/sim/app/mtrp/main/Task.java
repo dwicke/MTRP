@@ -35,7 +35,11 @@ public class Task {
         //state.printlnSynchronized("Task id: " + id + " location " + location + " discretized: " + state.getTaskPlane().discretize(location,5));
 
         // now generate the job
-        job = state.jobPrototypes[state.random.nextInt(state.numJobTypes - state.numEmergentJobTypes)].buildJob(state,this, id);
+        if (state.hasRandomness) {
+            job = state.jobPrototypes[state.random.nextInt(state.numJobTypes - state.numEmergentJobTypes)].buildJob(state, this, id);
+        }else {
+            job = state.jobPrototypes[0].buildJob(state, this, id);
+        }
         committedAgents = new Bag();
         blackList = new Bag();
     }

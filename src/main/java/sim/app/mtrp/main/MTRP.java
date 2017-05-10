@@ -47,8 +47,8 @@ public class MTRP extends SimState {
     public double thresholdToSignal = 5;
 
 
-
-
+    @Parameter(names={"--hasRandomness", "-hr"}, arity = 1)
+    public boolean hasRandomness = true;
 
 
 
@@ -68,6 +68,7 @@ public class MTRP extends SimState {
     @Parameter(names={"--timestepsTilNextTask", "-s"})
     public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
 
+    @Parameter(names={"--jobLength", "-jl"})
     public int jobLength = 15; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
@@ -152,7 +153,7 @@ public class MTRP extends SimState {
         }
 
 
-        printlnSynchronized("Has unexpectedlyHardJobs!! " + hasUnexpectedlyHardJobs);
+        printlnSynchronized("Has randomness " + hasRandomness);
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
@@ -572,5 +573,13 @@ public class MTRP extends SimState {
 
     public void setThresholdToSignal(double thresholdToSignal) {
         this.thresholdToSignal = thresholdToSignal;
+    }
+
+    public void setHasRandomness(boolean hasRandomness) {
+        this.hasRandomness = hasRandomness;
+    }
+
+    public boolean isHasRandomness() {
+        return hasRandomness;
     }
 }

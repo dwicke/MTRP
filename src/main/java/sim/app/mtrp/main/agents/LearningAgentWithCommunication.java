@@ -52,6 +52,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 return curJob.getTask();
             } else {
                 pTable.update(curJob.getTask().getNeighborhood().getId(), 0, 0.15);
+
             }
 
         }
