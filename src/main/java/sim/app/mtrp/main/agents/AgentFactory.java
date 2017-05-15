@@ -9,7 +9,7 @@ import sim.app.mtrp.main.MTRP;
 public enum AgentFactory {
 
 
-    RANDOM,LEARNING_NO_JUMP,BRIBING,AUCTION,FCFS, NEAREST_FIRST,NO_JUMP_RESOURCES, AUCTION_RESOURCES, LEARNING_JUMP, LEARNING_JUMP_SIG;
+    RANDOM,LEARNING_NO_JUMP,BRIBING,AUCTION,FCFS, NEAREST_FIRST,NO_JUMP_RESOURCES, AUCTION_RESOURCES, LEARNING_JUMP, LEARNING_JUMP_SIG,REAUCTION;
 
 
 
@@ -39,6 +39,8 @@ public enum AgentFactory {
             return new LearningAgentWithJumpship(state, id);
         } else if (type == LEARNING_JUMP_SIG.ordinal()) {
             return new LearningAgentWithCommunication(state, id);
+        } else if (type == REAUCTION.ordinal()) {
+            return new ReAuctionAgent(state, id);
         }
         return null;
     }

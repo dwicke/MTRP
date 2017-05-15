@@ -23,11 +23,15 @@ public class MTRP extends SimState {
     @Parameter
     private List<String> parameters = new ArrayList<String>();
 
+    @Parameter(names={"--numAgents", "-na"})
     public int numAgents = 4;
 
     @Parameter(names={"--numNeighborhoods", "-n"})
     public int numNeighborhoods = 4;
+
+    @Parameter(names={"--simWidth", "-sw"})
     public int simWidth = 100;
+    @Parameter(names={"--simHeight", "-sh"})
     public int simHeight = 100;
 
     // stat publisher
@@ -40,6 +44,8 @@ public class MTRP extends SimState {
 
     public int maxCarrySizePerResource = 100; // number of each type of resource I can carry
     public double startFunds = 100;
+
+    @Parameter(names={"--fuelCapacity", "-fc"})
     public double fuelCapacity = 1000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
 
@@ -72,13 +78,14 @@ public class MTRP extends SimState {
     public int jobLength = 15; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
-    public double meanDistBetweenNeighborhoods = 15.0; // this is the average distance between any two neighborhoods
+    public double meanDistBetweenNeighborhoods = Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
     public int numJobTypes = 3; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:
     @Parameter(names={"--basebounty", "-b"})
     public double basebounty = 100;
+    @Parameter(names={"--bountyIncrement", "-bi"})
     public double increment = 1.0;
 
 
@@ -97,20 +104,20 @@ public class MTRP extends SimState {
 
     // Augmentor stuff
     public Augmentor augmentor;
-    @Parameter(names={"--shouldDie", "-d"})
+    @Parameter(names={"--shouldDie", "-d"}, arity = 1)
     public boolean shouldDie = false;
     public int numstepsDead = 30000; // an agent is removed
 
-    @Parameter(names={"--hasEmergentJob", "-e"})
+    @Parameter(names={"--hasEmergentJob", "-e"}, arity = 1)
     public boolean hasEmergentJob = false; // job type with base bounty of 2000 appears every 20000 steps
     public int numEmergentJobTypes = 1;
     public int numstepsEmergentJob = 20000;
     public double emergentBounty = 2000;
 
-    @Parameter(names={"--hasUnexpectedlyHardJobs", "-u"})
+    @Parameter(names={"--hasUnexpectedlyHardJobs", "-u"}, arity = 1)
     public boolean hasUnexpectedlyHardJobs = false; // the length of the job increases by some factor
 
-    @Parameter(names={"--hasSuddenTaskIncrease", "-i"})
+    @Parameter(names={"--hasSuddenTaskIncrease", "-i"}, arity = 1)
     public boolean hasSuddenTaskIncrease = false;
     public double newRate = timestepsTilNextTask / 2;
     public int disasterLength = 2000;
@@ -118,6 +125,9 @@ public class MTRP extends SimState {
 
     @Parameter(names={"--directory", "-y"})
     public String directory = "/home/drew/tmp";
+
+    @Parameter(names={"--groupLabel", "-gl"})
+    public String groupLabel = "NA";
 
     public MTRP(long seed) {
         super(seed);
@@ -171,9 +181,11 @@ public class MTRP extends SimState {
         }
 
 
+
+
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
-        //Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
+        Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
 //        Double2D[] locations = new Double2D[4];
 //        locations[0] = new Double2D(50,50);
 //        locations[1] = new Double2D(100,50);
@@ -186,12 +198,14 @@ public class MTRP extends SimState {
             // create neighborhoods some distance appart
             Neighborhood n = new Neighborhood(this, i);
             // add it to the plane
-            /*
-            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != i) {
+
+
+            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
                 n = new Neighborhood(this, i);
             }
-            */
-            //neighborhoodPlane.setObjectLocation(n, n.meanLocation);
+
+
+            neighborhoodPlane.setObjectLocation(n, n.meanLocation);
             //n.setMeanLocation(locations[i]);
             //neighborhoodPlane.setObjectLocation(n, locations[i]);
 
@@ -200,6 +214,9 @@ public class MTRP extends SimState {
             schedule.scheduleRepeating(Schedule.EPOCH, order, neighborhoods[i]);
             order++;
         }
+
+        //setIncrement(basebounty / (Math.sqrt(Math.pow(getSimHeight(), 2) + Math.pow(getSimWidth(), 2)) * jobLength));
+
 
         depos = new Depo[numDepos];
         Bag shuffledNeighborhoods = new Bag(neighborhoods);

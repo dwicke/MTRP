@@ -18,7 +18,11 @@ public class FirstComeFirstServe extends BribingAgent{
 
     @Override
     double getUtility(Task t) {
-        return (t.getBounty() - getCost(t));
+        if (t.getNeighborhood().getId() == getId()) {
+            return t.getBounty();
+        } else {
+            return Double.NEGATIVE_INFINITY;
+        }
     }
 
 }

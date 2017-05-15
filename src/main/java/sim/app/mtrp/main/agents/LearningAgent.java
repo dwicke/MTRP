@@ -23,7 +23,7 @@ public class LearningAgent extends Agent {
     double tLearningRate = .95; // set to .1 originally (should be at .9 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .55;
-    double pLearningRate = .75;//.2; // set to .2 originally
+    double pLearningRate = .99;  //.75 is what i used to use... but .99 makes more sens
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  0.002;
     int numNeighborhoods;
@@ -112,7 +112,8 @@ public class LearningAgent extends Agent {
 //        return utility;
 
         // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
-        double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
+        double util =  ( confidence *  (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
+        //double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
         return util;
     }
 

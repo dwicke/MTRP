@@ -12,6 +12,8 @@ import sim.engine.Steppable;
 import sim.util.Bag;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -67,35 +69,58 @@ public class StatsPublisher implements Steppable {
                     for (int job = 0; job < bountyStats.length; job++) {
                         writer.println(bountyStats[job][((int)maxNumSteps - 1)] + " " + timeStats[job][((int)maxNumSteps - 1)]  + " " + seeds[job]);
                     }
-
-                    /*
-                    for (int i = ((int)maxNumSteps - 1); i < maxNumSteps; i++) {
-                        double sum = 0.0;
-                        for (int j = 0; j < stats.length; j++) {
-                            sum += stats[j][i];
-                            writer.println(stats[j][i] + " " + board.seed());
-                        }
-                        //writer.println("");
-
-                        double average = sum / (double) stats.length;
-                        double sd = 0;
-                        for (int k = 0; k < stats.length; k++)
-                        {
-                            sd += Math.pow(stats[k][i] - average, 2) / stats.length;
-                        }
-                        double standardDeviation = Math.sqrt(sd);
-                        writer.println(average + " " + standardDeviation);
-
-                    }
-                    */
                     writer.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.exit(0);
                 }
 
+                file = new File(directoryName + "/allBountyResults.txt");
+
+                PrintWriter out = getWriter(file);
+
+                if (out != null) {
+                    for (int job = 0; job < bountyStats.length; job++) {
+                        out.println(bountyStats[job][((int)maxNumSteps - 1)]  + " " + board.groupLabel);
+                    }
+                    out.close();
+                }
+
+                file = new File(directoryName + "/allTimeResults.txt");
+                out = getWriter(file);
+
+
+                if (out != null) {
+                    for (int job = 0; job < bountyStats.length; job++) {
+                        out.println(timeStats[job][((int)maxNumSteps - 1)]  + " " + board.groupLabel);
+                    }
+                    out.close();
+                }
+
+
+
             }
         }
+    }
+
+    public PrintWriter getWriter(File file) {
+        PrintWriter out = null;
+        if ( file.exists() && !file.isDirectory() ) {
+            try {
+                out = new PrintWriter(new FileOutputStream(file, true));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+            try {
+                out = new PrintWriter(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return out;
     }
 
     public void step(SimState state) {
