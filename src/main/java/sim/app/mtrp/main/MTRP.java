@@ -100,8 +100,6 @@ public class MTRP extends SimState {
     public Continuous2D depoPlane;
 
 
-    public TaskMaster master;
-
     // Augmentor stuff
     public Augmentor augmentor;
     @Parameter(names={"--shouldDie", "-d"}, arity = 1)
@@ -601,6 +599,7 @@ public class MTRP extends SimState {
     }
 
     public double getAverageWage() {
+        if (bondsman == null) { return 0.0;}
         return bondsman.getTotalBounty() / bondsman.getTotalTime();
     }
 }

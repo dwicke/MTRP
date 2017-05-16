@@ -81,13 +81,6 @@
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
         </dependency>
-        <dependency>
-            <groupId>isula</groupId>
-            <artifactId>isula</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>/home/drew/IdeaProjects/isula/target/isula-0.0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
         <dependency>
             <groupId>com.beust</groupId>
