@@ -36,7 +36,7 @@ public class Bondsman implements Steppable {
     }
 
 
-    public double getTotalTime() {
+    public double getTotalAverageTime() {
         int totalTime = 0;
         int totalCount = 0;
         /*
@@ -58,6 +58,17 @@ public class Bondsman implements Steppable {
             return 0;
         return (double) totalTime / (double) totalCount;
 
+    }
+
+    public double getTotalTime() {
+        int totalTime = 0;
+
+        for (Neighborhood n : state.neighborhoods ){
+            totalTime += n.totalTime;
+
+        }
+
+        return (double) totalTime;
     }
 
     public double getTotalBounty() {

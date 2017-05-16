@@ -444,7 +444,7 @@ public class MTRP extends SimState {
     public double getTotalTime() {
         // so get the total time the tasks have been waiting
         if (bondsman == null) { return 0.0;}
-        return bondsman.getTotalTime();
+        return bondsman.getTotalAverageTime();
     }
 
 
@@ -598,5 +598,9 @@ public class MTRP extends SimState {
 
     public boolean isHasRandomness() {
         return hasRandomness;
+    }
+
+    public double getAverageWage() {
+        return bondsman.getTotalBounty() / bondsman.getTotalTime();
     }
 }
