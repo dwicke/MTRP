@@ -18,7 +18,6 @@ public class Neighborhood implements Steppable{
 
     Double2D meanLocation;
     ArrayList<Task> tasks;
-    ArrayList<Task> newTask;
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
@@ -61,14 +60,10 @@ public class Neighborhood implements Steppable{
             if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
                 //if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
                 makeTask();
-            } else {
-                newTask = null;
             }
         } else {
             if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
                 makeTask();
-            } else {
-                newTask = null;
             }
         }
 
@@ -87,11 +82,9 @@ public class Neighborhood implements Steppable{
         //double y = (state.random.nextDouble(true, true) * state.getSimHeight());
 
 
-        if (newTask == null) {
-            newTask = new ArrayList<Task>();
-        }
+
         Task genTask = new Task(this, state, new Double2D(x, y));
-        newTask.add(genTask);
+
         tasks.add(genTask);
         totalNumTasksGenerated++;
         return genTask;

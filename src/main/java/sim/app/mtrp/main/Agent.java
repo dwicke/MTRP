@@ -228,8 +228,6 @@ public abstract class Agent implements Steppable {
 
 
     public boolean travel() {
-
-
         // example
         // 3-4-5 triangle
         // sqrt((3/5*.7)^2 + (4/5*.7)^2) = .7
@@ -241,10 +239,10 @@ public abstract class Agent implements Steppable {
                 return false; // don't move already at destination.
             double dis = curLocation.distance(curDestination);
             double dx = curDestination.getX() - curLocation.getX();
-            dx = dx / dis * state.getStepsize();
+            dx = (dx / dis) * state.getStepsize();
 
             double dy = curDestination.getY() - curLocation.getY();
-            dy = dy / dis * state.getStepsize();
+            dy = (dy / dis) * state.getStepsize();
 
             //Double2D oldLoc = curLocation;
             curLocation = new Double2D(curLocation.getX() + dx, curLocation.getY() + dy);
@@ -315,6 +313,7 @@ public abstract class Agent implements Steppable {
     }
 
     public int getNumTimeStepsFromLocation(Double2D dest, Double2D src) {
+        // don't overshoot so do the floor. if you are between 0 and state.stepsize you are there!
         return (int) Math.floor((src.distance(dest))/state.stepsize);
     }
 

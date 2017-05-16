@@ -171,7 +171,6 @@ public class MTRP extends SimState {
         // create the job prototypes
         for (int i = 0; i < numJobTypes; i++) {
             jobPrototypes[i] = new Job(this, i, basebounty);
-
         }
 
         for (int i = numJobTypes; i < (numJobTypes + numEmergentJobTypes); i++) {

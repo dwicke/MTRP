@@ -55,6 +55,7 @@ public class Augmentor implements Steppable {
             if ((state.schedule.getSteps() % state.getNumstepsDead()) == 0) {
                 Agent agentDied = aliveAgents.remove(state.random.nextInt(aliveAgents.size()));
                 agentDied.setDied(true);
+                // agent and the number of timesteps the agent has been dead for
                 deadAgents.put(agentDied, 0);
             }
 
