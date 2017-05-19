@@ -35,6 +35,14 @@ public class Bondsman implements Steppable {
         return (Task[]) availTasks.toArray(new Task[availTasks.size()]);
     }
 
+    public Task[] getAllTasks() {
+        Bag availTasks = new Bag();
+        for (Object task: state.getTaskPlane().getAllObjects().toArray()){
+            availTasks.add(task);
+        }
+        return (Task[]) availTasks.toArray(new Task[availTasks.size()]);
+    }
+
 
     public double getTotalAverageTime() {
         int totalTime = 0;

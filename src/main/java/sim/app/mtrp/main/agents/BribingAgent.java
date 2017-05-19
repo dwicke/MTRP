@@ -148,9 +148,9 @@ public class BribingAgent extends LearningAgentWithJumpship {
         bounty += bribe;
     }
 
-    @Override
+
     public Bag getTasksWithinRange() {
-        Bag inRange = super.getTasksWithinRange();
+        Bag inRange = super.getTasksWithinRange(state.getBondsman().getAvailableTasks());
         Task[] inRangeTasks = (Task[]) inRange.toArray(new Task[inRange.size()]);
         Bag nonBlacklistedTasks = new Bag();
         // now get rid of the ones i've been bribed to ignore

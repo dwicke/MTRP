@@ -33,7 +33,7 @@ public class ReAuctionAgent extends LearningAgent {
             // then set all of the agent valuations for that task to -MAX
 
             // DO i look at all of the task? or just those in the range of me?  i think just those in range.
-            Bag nonCommitedTasks = getTasksWithinRange();
+            Bag nonCommitedTasks = getTasksWithinRange(state.getBondsman().getAvailableTasks());
             Task[] availableTasks = (Task[]) nonCommitedTasks.toArray(new Task[nonCommitedTasks.size()]);
 
             double[][] valuations = new double[state.agents.length][availableTasks.length];

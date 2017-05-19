@@ -88,7 +88,7 @@ public class AuctionAgent extends LearningAgent {
 
 
     public Bag getNonCommittedTasks() {
-        Bag closestWithinRange = getTasksWithinRange();
+        Bag closestWithinRange = getTasksWithinRange(state.getBondsman().getAvailableTasks());
         Task[] availTasks = (Task[]) closestWithinRange.toArray(new Task[closestWithinRange.size()]);//getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
         Bag nonCommitedTasks = new Bag();
         for (Task t : availTasks) {
@@ -117,7 +117,7 @@ public class AuctionAgent extends LearningAgent {
 
         // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
         //double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
-        double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t)) /  (getNumTimeStepsFromLocation(t.getLocation()));
+        double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         return util;
     }

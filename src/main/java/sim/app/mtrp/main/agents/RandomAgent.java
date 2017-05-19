@@ -18,7 +18,7 @@ public class RandomAgent extends Agent {
 
         if (!amWorking && (curJob == null || !curJob.getIsAvailable())) {
 
-            Bag closestWithinRange = getTasksWithinRange();
+            Bag closestWithinRange = getTasksWithinRange(state.getBondsman().getAvailableTasks());
 
             if (closestWithinRange.size() == 0) {
                 return null; // need to go for resources.

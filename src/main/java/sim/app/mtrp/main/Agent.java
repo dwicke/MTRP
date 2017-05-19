@@ -27,7 +27,7 @@ public abstract class Agent implements Steppable {
     double fuelEpsilon = 2; // min amount of fuel
     Depo curDepo;
     int numTimeStepsWorking = 0;
-    boolean died = false;
+    protected boolean died = false;
 
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -168,8 +168,8 @@ public abstract class Agent implements Steppable {
      */
     public abstract Task getAvailableTask();
 
-    public Bag getTasksWithinRange() {
-        Task[] tasks = state.getBondsman().getAvailableTasks();
+    public Bag getTasksWithinRange(Task[] tasks) {
+        //Task[] tasks = state.getBondsman().getAvailableTasks();
         if (tasks.length == 0) {
             //state.printlnSynchronized("NO TASKS!");
         }

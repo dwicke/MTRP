@@ -46,7 +46,7 @@ public class MTRP extends SimState {
     public double startFunds = 100;
 
     @Parameter(names={"--fuelCapacity", "-fc"})
-    public double fuelCapacity = 1000;
+    public double fuelCapacity = 1000000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
 
     @Parameter(names={"--thresholdToSignal", "-t"})
@@ -161,7 +161,7 @@ public class MTRP extends SimState {
         }
 
 
-        printlnSynchronized("Has randomness " + hasRandomness);
+        printlnSynchronized("Has randomness " + basebounty);
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());

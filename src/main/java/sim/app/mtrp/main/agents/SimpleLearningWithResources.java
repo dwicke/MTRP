@@ -234,7 +234,7 @@ public class SimpleLearningWithResources extends LearningAgent {
         }
 
         if (curJob == null) {
-            Task bestTask = getBestTask(getTasksWithinRange());
+            Task bestTask = getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks()));
             if (bestTask != null)
                 state.printlnSynchronized("time step: " + state.schedule.getSteps() + "Best job id = " + bestTask.getJob().getId() + " confidence = " + getTravelConfidence(bestTask) + " failed Job = "  + failedJob);
             if (bestTask == null) {

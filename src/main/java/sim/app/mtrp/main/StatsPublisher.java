@@ -50,32 +50,22 @@ public class StatsPublisher implements Steppable {
             if (numWritten == SimState.totalNumJobs) {
                 // then I'll be the one to take care of the writting out to the file
 
-                File file = null;
+                String filepath = null;
                 if (board.isShouldDie()) {
-                    file = new File(directoryName + "/" + board + "_" + board.getAgentType()  + ".death.bounties");
+                    filepath = directoryName + "/death/" + board.jobLength;
                 } else if (board.isHasUnexpectedlyHardJobs()) {
-                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".hardjob.bounties");
+                    filepath = directoryName + "/hardjobs/" + board.jobLength;
                 } else if (board.isHasEmergentJob()) {
-                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".emergentjob.bounties");
+                    filepath = directoryName + "/emergentjobs/" + board.jobLength;
                 } else if (board.isHasSuddenTaskIncrease()) {
-                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".suddentasks.bounties");
+                    filepath = directoryName + "/suddentasks/" + board.jobLength;
                 } else {
-                    file = new File(directoryName + "/" + board + "_" + board.getAgentType() + ".regular.bounties");
+                    filepath = directoryName + "/regular/" + board.jobLength;
                 }
+
+
+                File file = new File(filepath + "/allBountyResults.txt");
                 file.getParentFile().mkdirs();
-                try {
-                    PrintWriter writer = new PrintWriter(file, "UTF-8");
-
-                    for (int job = 0; job < bountyStats.length; job++) {
-                        writer.println(bountyStats[job][((int)maxNumSteps - 1)] + " " + timeStats[job][((int)maxNumSteps - 1)]  + " " + seeds[job]);
-                    }
-                    writer.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.exit(0);
-                }
-
-                file = new File(directoryName + "/allBountyResults.txt");
 
                 PrintWriter out = getWriter(file);
 
@@ -86,17 +76,22 @@ public class StatsPublisher implements Steppable {
                     out.close();
                 }
 
-                file = new File(directoryName + "/allTimeResults.txt");
+
+                file = new File(filepath + "/graphResults.txt");
+                file.getParentFile().mkdirs();
+
                 out = getWriter(file);
 
-
                 if (out != null) {
-                    for (int job = 0; job < bountyStats.length; job++) {
-                        out.println(timeStats[job][((int)maxNumSteps - 1)]  + " " + board.groupLabel);
+                    for (int i = 0; i < maxNumSteps; i++) {
+                        double avg = 0.0;
+                        for (int job = 0; job < bountyStats.length; job++) {
+                            avg += bountyStats[job][i];
+                        }
+                        out.println(i + " " + (avg / (bountyStats.length))  + " " + board.groupLabel);
                     }
                     out.close();
                 }
-
 
 
             }

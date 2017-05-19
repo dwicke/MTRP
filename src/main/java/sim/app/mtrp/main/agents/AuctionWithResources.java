@@ -247,7 +247,7 @@ public class AuctionWithResources extends AuctionAgent {
         }
 
         if (curJob == null) {
-            Task bestTask = getBestTask(getTasksWithinRange());
+            Task bestTask = getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks()));
             if (bestTask == null) {
                 needResources = true;
             } else if (bestTask != null && getTravelConfidence(bestTask) < .75) {
