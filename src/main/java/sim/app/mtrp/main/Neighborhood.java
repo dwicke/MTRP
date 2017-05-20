@@ -56,16 +56,17 @@ public class Neighborhood implements Steppable{
     }
 
     public void generateTasks() {
-        if (state.hasRandomness) {
-            if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
-                //if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
-                makeTask();
-            }
-        } else {
-            if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
-                makeTask();
-            }
+        if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
+            //if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+            makeTask();
         }
+//        if (state.hasRandomness) {
+//
+//        } else {
+//            if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+//                makeTask();
+//            }
+//        }
 
     }
 

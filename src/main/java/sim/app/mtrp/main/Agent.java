@@ -57,13 +57,14 @@ public abstract class Agent implements Steppable {
         // 3. work on a job
         // and we always pick a destination
 
-        if (died) {
-            return;
-        }
+
 
         boolean didAction = buySellResources();
         // I need to know where I should go
         pickDestination();
+        if (died) {
+            return;
+        }
         if (!didAction)
             didAction = travel();
         if (!didAction)

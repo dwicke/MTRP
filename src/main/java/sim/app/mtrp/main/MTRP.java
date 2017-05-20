@@ -79,7 +79,8 @@ public class MTRP extends SimState {
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
-    public int numJobTypes = 3; // a job type is the average job length and the average number of resources needed for each type of resource.
+
+    public int numJobTypes = 1; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:

@@ -76,8 +76,20 @@ public class StatsPublisher implements Steppable {
                     out.close();
                 }
 
+                file = new File(filepath + "/allTimeResults.txt");
+                file.getParentFile().mkdirs();
 
-                file = new File(filepath + "/graphResults.txt");
+                out = getWriter(file);
+
+                if (out != null) {
+                    for (int job = 0; job < timeStats.length; job++) {
+                        out.println(timeStats[job][((int)maxNumSteps - 1)]  + " " + board.groupLabel);
+                    }
+                    out.close();
+                }
+
+
+                file = new File(filepath + "/graphBountyResults.txt");
                 file.getParentFile().mkdirs();
 
                 out = getWriter(file);
@@ -93,6 +105,21 @@ public class StatsPublisher implements Steppable {
                     out.close();
                 }
 
+                file = new File(filepath + "/graphTimeResults.txt");
+                file.getParentFile().mkdirs();
+
+                out = getWriter(file);
+
+                if (out != null) {
+                    for (int i = 0; i < maxNumSteps; i++) {
+                        double avg = 0.0;
+                        for (int job = 0; job < timeStats.length; job++) {
+                            avg += timeStats[job][i];
+                        }
+                        out.println(i + " " + (avg / (timeStats.length))  + " " + board.groupLabel);
+                    }
+                    out.close();
+                }
 
             }
         }
