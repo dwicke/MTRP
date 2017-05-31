@@ -77,7 +77,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
                     Double2D closest = null;
 
                     // this is wrong!!!  i know exactly how long the agent has been gone so I can know for pretty sure exactly which task he has gone
-                    // to next!
+                    // to next!  WAIT can't do that because of jumpship!  so i have to do the heuristic method by distance.
                     for (Map.Entry<Double2D, Integer> ol : lastSeenLocation.entrySet()) {
 //                        if (Math.abs(getNumTimeStepsFromLocation(en.getKey(), ol.getKey()) - ol.getValue()) <= 2) {
 //                            //state.printlnSynchronized("num steps = " + getNumTimeStepsFromLocation(en.getKey(), ol.getKey()) + " num i counted = " + ol.getValue());
@@ -126,7 +126,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         }
 
 
-        confidence = 1.0 / maxVal;
+        confidence = 0.9 * (1.0 / maxVal) + 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
         //state.printlnSynchronized("Confidence = " + confidence);
 
         double util =  (confidence * (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
