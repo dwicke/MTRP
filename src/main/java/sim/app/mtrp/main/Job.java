@@ -25,11 +25,12 @@ public class Job implements java.io.Serializable  {
     public Job(MTRP state, int id, double baseBounty) {
         // create the prototype
         this.id = id;
-        if (state.hasRandomness) {
+        this.meanJobLength = state.jobLength;
+        /*if (state.hasRandomness) {
             this.meanJobLength = state.random.nextInt(state.jobLength); //state.jobLength;
         }else {
             this.meanJobLength = state.jobLength;
-        }
+        }*/
         // now the mean resources:
         resourcesNeeded = new int[state.getNumResourceTypes()];
         for (int i = 0; i < state.numResourceTypes; i++) {

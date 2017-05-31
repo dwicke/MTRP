@@ -27,7 +27,7 @@ public class MTRP extends SimState {
     public int numAgents = 4;
 
     @Parameter(names={"--numNeighborhoods", "-n"})
-    public int numNeighborhoods = 4;
+    public int numNeighborhoods = 40;
 
     @Parameter(names={"--simWidth", "-sw"})
     public int simWidth = 100;
@@ -61,7 +61,7 @@ public class MTRP extends SimState {
     // neighborhood params:
 
     @Parameter(names={"--numDepos", "-nd"})
-    public int numDepos = 2;
+    public int numDepos = 40;
     public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
@@ -72,10 +72,10 @@ public class MTRP extends SimState {
     public double fuelCost = 1.0;
 
     @Parameter(names={"--timestepsTilNextTask", "-s"})
-    public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
+    public int timestepsTilNextTask = 300; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     @Parameter(names={"--jobLength", "-jl"})
-    public int jobLength = 15; // the max mean job length (the mean is picked randomly from zero to this max)
+    public int jobLength = 10; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
@@ -198,9 +198,9 @@ public class MTRP extends SimState {
             // add it to the plane
 
 
-            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
-                n = new Neighborhood(this, i);
-            }
+//            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
+//                n = new Neighborhood(this, i);
+//            }
 
 
             neighborhoodPlane.setObjectLocation(n, n.meanLocation);
@@ -246,6 +246,7 @@ public class MTRP extends SimState {
         agents = new Agent[numAgents];
         for (int i = 0; i < numAgents; i++) {
             agents[i] = AgentFactory.buildAgent(this, i, agentType);
+            agents[i].setStepsize(getStepsize());
             schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
             order++;
         }
@@ -602,4 +603,6 @@ public class MTRP extends SimState {
         if (bondsman == null) { return 0.0;}
         return bondsman.getTotalBounty() / bondsman.getTotalTime();
     }
+
+
 }

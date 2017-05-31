@@ -72,12 +72,14 @@ public class Neighborhood implements Steppable{
 
     public Task makeTask() {
         // generate a new task
-        // first generate its coordinates
-        //double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
-        //double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
+        // first generate its coordinates using a gausian
+//        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
+//        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
+
         // generate the x and y coordinates within the bounding area of the neighborhood
         double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
         double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
+
         // generate them within the view
         //double x = (state.random.nextDouble(true, true) * state.getSimWidth());
         //double y = (state.random.nextDouble(true, true) * state.getSimHeight());

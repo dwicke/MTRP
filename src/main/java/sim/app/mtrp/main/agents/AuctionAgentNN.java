@@ -8,9 +8,9 @@ import sim.util.Bag;
 /**
  * Created by drew on 3/11/17.
  */
-public class AuctionAgent extends LearningAgent {
+public class AuctionAgentNN extends NearestFirstWithJump {
 
-    public AuctionAgent(MTRP state, int id) {
+    public AuctionAgentNN(MTRP state, int id) {
         super(state, id);
     }
 
@@ -40,7 +40,7 @@ public class AuctionAgent extends LearningAgent {
             //System.err.println("Num avail tasks = " + availableTasks.length);
             // for each agent get their valuation
             for (int i = 0; i < state.agents.length; i++) {
-                valuations[i] = ((AuctionAgent)state.agents[i]).getEvaluations(availableTasks);// agent id corresponds to agent's index.
+                valuations[i] = ((AuctionAgentNN)state.agents[i]).getEvaluations(availableTasks);// agent id corresponds to agent's index.
             }
 
             //Task[] availableTasks = state.bondsman.getAvailableTasks();
@@ -113,30 +113,14 @@ public class AuctionAgent extends LearningAgent {
     }
 
 
-    double getUtility(Task t) {
 
-        // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
-        //double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
-        //double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-        double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-
-        return util;
-    }
-
-    /*
-    double getCost(Task t) {
-        Depo closestDepo = getClosestDepo(t.getLocation());
-        if (closestDepo == null) {
-            return Double.POSITIVE_INFINITY; // can't get to a depo from here! this is the case if i'm being asked what I'd bid for it.
-        }
-        return getNumTimeStepsFromLocation(t.getLocation()) * closestDepo.getFuelCost();
-    }*/
 
     public double[] getEvaluations(Task[] availTasks) {
         double[] valuations = new double[availTasks.length];
         int i = 0;
         for (Task t: availTasks) {
             valuations[i] = getUtility(t);
+            System.out.println("task " + t.getId() + " utility " + valuations[i]);
             i++;
         }
         return valuations;

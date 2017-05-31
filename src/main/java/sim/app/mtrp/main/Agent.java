@@ -28,6 +28,7 @@ public abstract class Agent implements Steppable {
     Depo curDepo;
     int numTimeStepsWorking = 0;
     protected boolean died = false;
+    double stepsize;
 
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -240,10 +241,10 @@ public abstract class Agent implements Steppable {
                 return false; // don't move already at destination.
             double dis = curLocation.distance(curDestination);
             double dx = curDestination.getX() - curLocation.getX();
-            dx = (dx / dis) * state.getStepsize();
+            dx = (dx / dis) * getStepSize();
 
             double dy = curDestination.getY() - curLocation.getY();
-            dy = (dy / dis) * state.getStepsize();
+            dy = (dy / dis) * getStepSize();
 
             //Double2D oldLoc = curLocation;
             curLocation = new Double2D(curLocation.getX() + dx, curLocation.getY() + dy);
@@ -310,14 +311,21 @@ public abstract class Agent implements Steppable {
     }
 
     public int getNumTimeStepsFromLocation(Double2D dest) {
-        return (int) Math.floor((curLocation.distance(dest))/state.stepsize);
+        return (int) Math.floor((curLocation.distance(dest))/getStepSize());
     }
 
     public int getNumTimeStepsFromLocation(Double2D dest, Double2D src) {
         // don't overshoot so do the floor. if you are between 0 and state.stepsize you are there!
-        return (int) Math.floor((src.distance(dest))/state.stepsize);
+        return (int) Math.floor((src.distance(dest))/getStepSize());
     }
 
+    public double getStepSize() {
+        return this.stepsize;
+    }
+
+    public void setStepsize(double stepsize) {
+        this.stepsize = stepsize;
+    }
 
     public double getCurFuel() {
         return curFuel;
@@ -338,7 +346,7 @@ public abstract class Agent implements Steppable {
 
     @Override
     public String toString() {
-        return "my ID " + id + " curJob = " + curJob;
+        return "my ID " + id + " curJob = " + curJob + " avg wage = " + (bounty / state.schedule.getSteps());
     }
 
     public double getBounty() {

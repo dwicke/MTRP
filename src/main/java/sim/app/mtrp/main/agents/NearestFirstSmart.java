@@ -8,7 +8,7 @@ import sim.util.Bag;
  * Whoever is closest to the task lays claim does not care about the bounty
  * Created by drew on 3/17/17.
  */
-public class NearestFirstSmart extends NearestFirst {
+public class NearestFirstSmart extends NearestFirstWithJump {
     public NearestFirstSmart(MTRP state, int id) {
         super(state, id);
     }
