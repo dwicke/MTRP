@@ -110,15 +110,17 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
 
     @Override
     double getUtility(Task t) {
-        double confidence = 1.0;
+        double confidence;
         double maxVal = 1.0;
         for (Map.Entry<Double2D, Integer> en: agentLocations.entrySet()) {
+            // TODO: Need to learn the speed of each of the agents
             double val = (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
             if (val > maxVal) {
                 maxVal = val;
             }
         }
         for (Map.Entry<Double2D, Integer> en: lastSeenLocation.entrySet()) {
+            // TODO: I think that this should scale with how long it has been since they have been seen so as to deal with dieing agents
             double val = (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
             if (val > maxVal) {
                 maxVal = val;
