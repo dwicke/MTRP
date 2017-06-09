@@ -30,9 +30,9 @@ public class MTRP extends SimState {
     public int numNeighborhoods = 40;
 
     @Parameter(names={"--simWidth", "-sw"})
-    public int simWidth = 100;
+    public int simWidth = 500;
     @Parameter(names={"--simHeight", "-sh"})
-    public int simHeight = 100;
+    public int simHeight = 500;
 
     // stat publisher
     StatsPublisher statsPublisher;
@@ -46,7 +46,7 @@ public class MTRP extends SimState {
     public double startFunds = 100;
 
     @Parameter(names={"--fuelCapacity", "-fc"})
-    public double fuelCapacity = 1000000;
+    public double fuelCapacity = 10000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
 
     @Parameter(names={"--thresholdToSignal", "-t"})
@@ -61,7 +61,7 @@ public class MTRP extends SimState {
     // neighborhood params:
 
     @Parameter(names={"--numDepos", "-nd"})
-    public int numDepos = 40;
+    public int numDepos = 10;
     public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 

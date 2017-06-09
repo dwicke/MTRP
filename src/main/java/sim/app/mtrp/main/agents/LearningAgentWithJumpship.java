@@ -36,7 +36,7 @@ public class LearningAgentWithJumpship extends LearningAgent {
             bestT = getBestTask(tasks);
         } else {
             // i'm going to consider jumping ship in that case just look at the newest tasks
-            bestT = getBestTask(state.bondsman.getNewTasks()); // this works because the bounty rate is constants.
+            bestT = getBestTask(getTasksWithinRange(state.bondsman.getNewTasks())); // this works because the bounty rate is constants.
         }
 
 
