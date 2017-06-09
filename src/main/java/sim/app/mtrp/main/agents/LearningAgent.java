@@ -7,6 +7,8 @@ import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
 import sim.util.Bag;
 
+import java.util.ArrayList;
+
 /**
  * Simple bounty hunting agent that cooresponds to the SimpleCostJumpship
  * in this scenario we actually have a bit more info and we know how long it will take to get to the task
@@ -20,13 +22,14 @@ public class LearningAgent extends Agent {
     QTable tTable; // for each type of job we learn the
     QTable pTable; // ptable probability of getting to the task
     double oneUpdateGamma = .001; // .001
-    double tLearningRate = .95; // set to .1 originally (should be at .9 though...) tried .75
+    double tLearningRate = .5; // set to .1 originally (should be at .95 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .55;
     double pLearningRate = 0.99;  //.75 is what i used to use... but .99 makes more sens
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  .002; // was .002
     int numNeighborhoods;
+
 
     public LearningAgent(MTRP state, int id) {
         super(state, id);
@@ -39,9 +42,12 @@ public class LearningAgent extends Agent {
         }
     }
 
+    static int beatCounter = 0;
+    static int getBestCounter = 0;
     public Task getAvailableTask(Bag tasks) {
 
         if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
+            //state.printlnSynchronized("Agent " + getId() + " has been beat!" + " total = " + beatCounter++);
             // then someone beat me to it so learn
             learn(0.0);
             curJob.getTask().decommit(this);// must decommit.
@@ -51,6 +57,7 @@ public class LearningAgent extends Agent {
 
 
         if (curJob == null) {
+            state.printlnSynchronized("Agent " + getId() + " getting task = " + getBestCounter++);
             Task bestT = getBestTask(tasks);
             return bestT;
         }else {
@@ -62,6 +69,7 @@ public class LearningAgent extends Agent {
     @Override
     public Task getAvailableTask() {
         return getAvailableTask(getTasksWithinRange(state.getBondsman().getAvailableTasks()));
+        //return getAvailableTask(getTasksWithinRange(state.getBondsman().getNewTasks()));
     }
 
     public Task getBestTask(Bag bagOfTasks) {

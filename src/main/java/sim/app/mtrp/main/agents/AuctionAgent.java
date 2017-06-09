@@ -19,6 +19,7 @@ public class AuctionAgent extends LearningAgent {
     public Task getAvailableTask() {
 
         if (curJob == null) {
+            //state.printlnSynchronized("Agent " + getId() + " getting task = " + getBestCounter++);
 
             // so here do the auction!
 

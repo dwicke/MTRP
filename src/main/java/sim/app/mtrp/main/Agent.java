@@ -60,7 +60,7 @@ public abstract class Agent implements Steppable {
 
 
 
-        boolean didAction = buySellResources();
+        boolean didAction = false;//buySellResources();
         // I need to know where I should go
         pickDestination();
         if (died) {
@@ -359,5 +359,12 @@ public abstract class Agent implements Steppable {
 
     public void setDied(boolean died) {
         this.died = died;
+    }
+
+    public double getBountyRate() {
+        if (state.schedule.getSteps() == 0) {
+            return 0;
+        }
+        return getBounty() / state.schedule.getSteps();
     }
 }

@@ -198,9 +198,9 @@ public class MTRP extends SimState {
             // add it to the plane
 
 
-//            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
-//                n = new Neighborhood(this, i);
-//            }
+            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
+                n = new Neighborhood(this, i);
+            }
 
 
             neighborhoodPlane.setObjectLocation(n, n.meanLocation);

@@ -30,7 +30,15 @@ public class LearningAgentWithJumpship extends LearningAgent {
 //        }
 
         // let the agent jumpship if they have not made it to the job yet.
-        Task bestT = getBestTask(tasks);
+        Task bestT = null;
+        if (curJob == null) {
+            // then evaluate from all the tasks
+            bestT = getBestTask(tasks);
+        } else {
+            // i'm going to consider jumping ship in that case just look at the newest tasks
+            bestT = getBestTask(state.bondsman.getNewTasks()); // this works because the bounty rate is constants.
+        }
+
 
         if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
             bestT = handleJumpship(bestT);

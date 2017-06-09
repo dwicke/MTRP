@@ -34,9 +34,9 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         for (Task t : allTasks) {
             if (!t.getIsAvailable() && (curJob == null || curJob.getTask().getId() != t.getId())) {
                 if (agentLocations.containsKey(t.getLocation())) {
-                    oldAgentLocations.put(t.getLocation(), agentLocations.get(t.getLocation()) + 1);
+                    oldAgentLocations.put(t.getLocation(), Math.max(0, agentLocations.get(t.getLocation()) - 1));
                 } else {
-                    newAgentLocations.put(t.getLocation(), 1);
+                    newAgentLocations.put(t.getLocation(), (int) tTable.getQValue(t.getJob().getJobType(), 0));
                 }
             }
         }
@@ -54,7 +54,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
                 if (!oldAgentLocations.containsKey(en.getKey())) {
                     // we are going over each of the locations we thought we knew and if
                     // the task was completed it is now a prev agent location
-                    prevAgentLocations.put(en.getKey(), 0);
+                    prevAgentLocations.put(en.getKey(), 1);
                 }
             }
 
@@ -107,32 +107,120 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         return super.getAvailableTask();
     }
 
-
     @Override
     double getUtility(Task t) {
         double confidence;
-        double maxVal = 1.0;
+        double maxVal = Double.MAX_VALUE;
         for (Map.Entry<Double2D, Integer> en: agentLocations.entrySet()) {
+
             // TODO: Need to learn the speed of each of the agents
-            double val = (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
-            if (val > maxVal) {
+            double val = getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + en.getValue();
+            if (val < maxVal) {
                 maxVal = val;
             }
         }
+
         for (Map.Entry<Double2D, Integer> en: lastSeenLocation.entrySet()) {
             // TODO: I think that this should scale with how long it has been since they have been seen so as to deal with dieing agents
-            double val = (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
-            if (val > maxVal) {
+            //state.printlnSynchronized("Ttable = " + tTable.getQValue(t.getJob().getJobType(), 0) + " agent id = " + id);
+            double val = getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + en.getValue();// + en.getValue is not the best... would be better to learn this...
+
+            if (val < maxVal) {
                 maxVal = val;
             }
         }
 
+        if (id == 0) {
+            state.printlnSynchronized("MaxVal = " + maxVal + " my val = " + getNumTimeStepsFromLocation(t.getLocation()));
+        }
+        // TODO: I also should scale what i use from each of the settings in order to work better in settings where the environment can easily be split
+        if (maxVal == Double.MAX_VALUE) {
+            return 1.0 / getNumTimeStepsFromLocation(t.getLocation());
+        }
+        // so this value is 1 if we are colocated for all of the tasks
+        // that are closest to me
+        // then for all other tasks that are closer to other agents
+        // that value is less than one
+        // so, i will end up going after the same task as the agent
+        // that i am colocated with.
+        // therefore, this is poorly designed.
+        //
+        confidence = maxVal / getNumTimeStepsFromLocation(t.getLocation());
+        //state.printlnSynchronized("Confidence = " + confidence);
 
-        confidence = 0.9 * (1.0 / maxVal) + 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
+        double util =  (confidence); //* (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+
+        return util;
+    }
+
+
+    /*
+    @Override
+    double getUtility(Task t) {
+        double confidence;
+        double maxVal = Double.MAX_VALUE;
+        for (Map.Entry<Double2D, Integer> en: agentLocations.entrySet()) {
+
+            // TODO: Need to learn the speed of each of the agents
+            double val = getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + en.getValue();
+            if (val < maxVal) {
+                maxVal = val;
+            }
+        }
+
+        for (Map.Entry<Double2D, Integer> en: lastSeenLocation.entrySet()) {
+            // TODO: I think that this should scale with how long it has been since they have been seen so as to deal with dieing agents
+            //state.printlnSynchronized("Ttable = " + tTable.getQValue(t.getJob().getJobType(), 0) + " agent id = " + id);
+            double val = getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + en.getValue();// + en.getValue is not the best... would be better to learn this...
+
+            if (val < maxVal) {
+                maxVal = val;
+            }
+        }
+
+        // TODO: I also should scale what i use from each of the settings in order to work better in settings where the environment can easily be split
+        if (maxVal == Double.MAX_VALUE) {
+            return 1.0 / getNumTimeStepsFromLocation(t.getLocation());
+        }
+        confidence =  0.9 * maxVal / getNumTimeStepsFromLocation(t.getLocation()) + 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
         //state.printlnSynchronized("Confidence = " + confidence);
 
         double util =  (confidence * (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         return util;
     }
+    */
+
+/*
+    @Override
+    double getUtility(Task t) {
+        double confidence;
+        double maxVal = 1.0;
+        for (Map.Entry<Double2D, Integer> en: agentLocations.entrySet()) {
+
+            // TODO: Need to learn the speed of each of the agents
+            double val = (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue());
+            if (val > maxVal) {
+                maxVal = val;
+            }
+        }
+
+        for (Map.Entry<Double2D, Integer> en: lastSeenLocation.entrySet()) {
+            // TODO: I think that this should scale with how long it has been since they have been seen so as to deal with dieing agents
+            //state.printlnSynchronized("Ttable = " + tTable.getQValue(t.getJob().getJobType(), 0) + " agent id = " + id);
+            double val =  (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
+            if (val > maxVal) {
+                maxVal = val;
+            }
+        }
+
+        // TODO: I also should scale what i use from each of the settings in order to work better in settings where the environment can easily be split
+        confidence = 1.0 * (1.0 / maxVal);// + 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
+        //state.printlnSynchronized("Confidence = " + confidence);
+
+        double util =  (confidence * (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+
+        return util;
+    }
+*/
 }

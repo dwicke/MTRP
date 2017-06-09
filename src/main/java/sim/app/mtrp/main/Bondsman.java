@@ -13,14 +13,20 @@ public class Bondsman implements Steppable {
 
     MTRP state;
 
+    int numStale = 0;
+
     public Bondsman(MTRP state) {
         this.state = state;
     }
 
     public void step(SimState simState) {
+        numStale = 0;
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
             ((Task)task).incrementBounty();
             ((Task)task).incrementTimeNotFinished();
+            if (((Task)task).getTimeNotFinished() >= 200) {
+                numStale++;
+            }
         }
 
     }
@@ -43,6 +49,15 @@ public class Bondsman implements Steppable {
         return (Task[]) availTasks.toArray(new Task[availTasks.size()]);
     }
 
+    public Bag getNewTasks() {
+        Bag availTasks = new Bag();
+        for (Neighborhood neighborhood: state.getNeighborhoods()){
+            Task t = neighborhood.getLatestTask();
+            if (t != null)
+                availTasks.add(t);
+        }
+        return availTasks;
+    }
 
     public double getTotalAverageTime() {
         int totalTime = 0;
@@ -110,6 +125,7 @@ public class Bondsman implements Steppable {
         return totalBounty;
     }
 
-
-
+    public int getNumStale() {
+        return numStale;
+    }
 }

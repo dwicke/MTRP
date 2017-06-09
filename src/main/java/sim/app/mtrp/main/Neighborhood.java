@@ -23,6 +23,7 @@ public class Neighborhood implements Steppable{
 
     double timestepsTilNextTask;
 
+    Task latestTask = null;
 
     public Neighborhood(MTRP state, int id) {
         this.state = state;
@@ -39,7 +40,6 @@ public class Neighborhood implements Steppable{
     public void step(SimState simState) {
         // here we decide if we create a new task
         generateTasks();
-
     }
 
     public Double2D getMeanLocation() {
@@ -55,10 +55,13 @@ public class Neighborhood implements Steppable{
         return "id = " + id + " mean (" + meanLocation.getX() + ", " + meanLocation.getY() + ")" + " numTasks = " + tasks.size();
     }
 
+
     public void generateTasks() {
         if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
             //if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
             makeTask();
+        } else {
+            latestTask = null;
         }
 //        if (state.hasRandomness) {
 //
@@ -73,12 +76,12 @@ public class Neighborhood implements Steppable{
     public Task makeTask() {
         // generate a new task
         // first generate its coordinates using a gausian
-//        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
-//        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
+        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
+        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
 
         // generate the x and y coordinates within the bounding area of the neighborhood
-        double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
-        double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
+//        double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
+//        double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
 
         // generate them within the view
         //double x = (state.random.nextDouble(true, true) * state.getSimWidth());
@@ -89,6 +92,7 @@ public class Neighborhood implements Steppable{
         Task genTask = new Task(this, state, new Double2D(x, y));
 
         tasks.add(genTask);
+        latestTask = genTask;
         totalNumTasksGenerated++;
         return genTask;
     }
@@ -127,5 +131,9 @@ public class Neighborhood implements Steppable{
 
     public double getTimestepsTilNextTask() {
         return timestepsTilNextTask;
+    }
+
+    public Task getLatestTask() {
+        return latestTask;
     }
 }
