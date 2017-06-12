@@ -19,6 +19,7 @@ public class Job implements java.io.Serializable  {
     boolean isAvailable;
     int meanJobLength;
     int countWork = 0;
+    boolean slow = false;
 
     private Job() {}
 
@@ -185,5 +186,13 @@ public class Job implements java.io.Serializable  {
     }
     public boolean noSignals() {
         return totalSignals == 0;
+    }
+
+    public boolean isSlow() {
+        return slow;
+    }
+
+    public void setSlow(boolean slow) {
+        this.slow = slow;
     }
 }

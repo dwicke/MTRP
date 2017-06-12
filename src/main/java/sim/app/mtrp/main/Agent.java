@@ -29,6 +29,8 @@ public abstract class Agent implements Steppable {
     int numTimeStepsWorking = 0;
     protected boolean died = false;
     double stepsize;
+    double originalStepSize = -1;
+    boolean slow = false;
 
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -58,7 +60,17 @@ public abstract class Agent implements Steppable {
         // 3. work on a job
         // and we always pick a destination
 
+        if(slow && originalStepSize == -1) {
+            if (id == 0) {
+                state.printlnSynchronized("going slow");
+            }
+            originalStepSize = stepsize;
+            stepsize = originalStepSize / 2.0;
+        }else if (!slow && originalStepSize != -1) {
+            stepsize = originalStepSize;
+            originalStepSize = -1;
 
+        }
 
         boolean didAction = buySellResources();
         // I need to know where I should go
@@ -257,15 +269,20 @@ public abstract class Agent implements Steppable {
         // therefore if I move (3/5*.7) in the x direction and (4/5*.7) in the y direction I will end up only going .7
         // so do that. essentially normalizing on the euclidean distance.
         if (curFuel > 0) {
+
+            double SS = getStepSize();
+            if (curJob != null && curJob.isSlow()) {
+                SS /= 2;
+            }
             double numTimeSteps = getNumTimeStepsFromLocation(curDestination);
             if (numTimeSteps == 0) // might need to account for some error here eventually...
                 return false; // don't move already at destination.
             double dis = curLocation.distance(curDestination);
             double dx = curDestination.getX() - curLocation.getX();
-            dx = (dx / dis) * getStepSize();
+            dx = (dx / dis) * SS;
 
             double dy = curDestination.getY() - curLocation.getY();
-            dy = (dy / dis) * getStepSize();
+            dy = (dy / dis) * SS;
 
             //Double2D oldLoc = curLocation;
             curLocation = new Double2D(curLocation.getX() + dx, curLocation.getY() + dy);
@@ -387,5 +404,9 @@ public abstract class Agent implements Steppable {
             return 0;
         }
         return getBounty() / state.schedule.getSteps();
+    }
+
+    public void setSlow(boolean slow) {
+        this.slow = slow;
     }
 }

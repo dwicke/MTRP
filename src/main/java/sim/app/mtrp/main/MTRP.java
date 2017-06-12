@@ -6,6 +6,7 @@ import sim.app.mtrp.main.agents.AgentFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class MTRP extends SimState {
     public int numAgents = 4;
 
     @Parameter(names={"--numNeighborhoods", "-n"})
-    public int numNeighborhoods = 40;
+    public int numNeighborhoods = 5;
 
     @Parameter(names={"--simWidth", "-sw"})
     public int simWidth = 500;
@@ -46,7 +47,7 @@ public class MTRP extends SimState {
     public double startFunds = 100;
 
     @Parameter(names={"--fuelCapacity", "-fc"})
-    public double fuelCapacity = 10000;
+    public double fuelCapacity = 3000;
     public double stepsize = 0.7; // this is the max distance I can travel in one step
 
     @Parameter(names={"--thresholdToSignal", "-t"})
@@ -61,7 +62,7 @@ public class MTRP extends SimState {
     // neighborhood params:
 
     @Parameter(names={"--numDepos", "-nd"})
-    public int numDepos = 10;
+    public int numDepos = 1;
     public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
@@ -72,13 +73,13 @@ public class MTRP extends SimState {
     public double fuelCost = 1.0;
 
     @Parameter(names={"--timestepsTilNextTask", "-s"})
-    public int timestepsTilNextTask = 300; // used to calculate the arrival rate of the tasks using a geometric distribution
+    public int timestepsTilNextTask = 20; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     @Parameter(names={"--jobLength", "-jl"})
-    public int jobLength = 10; // the max mean job length (the mean is picked randomly from zero to this max)
+    public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
-    public double meanDistBetweenNeighborhoods = Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
+    public double meanDistBetweenNeighborhoods = 40;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
 
     public int numJobTypes = 1; // a job type is the average job length and the average number of resources needed for each type of resource.
 
@@ -111,7 +112,7 @@ public class MTRP extends SimState {
     public boolean hasEmergentJob = false; // job type with base bounty of 2000 appears every 20000 steps
     public int numEmergentJobTypes = 1;
     public int numstepsEmergentJob = 20000;
-    public double emergentBounty = 2000;
+    public double emergentBounty = basebounty * 5;
 
     @Parameter(names={"--hasUnexpectedlyHardJobs", "-u"}, arity = 1)
     public boolean hasUnexpectedlyHardJobs = false; // the length of the job increases by some factor
@@ -121,6 +122,11 @@ public class MTRP extends SimState {
     public double newRate = timestepsTilNextTask / 2;
     public int disasterLength = 2000;
     public int disasterStep = 50000;
+
+    public boolean slower = false;
+    public long numstepsSlow = 2000;
+
+    public boolean hasUnexpectedlySlowJobs = false;
 
     @Parameter(names={"--directory", "-y"})
     public String directory = "/home/drew/tmp";
@@ -184,11 +190,12 @@ public class MTRP extends SimState {
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
         Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
-//        Double2D[] locations = new Double2D[4];
+//        Double2D[] locations = new Double2D[5];
 //        locations[0] = new Double2D(50,50);
 //        locations[1] = new Double2D(100,50);
 //        locations[2] = new Double2D(50,100);
 //        locations[3] = new Double2D(100, 100);
+//        locations[4] = new Double2D(25, 25);
 
 
         // First create the neighborhoods.  Use the mean location as the location for the depos
@@ -605,4 +612,32 @@ public class MTRP extends SimState {
     }
 
 
+    public boolean isSlower() {
+        return slower;
+    }
+
+    public void setSlower(boolean slower) {
+        this.slower = slower;
+    }
+
+    public long getNumstepsSlow() {
+        return numstepsSlow;
+    }
+
+    public void setNumstepsSlow(long numstepsSlow) {
+        this.numstepsSlow = numstepsSlow;
+    }
+
+    public boolean isHasUnexpectedlySlowJobs() {
+        return hasUnexpectedlySlowJobs;
+    }
+
+    public void setHasUnexpectedlySlowJobs(boolean hasUnexpectedlySlowJobs) {
+        this.hasUnexpectedlySlowJobs = hasUnexpectedlySlowJobs;
+    }
+
+    public double getNumStale() {
+        if (bondsman == null) { return 0.0;}
+        return bondsman.getNumStale();
+    }
 }

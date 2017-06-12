@@ -107,6 +107,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         return super.getAvailableTask();
     }
 
+    /*
     @Override
     double getUtility(Task t) {
         double confidence;
@@ -152,9 +153,9 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
 
         return util;
     }
+*/
 
-
-    /*
+/*
     @Override
     double getUtility(Task t) {
         double confidence;
@@ -182,16 +183,16 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         if (maxVal == Double.MAX_VALUE) {
             return 1.0 / getNumTimeStepsFromLocation(t.getLocation());
         }
-        confidence =  0.9 * maxVal / getNumTimeStepsFromLocation(t.getLocation()) + 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
+        confidence =  0.75 * maxVal / getNumTimeStepsFromLocation(t.getLocation()) + 0.25 * pTable.getQValue(t.getNeighborhood().getId(), 0);
         //state.printlnSynchronized("Confidence = " + confidence);
 
-        double util =  (confidence * (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+        double util =  (confidence * (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         return util;
     }
-    */
+*/
 
-/*
+
     @Override
     double getUtility(Task t) {
         double confidence;
@@ -199,7 +200,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         for (Map.Entry<Double2D, Integer> en: agentLocations.entrySet()) {
 
             // TODO: Need to learn the speed of each of the agents
-            double val = (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue());
+            double val = (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue()) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0) + en.getValue());
             if (val > maxVal) {
                 maxVal = val;
             }
@@ -208,19 +209,20 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         for (Map.Entry<Double2D, Integer> en: lastSeenLocation.entrySet()) {
             // TODO: I think that this should scale with how long it has been since they have been seen so as to deal with dieing agents
             //state.printlnSynchronized("Ttable = " + tTable.getQValue(t.getJob().getJobType(), 0) + " agent id = " + id);
-            double val =  (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
+            double val =  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement()) /  (getNumTimeStepsFromLocation(t.getLocation(), en.getKey()) + tTable.getQValue(t.getJob().getJobType(), 0));
             if (val > maxVal) {
                 maxVal = val;
             }
         }
 
         // TODO: I also should scale what i use from each of the settings in order to work better in settings where the environment can easily be split
-        confidence = 1.0 * (1.0 / maxVal);// + 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
+        //confidence = 0.9 * ( maxVal / getNumTimeStepsFromLocation(t.getLocation())); //+ 0.1 * pTable.getQValue(t.getNeighborhood().getId(), 0);
+        confidence = 1 / maxVal;
         //state.printlnSynchronized("Confidence = " + confidence);
 
-        double util =  (confidence * (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+        double util =  (confidence * (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         return util;
     }
-*/
+
 }

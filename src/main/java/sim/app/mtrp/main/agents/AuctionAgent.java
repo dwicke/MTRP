@@ -119,19 +119,19 @@ public class AuctionAgent extends LearningAgent {
         // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
         //double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
         //double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-        double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+        double util =   (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         return util;
     }
 
-    /*
+
     double getCost(Task t) {
         Depo closestDepo = getClosestDepo(t.getLocation());
         if (closestDepo == null) {
             return Double.POSITIVE_INFINITY; // can't get to a depo from here! this is the case if i'm being asked what I'd bid for it.
         }
         return getNumTimeStepsFromLocation(t.getLocation()) * closestDepo.getFuelCost();
-    }*/
+    }
 
     public double[] getEvaluations(Task[] availTasks) {
         double[] valuations = new double[availTasks.length];

@@ -14,6 +14,8 @@ public class Bondsman implements Steppable {
     MTRP state;
 
     int numStale = 0;
+    int lengthStale = 0;
+    int lengthNotStale = 0;
 
     public Bondsman(MTRP state) {
         this.state = state;
@@ -24,9 +26,17 @@ public class Bondsman implements Steppable {
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
             ((Task)task).incrementBounty();
             ((Task)task).incrementTimeNotFinished();
-            if (((Task)task).getTimeNotFinished() >= 200) {
+            if (((Task)task).getTimeNotFinished() >= 2000) {
                 numStale++;
             }
+
+        }
+        if (numStale > 0) {
+            lengthStale++;
+            lengthNotStale = 0;
+        } else {
+            lengthStale = 0;
+            lengthNotStale++;
         }
 
     }
@@ -128,4 +138,14 @@ public class Bondsman implements Steppable {
     public int getNumStale() {
         return numStale;
     }
+
+    public int getLengthStale() {
+        return lengthStale;
+    }
+
+    public int getLengthNotStale() {
+        return lengthNotStale;
+    }
+
+
 }
