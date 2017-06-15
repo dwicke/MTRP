@@ -17,20 +17,33 @@ public class Bondsman implements Steppable {
     int lengthStale = 0;
     int lengthNotStale = 0;
 
+
     public Bondsman(MTRP state) {
         this.state = state;
     }
 
     public void step(SimState simState) {
         numStale = 0;
+        //Bag tasksToRemove = new Bag();
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
             ((Task)task).incrementBounty();
             ((Task)task).incrementTimeNotFinished();
-            if (((Task)task).getTimeNotFinished() >= 2000) {
+            if (((Task)task).getTimeNotFinished() >= state.getDeadline()) {
                 numStale++;
+                //tasksToRemove.add(task);
             }
 
         }
+        /*
+        for (Object task: tasksToRemove) {
+            Task t = (Task) task;
+            for (Object commited: t.getCommittedAgents()) {
+                Agent a = (Agent) commited;
+                a.curJob = null;
+            }
+            t.setFinished();
+        }
+        */
         if (numStale > 0) {
             lengthStale++;
             lengthNotStale = 0;

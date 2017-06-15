@@ -61,11 +61,13 @@ public class AuctionWithResources extends AuctionAgent {
         // if so then learn not to do that particular type of job
         // ... figure out how...
 
+        if (amWorking) {
+            return curJob.getTask();
+        }
+
         Task t = super.getAvailableTask();
 
-        if (amWorking) {
-            return t;
-        }
+
 
 
         if (t != null /* && getTravelConfidence(t) > 0.75*/)
@@ -102,7 +104,7 @@ public class AuctionWithResources extends AuctionAgent {
         //double travelConf = getTravelConfidence(t);
         //double expectedDistTravel = (1 - travelConf) * getNumTimeStepsFromLocation(t.getLocation()) + travelConf * getNumTimeStepsFromLocation(nearestDepo.getLocation());
         //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / expectedDistTravel;
-        double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
+        double util =  ( (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
         //state.printlnSynchronized("task id = " + t.getId() + " utility = " + util + " cost = " + getCost(t));
 
         return util;

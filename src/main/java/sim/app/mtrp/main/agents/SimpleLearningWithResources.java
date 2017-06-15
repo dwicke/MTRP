@@ -13,7 +13,7 @@ import sim.app.mtrp.main.util.QTable;
  *
  * Created by drew on 3/21/17.
  */
-public class SimpleLearningWithResources extends LearningAgent {
+public class SimpleLearningWithResources extends LearningAgentWithJumpship {
     QTable resources[]; // for each element in the array corresponds to the job type and within the job type we must learn the number of resources that are expected of each type
 
     QTable resourceUsage; // these are the estimates on the needed resources in my bag!
@@ -49,12 +49,12 @@ public class SimpleLearningWithResources extends LearningAgent {
     @Override
     public Task getAvailableTask() {
 
+        if (amWorking) {
+            return curJob.getTask();
+        }
+
         Task t = super.getAvailableTask();
 
-        // rethink this!!!!
-        if (amWorking) {
-            return t;
-        }
 
         if (t != null && getTravelConfidence(t) > 0.75)
         {
@@ -77,7 +77,7 @@ public class SimpleLearningWithResources extends LearningAgent {
     @Override
     double getUtility(Task t) {
         // P(N)*P(J|N) (N - neighborhood, J - job) we are calculating bayes
-        double confidenceSuccess = pTable.getQValue(t.getNeighborhood().getId(), 0) * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
+        double confidenceSuccess = pTable.getQValue(t.getNeighborhood().getId(), 0);// * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
 
         /*
         Depo nearestDepo = getClosestDepo(t.getLocation()); // TODO should i look at the depo closest to me or the task... i think the task.  also i might have to ignore the fuel left...
@@ -88,7 +88,7 @@ public class SimpleLearningWithResources extends LearningAgent {
         //double expectedDistTravel = (1 - travelConf) * getNumTimeStepsFromLocation(t.getLocation()) + travelConf * getNumTimeStepsFromLocation(nearestDepo.getLocation());
         //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength() - getCost(t))) / expectedDistTravel;
         //double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation())+ state.getJobLength() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + state.getJobLength());
-        double util =  ( confidenceSuccess *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
+        double util =  ( confidenceSuccess *  (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
         //state.printlnSynchronized("task id = " + t.getId() + " utility = " + util + " cost = " + getCost(t));
 
         return util;

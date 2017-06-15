@@ -9,7 +9,7 @@ import sim.app.mtrp.main.MTRP;
 public enum AgentFactory {
 
 
-    RANDOM,LEARNING_NO_JUMP,BRIBING,AUCTION,FCFS, NEAREST_FIRST,NO_JUMP_RESOURCES, AUCTION_RESOURCES, LEARNING_JUMP, LEARNING_JUMP_SIG,REAUCTION,NEAREST_FIRST_SMART,NEAREST_FIRST_JUMP, LEARNING_NNJ, AUCTION_NNJ, NNJB, COMPLEX;
+    RANDOM,LEARNING_NO_JUMP,BRIBING,AUCTION,FCFS, NEAREST_FIRST,JUMP_RESOURCES, AUCTION_RESOURCES, LEARNING_JUMP, LEARNING_JUMP_SIG,REAUCTION,NEAREST_FIRST_SMART,NEAREST_FIRST_JUMP, LEARNING_NNJ, AUCTION_NNJ, NNJB, COMPLEX;
 
 
 
@@ -25,15 +25,15 @@ public enum AgentFactory {
             return new LearningAgent(state, id);
         } else if (type == BRIBING.ordinal()) { // 2
             return new BribingAgent(state, id);
-        } else if (type == AUCTION.ordinal()) {
+        } else if (type == AUCTION.ordinal()) { // 3
             return new AuctionAgent(state, id);
-        } else if (type == FCFS.ordinal()) {
+        } else if (type == FCFS.ordinal()) { // 4
             return new FirstComeFirstServe(state, id);
-        } else if (type == NEAREST_FIRST.ordinal()) {
+        } else if (type == NEAREST_FIRST.ordinal()) { // 5
             return new NearestFirst(state, id);
-        } else if (type == NO_JUMP_RESOURCES.ordinal()) {
+        } else if (type == JUMP_RESOURCES.ordinal()) { // 6
             return new SimpleLearningWithResources(state, id);
-        } else if (type == AUCTION_RESOURCES.ordinal()) {
+        } else if (type == AUCTION_RESOURCES.ordinal()) { // 7
             return new AuctionWithResources(state, id);
         } else if (type == LEARNING_JUMP.ordinal()) { // 8
             return new LearningAgentWithJumpship(state, id);

@@ -116,6 +116,18 @@ public class Job implements java.io.Serializable  {
 
     public boolean claimWork(Agent worker) {
 
+        // check if the agent has enough resources
+        for (int i = 0; i < resourcesNeeded.length; i++) {
+            if (worker.resourcesQuantities[i] < resourcesNeeded[i]) {
+                return false;
+            }
+        }
+
+        // now since the agent has enough resources remove them
+        for (int i = 0; i < resourcesNeeded.length; i++) {
+            worker.resourcesQuantities[i] -= resourcesNeeded[i];
+        }
+
 
         curWorker = worker;
         isAvailable = false;

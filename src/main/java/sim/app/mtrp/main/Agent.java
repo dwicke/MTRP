@@ -112,6 +112,7 @@ public abstract class Agent implements Steppable {
             // so buy fuel, note that fuel price is 1-to-1 cost
             // buy whatever I can
             double fuelBought = Math.min(bounty / nearestDepo.getFuelCost(), state.getFuelCapacity() - curFuel);
+            nearestDepo.buyFuel(fuelBought);
             bounty -= fuelBought * nearestDepo.getFuelCost();
             curFuel += fuelBought;
             return true;

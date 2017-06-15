@@ -16,6 +16,7 @@ public class Depo implements Steppable{
     Double2D location;
     Neighborhood neighborhood;
     Resource resources[];
+    double totalFuelPurchased = 0;
 
     public Depo(MTRP state, int id, Neighborhood neighborhood) {
         this.state = state;
@@ -74,5 +75,9 @@ public class Depo implements Steppable{
 
     public Double2D getLocation() {
         return location;
+    }
+
+    public void buyFuel(double fuelBought) {
+        totalFuelPurchased += fuelBought;
     }
 }

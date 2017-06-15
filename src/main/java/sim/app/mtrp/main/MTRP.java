@@ -128,6 +128,8 @@ public class MTRP extends SimState {
 
     public boolean hasUnexpectedlySlowJobs = false;
 
+    public int deadline = 2000;
+
     @Parameter(names={"--directory", "-y"})
     public String directory = "/home/drew/tmp";
 
@@ -205,9 +207,9 @@ public class MTRP extends SimState {
             // add it to the plane
 
 
-            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
-                n = new Neighborhood(this, i);
-            }
+//            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
+//                n = new Neighborhood(this, i);
+//            }
 
 
             neighborhoodPlane.setObjectLocation(n, n.meanLocation);
@@ -558,6 +560,14 @@ public class MTRP extends SimState {
         this.numstepsDead = numstepsDead;
     }
 
+    public int getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(int deadline) {
+        this.deadline = deadline;
+    }
+
     public boolean isHasSuddenTaskIncrease() {
         return hasSuddenTaskIncrease;
     }
@@ -640,4 +650,16 @@ public class MTRP extends SimState {
         if (bondsman == null) { return 0.0;}
         return bondsman.getNumStale();
     }
+
+    public double getTotalFuelPurchased() {
+        if(depos == null || depos.length == 0) {
+            return 0;
+        }
+        double totalFuelPurchased = 0.0;
+        for (Depo d : depos) {
+            totalFuelPurchased += d.totalFuelPurchased;
+        }
+        return totalFuelPurchased;
+    }
+
 }

@@ -52,6 +52,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>ros</id>
+            <name>ros</name>
+            <url>https://github.com/rosjava/rosjava_mvn_repo/tree/master</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -86,6 +91,11 @@
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <version>1.69</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ros.rosjava_core</groupId>
+            <artifactId>rosjava</artifactId>
+            <version>0.3.4</version>
         </dependency>
 
 
