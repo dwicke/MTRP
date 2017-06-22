@@ -9,7 +9,7 @@ import sim.app.mtrp.main.MTRP;
 public enum AgentFactory {
 
 
-    RANDOM,LEARNING_NO_JUMP,BRIBING,AUCTION,FCFS, NEAREST_FIRST,JUMP_RESOURCES, AUCTION_RESOURCES, LEARNING_JUMP, LEARNING_JUMP_SIG,REAUCTION,NEAREST_FIRST_SMART,NEAREST_FIRST_JUMP, LEARNING_NNJ, AUCTION_NNJ, NNJB, COMPLEX;
+    RANDOM,LEARNING_NO_JUMP,BRIBING,AUCTION,FCFS, NEAREST_FIRST,JUMP_RESOURCES, AUCTION_RESOURCES, LEARNING_JUMP, LEARNING_JUMP_SIG,REAUCTION,NEAREST_FIRST_SMART,NEAREST_FIRST_JUMP, LEARNING_NNJ, AUCTION_NNJ, NNJB, COMPLEX, NBH;
 
 
 
@@ -53,6 +53,8 @@ public enum AgentFactory {
             return new NearestFirstWithJumpBounty(state, id);
         } else if (type == COMPLEX.ordinal()) { //16
             return new ComplexLearningAgent(state, id);
+        } else if (type == NBH.ordinal()) { // 17
+            return new NeighborhoodBountyHunter(state, id);
         }
         return null;
     }

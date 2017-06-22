@@ -349,6 +349,20 @@ public abstract class Agent implements Steppable {
         curJob = null;
     }
 
+
+
+    public Bag getNonCommittedTasks() {
+        Bag closestWithinRange = getTasksWithinRange(state.getBondsman().getAvailableTasks());
+        Task[] availTasks = (Task[]) closestWithinRange.toArray(new Task[closestWithinRange.size()]);//getAvailableTasksInRange();//state.bondsman.getAvailableTasks();
+        Bag nonCommitedTasks = new Bag();
+        for (Task t : availTasks) {
+            if (t.getCommittedAgents().size() == 0) {
+                nonCommitedTasks.add(t);
+            }
+        }
+        return nonCommitedTasks;
+    }
+
     public int getNumTimeStepsFromLocation(Double2D dest) {
         return (int) Math.floor((curLocation.distance(dest))/getStepSize());
     }

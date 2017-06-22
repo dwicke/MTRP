@@ -136,4 +136,19 @@ public class Neighborhood implements Steppable{
     public Task getLatestTask() {
         return latestTask;
     }
+
+    public double getTotalBounty() {
+        double total = 0.0;
+        for (Task t : tasks) {
+            total += t.getBounty();
+        }
+        return total;
+    }
+
+    public Task[] getTasks() {
+        if (tasks.size() == 0) {
+            return new Task[0];
+        }
+        return tasks.toArray(new Task[tasks.size()]);
+    }
 }
