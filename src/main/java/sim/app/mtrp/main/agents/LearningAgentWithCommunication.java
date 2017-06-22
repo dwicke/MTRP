@@ -14,7 +14,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     public LearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
-        agentSuccess = new QTable(state.getNumAgents(), 1, .9, .1, 1.0);
+        agentSuccess = new QTable(state.getNumAgents(), 1, .99, .1, 1.0);
 
     }
 
@@ -22,6 +22,12 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     @Override
     public void learn(double reward) {
         super.learn(reward);
+        if (curJob == null || curJob.getCurWorker() == null) {
+            state.printlnSynchronized("CurJob = " + curJob + "reward = " + reward + " am working = " + amWorking);
+            if (curJob != null) {
+                state.printlnSynchronized("Cur worker is null");
+            }
+        }
         agentSuccess.update(curJob.getCurWorker().getId(), 0, reward);
         agentSuccess.oneUpdate(oneUpdateGamma);
     }
@@ -54,25 +60,9 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         return hasTraveled;
     }
 
-
     @Override
     public Task handleJumpship(Task bestT) {
-
-
-        // TODO: consider learning after jumping ship
-        if (bestT != null && curJob != null && !curJob.isSignaled(this) && !curJob.noSignals()) {
-            //state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " jumpingship to task id = " + bestT.getJob().getId() + " with utility " + getUtility(bestT) + " from task id " + curJob.getId() + " with utility " + getUtility(curJob.getTask()));
-            //state.printlnSynchronized("Jumpingship because there is another person going after this task that is closer so learn not to do this neighborhood");
-            if (super.getUtility(bestT) < super.getUtility(curJob.getTask())) {
-                return curJob.getTask();
-            } else {
-                pTable.update(curJob.getTask().getNeighborhood().getId(), 0, 0.15);
-
-            }
-
-        }
-
-        // this must come last as I'm checking if i've signaled the task
+        curJob.unsignal(this);
         return super.handleJumpship(bestT);
     }
 }

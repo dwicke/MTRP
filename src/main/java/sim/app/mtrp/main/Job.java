@@ -139,7 +139,6 @@ public class Job implements java.io.Serializable  {
         curWorker = null;
         isAvailable = true;
         countWork = 0;
-        unsignal(agent);
     }
 
 

@@ -66,7 +66,7 @@ public abstract class Agent implements Steppable {
                 state.printlnSynchronized("going slow");
             }
             originalStepSize = stepsize;
-            stepsize = originalStepSize / 2.0;
+            stepsize = originalStepSize / 10.0;
         }else if (!slow && originalStepSize != -1) {
             stepsize = originalStepSize;
             originalStepSize = -1;

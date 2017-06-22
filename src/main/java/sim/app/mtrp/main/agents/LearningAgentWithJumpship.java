@@ -36,7 +36,8 @@ public class LearningAgentWithJumpship extends LearningAgent {
             bestT = getBestTask(tasks);
         } else {
             // i'm going to consider jumping ship in that case just look at the newest tasks
-            bestT = getBestTask(getTasksWithinRange(state.bondsman.getNewTasks())); // this works because the bounty rate is constants.
+            //bestT = getBestTask(getTasksWithinRange(state.bondsman.getNewTasks()));
+            bestT = getBestTask(tasks);
         }
 
 
@@ -59,8 +60,15 @@ public class LearningAgentWithJumpship extends LearningAgent {
             //jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, 0.5);
         }
 
-        curJob.leaveWork(this);
-        amWorking = false;
+        if (amWorking == true && curJob.getCurWorker() == null) {
+            state.printlnSynchronized("I am supposedly working but the current worker is null!!!");
+        }
+
+        if (amWorking == true && curJob.getCurWorker().getId() == id) {
+            curJob.leaveWork(this);
+            amWorking = false;
+        }
+
         curJob.getTask().decommit(this);// must decommit.
         return bestT;
     }
