@@ -113,7 +113,7 @@ public class NeighborhoodBountyHunter extends Agent {
                 index++;
             }
 
-            return a.runAuction(availableTasks, valuations, myId);
+            return availableTasks[a.runAuction(availableTasks.length, valuations, myId)];
         }
 
 

@@ -14,13 +14,13 @@ public class Auction {
     }
 
 
-    public Task runAuction(Task[] availableTasks, double[][] valuations, int myId) {
-        for (int i = 0; i < availableTasks.length; i++) {
+    public int runAuction(int numTasks, double[][] valuations, int myId) {
+        for (int i = 0; i < numTasks; i++) {
             AgentTaskPair max = getAssignment(valuations);
             if (max != null) {
                 if (max.agentID == myId) {
 
-                    return availableTasks[max.taskID];
+                    return max.taskID;
                 }
                 valuations = getNewValuations(valuations, max);
             }
@@ -40,12 +40,11 @@ public class Auction {
         // the other case this happens is if there are no tasks available in which
         // case return null since I can't actually physically commit to a task since
         // no tasks exist
-        if (availableTasks.length > 0) {
-            Task chosenTask = availableTasks[state.random.nextInt(availableTasks.length)];
-            //state.printlnSynchronized("picked randomly task" + chosenTask.);
-            return chosenTask;
+        if (numTasks > 0) {
+            return state.random.nextInt(numTasks);
+
         }
-        return null;
+        return -1;
     }
 
     /**

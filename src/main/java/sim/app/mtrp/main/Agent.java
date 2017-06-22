@@ -35,6 +35,7 @@ public abstract class Agent implements Steppable {
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
 
+    public Agent() {}
 
     public Agent(MTRP state, int id) {
         this.state = state;

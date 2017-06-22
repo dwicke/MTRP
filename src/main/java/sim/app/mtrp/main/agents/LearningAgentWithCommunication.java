@@ -10,11 +10,20 @@ import sim.util.Double2D;
  */
 public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
+    QTable agentSuccess;
 
     public LearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
+        agentSuccess = new QTable(state.getNumAgents(), 1, .9, .1, 1.0);
+
+    }
 
 
+    @Override
+    public void learn(double reward) {
+        super.learn(reward);
+        agentSuccess.update(curJob.getCurWorker().getId(), 0, reward);
+        agentSuccess.oneUpdate(oneUpdateGamma);
     }
 
     @Override
@@ -25,7 +34,13 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             if (!t.getJob().noSignals()) {
                 //state.printlnSynchronized("Time step" + state.schedule.getSteps() + "Job id " + t.getJob().getId() + " is signaled but not by me " + getId());
             }
-            return 0; // might want to change this...
+            double confidence = 0.0;
+            for (int i = 0; i < state.numAgents; i++) {
+                if (t.getJob().isSignaled(state.getAgents()[i]))
+                    confidence *= agentSuccess.getQValue(i, 0);
+            }
+            return confidence * super.getUtility(t);
+            //return 0; // need to change this.
         }
     }
 

@@ -99,11 +99,14 @@ public class LearningAgent extends Agent {
         for (Task t : tasks) {
 
             double value = getUtility(t);
+
             if (value > curMax) {
                 chosenTask = t;
                 curMax = value;
             }
         }
+
+
         return chosenTask;
     }
 

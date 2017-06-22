@@ -261,32 +261,7 @@ public class AuctionWithResources extends AuctionAgent {
         }
 
 
-        /*
-        Task bestTask = getBestTask(getTasksWithinRange());
-        if (bestTask == null) {
-            needResources = true;
 
-            //state.printlnSynchronized("Failed job = " + failedJob.getId() + " picked id = null" + " needRes = " + needResources);
-
-        } else if (failedJob != null) {
-            needResources |= (bestTask.getJob().getId() == failedJob.getId());
-            logger.debug("failed job id = {} bestTask id = {} needResources = {}", failedJob.getId(), bestTask.getJob().getId(), needResources);
-            //state.printlnSynchronized("Failed job = " + failedJob.getId() + " picked id = " + bestTask.getJob().getId() + " needRes = " + needResources);
-
-        }
-
-        if (bestTask != null && getTravelConfidence(bestTask) < .75) {
-            needResources = true;
-        }
-
-
-        if (bestTask != null) {
-            logger.debug("Agent {} need resources {} bestTask = {} failedJob = {} travelConf = {} utility = {}", id, needResources, bestTask, failedJob, getTravelConfidence(bestTask), getUtility(bestTask));
-        } else {
-            logger.debug("Agent {} need resources {} bestTask = {} failedJob = {}", id, needResources, bestTask, failedJob);
-
-        }
-        */
         return needResources;
     }
 

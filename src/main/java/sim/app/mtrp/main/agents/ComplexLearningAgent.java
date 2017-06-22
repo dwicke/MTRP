@@ -115,6 +115,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
     }
 */
 
+/*
 
     @Override
     double getUtility(Task t) {
@@ -144,6 +145,36 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
         //state.printlnSynchronized("Confidence = " + confidence);
 
         double util =  (confidence * (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+
+        return util;
+    }
+    */
+
+    @Override
+    double getUtility(Task t) {
+
+        int count = 0;
+        for (Map.Entry<Task, Integer> en: alp.getAgentLocations().entrySet()) {
+            if (id == 0)
+                state.printlnSynchronized("agent location = " + en.getKey().getId() + " count = " + count + " distance = " + getNumTimeStepsFromLocation(t.getLocation(), en.getKey().getLocation()));
+            count++;
+            if (getNumTimeStepsFromLocation(t.getLocation(), en.getKey().getLocation()) < 10) {
+                return 0.0;
+            }
+        }
+
+        /*
+        for (Map.Entry<Task, Integer> en: alp.getLastSeenLocation().entrySet()) {
+            // TODO: I think that this should scale with how long it has been since they have been seen so as to deal with dieing agents
+            //state.printlnSynchronized("Ttable = " + tTable.getQValue(t.getJob().getJobType(), 0) + " agent id = " + id);
+            if (getNumTimeStepsFromLocation(t.getLocation(), en.getKey().getLocation()) - en.getValue() < 2) {
+                return 0.0;
+            }
+        }*/
+
+        // TODO: I also should scale what i use from each of the settings in order to work better in settings where the environment can easily be split
+
+        double util =  (pTable.getQValue(t.getNeighborhood().getId(), 0) * (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         return util;
     }

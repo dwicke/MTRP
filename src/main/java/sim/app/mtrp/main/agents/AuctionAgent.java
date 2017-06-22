@@ -44,16 +44,27 @@ public class AuctionAgent extends LearningAgent {
             //Bag nonCommitedTasks = getNonCommittedTasks();
             Task[] availableTasks = (Task[]) nonCommitedTasks.toArray(new Task[nonCommitedTasks.size()]);
 
-            double[][] valuations = new double[state.agents.length][availableTasks.length];
-            //System.err.println("Num avail tasks = " + availableTasks.length);
-            // for each agent get their valuation
-            for (int i = 0; i < state.agents.length; i++) {
-                valuations[i] = ((AuctionAgent) state.agents[i]).getEvaluations(availableTasks);// agent id corresponds to agent's index.
-            }
+            if (availableTasks.length > 0) {
+                double[][] valuations = new double[state.agents.length][availableTasks.length];
+                //System.err.println("Num avail tasks = " + availableTasks.length);
+                // for each agent get their valuation
+                for (int i = 0; i < state.agents.length; i++) {
+                    valuations[i] = ((AuctionAgent) state.agents[i]).getEvaluations(availableTasks);// agent id corresponds to agent's index.
+                }
 
-            //Task[] availableTasks = state.bondsman.getAvailableTasks();
-            Auction a = new Auction(state);
-            return a.runAuction(availableTasks, valuations, this.getId());
+                //Task[] availableTasks = state.bondsman.getAvailableTasks();
+                Auction a = new Auction(state);
+                int index = a.runAuction(availableTasks.length, valuations, this.getId());
+                if (index == -1) {
+                    state.printlnSynchronized("Agent " + id + " index for task returned was -1 we have a problem...");
+                    return null;
+                }
+                return availableTasks[index];
+
+            } else {
+                // no tasks to choose from.
+                return null;
+            }
         }
         return curJob.getTask();
     }
