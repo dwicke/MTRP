@@ -50,7 +50,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
             if (state.numAgents <= state.getNeighborhoods().length) {
                 confidence = pTable.getQValue(t.getNeighborhood().getId(), 0);
-            } else {
+            } else if ( state.getNeighborhoods().length > 1) {
                 double weight = Math.max(0, ((double) state.numAgents - state.getNeighborhoods().length) / (double) state.numAgents);
                 confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
             }
