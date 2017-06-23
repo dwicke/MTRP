@@ -66,14 +66,14 @@ public class MTRP extends SimState {
     public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
-    public int numResourceTypes = 3; // fuel is not a resource included here.
+    public int numResourceTypes = 0; // fuel is not a resource included here.
     public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
     public int maxMeanResourcesNeededForType = numResourceTypes; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
 
     @Parameter(names={"--timestepsTilNextTask", "-s"})
-    public int timestepsTilNextTask = 20; // used to calculate the arrival rate of the tasks using a geometric distribution
+    public int timestepsTilNextTask = 10; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     @Parameter(names={"--jobLength", "-jl"})
     public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
