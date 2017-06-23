@@ -45,7 +45,19 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 if (t.getJob().isSignaled(state.getAgents()[i]))
                     confidence *= agentSuccess.getQValue(i, 0);
             }
-            return confidence * super.getUtility(t);
+            // this is ORing...
+            // so if i have
+
+            if (state.numAgents <= state.getNeighborhoods().length) {
+                confidence = pTable.getQValue(t.getNeighborhood().getId(), 0);
+            } else {
+                double weight = Math.max(0, ((double) state.numAgents - state.getNeighborhoods().length) / (double) state.numAgents);
+                confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
+            }
+
+            double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+            //double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
+            return util;
             //return 0; // need to change this.
         }
     }
@@ -62,7 +74,13 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     @Override
     public Task handleJumpship(Task bestT) {
-        curJob.unsignal(this);
+       // if (curJob.isSignaled(this)) {
+
+            curJob.unsignal(this);
+            //pTable.update(curJob.getTask().getNeighborhood().getId(), 0, 0.0);
+             //pTable.oneUpdate(oneUpdateGamma);
+
+        //}
         return super.handleJumpship(bestT);
     }
 }
