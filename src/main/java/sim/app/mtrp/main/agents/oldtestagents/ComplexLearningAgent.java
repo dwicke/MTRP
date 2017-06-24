@@ -1,8 +1,9 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.oldtestagents;
 
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
+import sim.app.mtrp.main.agents.LearningAgentWithJumpship;
 import sim.app.mtrp.main.agents.Valuators.AgentLocationPredictor;
 import sim.field.continuous.Continuous2D;
 import sim.util.Double2D;
@@ -151,7 +152,7 @@ public class ComplexLearningAgent extends LearningAgentWithJumpship {
     */
 
     @Override
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
 
         int count = 0;
         for (Map.Entry<Task, Integer> en: alp.getAgentLocations().entrySet()) {

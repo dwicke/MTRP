@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class LearningAgent extends Agent {
 
     QTable jobSuccess[];
-    QTable tTable; // for each type of job we learn the
-    QTable pTable; // ptable probability of getting to the task
+    public QTable tTable; // for each type of job we learn the
+    public QTable pTable; // ptable probability of getting to the task
     double oneUpdateGamma = .001; // .001
     double tLearningRate = .5; // set to .1 originally (should be at .95 though...) tried .75
     double tDiscountBeta = .1; // not used...
@@ -110,7 +110,7 @@ public class LearningAgent extends Agent {
         return chosenTask;
     }
 
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
         double confidence = pTable.getQValue(t.getNeighborhood().getId(), 0) /* * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0)*/;
 //
 //        double timeWorking = 0;
@@ -129,7 +129,7 @@ public class LearningAgent extends Agent {
         return util;
     }
 
-    double getCost(Task t) {
+    public double getCost(Task t) {
         // closest depo will never be null because we only consider tasks that are within distance of a depo
         return getNumTimeStepsFromLocation(t.getLocation()) * getClosestDepo(t.getLocation()).getFuelCost();
     }

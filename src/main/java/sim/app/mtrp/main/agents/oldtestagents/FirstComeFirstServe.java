@@ -1,4 +1,4 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.oldtestagents;
 
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
@@ -17,7 +17,7 @@ public class FirstComeFirstServe extends BribingAgent{
 
 
     @Override
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
         if (t.getNeighborhood().getId() == getId()) {
             return t.getBounty();
         } else {

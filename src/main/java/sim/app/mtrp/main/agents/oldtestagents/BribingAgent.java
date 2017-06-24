@@ -1,9 +1,10 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.oldtestagents;
 
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.Job;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
+import sim.app.mtrp.main.agents.LearningAgentWithJumpship;
 import sim.util.Bag;
 
 /**
