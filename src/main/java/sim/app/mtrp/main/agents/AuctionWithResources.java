@@ -94,7 +94,7 @@ public class AuctionWithResources extends AuctionAgent {
     }
 
     @Override
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
 
         /*
         Depo nearestDepo = getClosestDepo(t.getLocation()); // TODO should i look at the depo closest to me or the task... i think the task.  also i might have to ignore the fuel left...
@@ -124,7 +124,7 @@ public class AuctionWithResources extends AuctionAgent {
     
 
 
-    double getCost(Task t) {
+    public double getCost(Task t) {
         // we have a more complicated cost function because we learn the expected number of resources needed
 
         double resourceCostEstimated = 0.0;

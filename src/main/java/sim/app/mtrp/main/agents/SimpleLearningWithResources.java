@@ -75,7 +75,7 @@ public class SimpleLearningWithResources extends LearningAgentWithJumpship {
 
 
     @Override
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
         // P(N)*P(J|N) (N - neighborhood, J - job) we are calculating bayes
         double confidenceSuccess = pTable.getQValue(t.getNeighborhood().getId(), 0);// * jobSuccess[t.getNeighborhood().getId()].getQValue(t.getJob().getJobType(), 0);
 
@@ -108,7 +108,7 @@ public class SimpleLearningWithResources extends LearningAgentWithJumpship {
     
 
 
-    double getCost(Task t) {
+    public double getCost(Task t) {
         // we have a more complicated cost function because we learn the expected number of resources needed
 
         double resourceCostEstimated = 0.0;

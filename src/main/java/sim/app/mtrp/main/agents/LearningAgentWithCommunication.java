@@ -33,7 +33,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     }
 
     @Override
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
         if (t.getJob().isSignaled(this) || t.getJob().noSignals()) {
             return super.getUtility(t);
         } else {

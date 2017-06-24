@@ -86,7 +86,7 @@ public class AuctionAgent extends LearningAgent {
     }
 
 
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
 
         // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
         //double util =  ( (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
@@ -97,7 +97,7 @@ public class AuctionAgent extends LearningAgent {
     }
 
 
-    double getCost(Task t) {
+    public double getCost(Task t) {
         Depo closestDepo = getClosestDepo(t.getLocation());
         if (closestDepo == null) {
             return Double.POSITIVE_INFINITY; // can't get to a depo from here! this is the case if i'm being asked what I'd bid for it.

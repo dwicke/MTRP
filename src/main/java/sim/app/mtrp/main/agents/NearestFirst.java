@@ -14,7 +14,7 @@ public class NearestFirst extends LearningAgent {
     }
 
     @Override
-    double getUtility(Task t) {
+    public double getUtility(Task t) {
 
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
