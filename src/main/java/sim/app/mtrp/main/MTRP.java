@@ -100,6 +100,7 @@ public class MTRP extends SimState {
     public Continuous2D agentPlane;
     public Continuous2D taskPlane;
     public Continuous2D depoPlane;
+    public Continuous2D neighborhoodPlane;
 
 
     // Augmentor stuff
@@ -191,7 +192,7 @@ public class MTRP extends SimState {
 
         int order = 0;
         neighborhoods = new Neighborhood[numNeighborhoods];
-        Continuous2D neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
+        neighborhoodPlane = new Continuous2D(1.0, getSimWidth(), getSimHeight());
 //        Double2D[] locations = new Double2D[5];
 //        locations[0] = new Double2D(50,50);
 //        locations[1] = new Double2D(100,50);

@@ -137,4 +137,16 @@ public class AgentLocationPredictor {
 
         return allLocs;
     }
+
+
+    public double getDistanceToClosestAgent(Double2D curLoc) {
+        double minDist = Double.MAX_VALUE;
+        for (Map.Entry<Task, Integer> en : getAgentLocations().entrySet()) {
+            double dist = en.getKey().getLocation().distance(curLoc);
+            if (dist  < minDist) {
+                minDist = dist;
+            }
+        }
+        return minDist;
+    }
 }
