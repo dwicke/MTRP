@@ -32,7 +32,10 @@ public class SimpleLearningWithResources extends LearningAgentWithCommunication 
     }
 
     public boolean checkNeedResources(Depo nearestDepo) {
-        return super.checkNeedResources(nearestDepo) || resourceLearner.checkNeedResources(nearestDepo, curJob,getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks())));
+        boolean needFuel =  super.checkNeedResources(nearestDepo);
+        boolean needOtherResources = resourceLearner.checkNeedResources(nearestDepo, curJob,getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks())));
+        state.printlnSynchronized("Need fuel = " + needFuel + " need other resources = " + needOtherResources);
+        return needFuel || needOtherResources;
     }
 
     @Override
@@ -44,13 +47,12 @@ public class SimpleLearningWithResources extends LearningAgentWithCommunication 
 
     @Override
     public void claimWork() {
-        amWorking = curJob.claimWork(this);
-        if (amWorking == true) {
-            amWorking = resourceLearner.claimWork(curJob);
-            if (amWorking == false) {
-                curJob.leaveWork(this);
-                decommitTask();
-            }
+        amWorking = resourceLearner.claimWork(curJob);
+        if (amWorking) {
+            amWorking = curJob.claimWork(this);
+            state.printlnSynchronized("Am working? = " + amWorking);
+        } else {
+            state.printlnSynchronized("Am working? = " + amWorking);
         }
     }
 

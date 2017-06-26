@@ -42,13 +42,10 @@ public class AuctionWithResources extends AuctionAgent {
 
     @Override
     public void claimWork() {
-        amWorking = curJob.claimWork(this);
+        amWorking = resourceLearner.claimWork(curJob);
         if (amWorking) {
-            amWorking = resourceLearner.claimWork(curJob);
-            if (amWorking == false) {
-                curJob.leaveWork(this);
-                decommitTask();
-            }
+            amWorking = curJob.claimWork(this);
+            state.printlnSynchronized("Am working? = " + amWorking);
         }
     }
 

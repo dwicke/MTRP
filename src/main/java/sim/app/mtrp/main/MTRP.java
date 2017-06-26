@@ -25,15 +25,15 @@ public class MTRP extends SimState {
     private List<String> parameters = new ArrayList<String>();
 
     @Parameter(names={"--numAgents", "-na"})
-    public int numAgents = 4;
+    public int numAgents = 1;
 
     @Parameter(names={"--numNeighborhoods", "-n"})
-    public int numNeighborhoods = 5;
+    public int numNeighborhoods = 1;
 
     @Parameter(names={"--simWidth", "-sw"})
-    public int simWidth = 500;
+    public int simWidth = 100;
     @Parameter(names={"--simHeight", "-sh"})
-    public int simHeight = 500;
+    public int simHeight = 100;
 
     // stat publisher
     StatsPublisher statsPublisher;
@@ -41,7 +41,7 @@ public class MTRP extends SimState {
     // agent params:
 
     @Parameter(names={"--agentType", "-a"})
-    public int agentType = 0;
+    public int agentType = 3;
 
     public int maxCarrySizePerResource = 100; // number of each type of resource I can carry
     public double startFunds = 100;
@@ -66,9 +66,9 @@ public class MTRP extends SimState {
     public int depoCapacity = 50; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
-    public int numResourceTypes = 0; // fuel is not a resource included here.
+    public int numResourceTypes = 1; // fuel is not a resource included here.
     public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
-    public int maxMeanResourcesNeededForType = numResourceTypes; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
+    public int maxMeanResourcesNeededForType = 3; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
 

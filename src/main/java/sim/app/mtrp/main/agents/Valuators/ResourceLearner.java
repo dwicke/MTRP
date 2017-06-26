@@ -56,9 +56,12 @@ public class ResourceLearner {
     double getTravelConfidence(Task t) {
         double travelConf = 1.0;
         for (int i = 0; i < state.numResourceTypes; i++) {
-            if (resources[t.getJob().getJobType()].getQValue(i, 0) - myResources[i] > 0) {
+            if (resources[t.getJob().getJobType()].getQValue(i, 0) > myResources[i]) {
                 // then we will need resources take the min because it is a worst case confidence...
-                travelConf = Math.min(travelConf, (resources[t.getJob().getJobType()].getQValue(i, 0) - myResources[i]) / resources[t.getJob().getJobType()].getQValue(i, 0));
+                travelConf = Math.min(travelConf, myResources[i] / resources[t.getJob().getJobType()].getQValue(i, 0));
+                //state.printlnSynchronized("Dif is >0 predicted num resources needed = " + resources[t.getJob().getJobType()].getQValue(i, 0) + " num resources i have = " + myResources[i] + " travel conf = " + travelConf + " calculation = " + (resources[t.getJob().getJobType()].getQValue(i, 0) - myResources[i]) / resources[t.getJob().getJobType()].getQValue(i, 0));
+            } else {
+                //state.printlnSynchronized("predicted num resources needed = " + resources[t.getJob().getJobType()].getQValue(i, 0) + " num resources i have = " + myResources[i]);
             }
         }
 
@@ -100,6 +103,7 @@ public class ResourceLearner {
         numFailedTasks = 0;
         numJumpship = 0;
 
+
         if (updatedResourceUsage == false) { // only
             updatedResourceUsage = true;
             // first learn the resources that have been used during a trip and reset
@@ -115,11 +119,15 @@ public class ResourceLearner {
         }
 
 
+        // really i should learn which of the job types i do and what they need resource wise
+        // then I can buy as many of those
+
 
         // now go in and buy up them resources!
         for (Resource r : nearestDepo.getResources()) {
             int numShouldBuy = Math.min((int) r.getCurQuantity(), (int) Math.min(bounty / nearestDepo.getResourceCost(r.getResourceType()), (int) Math.round(resourceUsage.getQValue(r.getResourceType(), 0)) - myResources[r.getResourceType()]));
 
+            state.printlnSynchronized("number should buy = " + numShouldBuy);
 
             if (numShouldBuy > 0) {
                 //logger.debug("Agent id " + id + " buying resouce " + r.getResourceType()  + " of quantity " + numShouldBuy + " qval = " + resourceUsage.getQValue(r.getResourceType(), 0));
@@ -174,6 +182,8 @@ public class ResourceLearner {
 
         if (curJob != null && getTravelConfidence(curJob.getTask()) < .75) {
             needResources = true;
+        } else if (curJob != null) {
+            state.printlnSynchronized("Travel confidence = " + getTravelConfidence(curJob.getTask()));
         }
 
         if (curJob == null) {

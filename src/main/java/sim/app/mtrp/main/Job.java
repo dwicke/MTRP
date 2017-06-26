@@ -35,7 +35,7 @@ public class Job implements java.io.Serializable  {
         // now the mean resources:
         resourcesNeeded = new int[state.getNumResourceTypes()];
         for (int i = 0; i < state.numResourceTypes; i++) {
-            resourcesNeeded[i] = state.random.nextInt(state.maxMeanResourcesNeededForType);
+            resourcesNeeded[i] = state.maxMeanResourcesNeededForType;//state.random.nextInt(state.maxMeanResourcesNeededForType);
         }
         this.currentBounty = baseBounty;
     }
@@ -53,17 +53,18 @@ public class Job implements java.io.Serializable  {
         job.jobType = this.id;
         job.id = id;
         job.task = task;
-        job.resourcesNeeded = new int[this.resourcesNeeded.length];
+        job.resourcesNeeded = this.resourcesNeeded.clone();//new int[this.resourcesNeeded.length];
         job.isAvailable = true;
         job.currentBounty = this.currentBounty;
         job.state = state;
-        job.signals = new int[state.numAgents];;
-        for (int i = 0; i < this.resourcesNeeded.length; i++) {
-            while(state.random.nextDouble() > (1.0 / (double) this.resourcesNeeded[i])) {
-                job.resourcesNeeded[i]++;
-                //job.currentBounty += state.maxCostPerResource*2;
-            }
-        }
+        job.signals = new int[state.numAgents];
+
+//        for (int i = 0; i < this.resourcesNeeded.length; i++) {
+//            while(state.random.nextDouble() > (1.0 / (double) this.resourcesNeeded[i])) {
+//                job.resourcesNeeded[i]++;
+//                //job.currentBounty += state.maxCostPerResource*2;
+//            }
+//        }
         job.meanJobLength = this.meanJobLength;
         return job;
     }
@@ -116,17 +117,17 @@ public class Job implements java.io.Serializable  {
 
     public boolean claimWork(Agent worker) {
 
-        // check if the agent has enough resources
-        for (int i = 0; i < resourcesNeeded.length; i++) {
-            if (worker.resourcesQuantities[i] < resourcesNeeded[i]) {
-                return false;
-            }
-        }
-
-        // now since the agent has enough resources remove them
-        for (int i = 0; i < resourcesNeeded.length; i++) {
-            worker.resourcesQuantities[i] -= resourcesNeeded[i];
-        }
+//        // check if the agent has enough resources
+//        for (int i = 0; i < resourcesNeeded.length; i++) {
+//            if (worker.resourcesQuantities[i] < resourcesNeeded[i]) {
+//                return false;
+//            }
+//        }
+//
+//        // now since the agent has enough resources remove them
+//        for (int i = 0; i < resourcesNeeded.length; i++) {
+//            worker.resourcesQuantities[i] -= resourcesNeeded[i];
+//        }
 
 
         curWorker = worker;
