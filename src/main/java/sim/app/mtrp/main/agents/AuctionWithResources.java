@@ -36,7 +36,8 @@ public class AuctionWithResources extends AuctionAgent {
     @Override
     public boolean buySellTaskResources(Depo nearestDepo) {
         double preBounty = bounty;
-        bounty =  resourceLearner.buySellTaskResources(nearestDepo, bounty);
+
+        bounty =  resourceLearner.buySellTaskResources(nearestDepo, bounty, getPercentageJobTypes(getNonCommittedTasksAsArray()));
         return preBounty != bounty;// i did something if i have different amount of bounty now.
     }
 

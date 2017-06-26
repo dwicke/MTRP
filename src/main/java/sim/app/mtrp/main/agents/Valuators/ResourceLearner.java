@@ -6,6 +6,9 @@ import sim.app.mtrp.main.*;
 import sim.app.mtrp.main.agents.SimpleLearningWithResources;
 import sim.app.mtrp.main.util.QTable;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * The purpose of this class is to learn what resources
  * a particular agent needs in order to complete task before returning
@@ -36,7 +39,6 @@ public class ResourceLearner {
 
     public ResourceLearner(MTRP state) {
         this.state = state;
-        resources = new QTable[state.numJobTypes];
         resources = new QTable[state.numJobTypes];
         for (int i = 0; i < resources.length; i++) {
             // TODO: figure out what i should do here i think it needs to be zero otherwise i might think i don't have enough resources to do any task
@@ -96,50 +98,59 @@ public class ResourceLearner {
      * Buy and sell resources from the depo passed
      * Basically what  are the resources and the numbers on average I need when I go on the road
      * @param nearestDepo
+     * @param percentJobTypes key is the percent of the jobs that are of type of the value (keys must be unique so the percents must be unique)
      */
-    public double buySellTaskResources(Depo nearestDepo, double bounty) {
-        boolean didAction = false;
-        completedTasks = 0;
-        numFailedTasks = 0;
-        numJumpship = 0;
+    public double buySellTaskResources(Depo nearestDepo, double bounty, TreeMap<Double, Integer> percentJobTypes) {
 
 
-        if (updatedResourceUsage == false) { // only
-            updatedResourceUsage = true;
-            // first learn the resources that have been used during a trip and reset
-            for (int i = 0; i < resourcesUsed.length; i++) {
+        // really i can look at the percentages of the total jobs available what are there job types
+        // then say 50% of all of the availble nearby jobs are of type 0 then  I should buy the resources
+        // that will let me do those jobs with 50% of my money.
+        // then if 20% of the tasks are of another type of job then I use 20% of my money to purchase those resources
+        // and so on and so forth
+        // This is an estimate of the resources I need.
+        // I also have to consider fuel cost and that sort of thing.
+        // fuel is purchased first so I don't have to worry about saving enough to buy fuel
+        // fuel is purchased so as to completely fill up
+        // would be interesting to consider what percent to save?  as in don't spend? will try that later
+        // for now just buy it all!!!
 
-                if (resourcesUsed[i] > resourceUsage.getQValue(i, 0)) {
-                    resourceUsage.update(i, 0, resourcesUsed[i]);
+
+        for (Map.Entry<Double, Integer> en: percentJobTypes.descendingMap().entrySet()) {
+
+            // for each of the job types I should buy resources for them
+            // but first I need to figure out how many
+            double budget = bounty * en.getKey();
+            int jobtype = en.getValue();
+            double costPerJob = 0.0;
+            boolean suficientResources = true;
+            int minJobs = Integer.MAX_VALUE;
+            // should I take into account already owned resources before I started buying? that seems complicated
+            for (int i = 0; i < state.numResourceTypes; i++) {
+                if (nearestDepo.getResources()[i].getCurQuantity() < Math.ceil(resources[jobtype].getQValue(i, 0))) {
+                    // we have a problem! the depo doesn't have enough of the resource in order for me to even do a single job of this type!
+                    suficientResources = false;
+                    break;
+                } else {
+                    costPerJob += Math.ceil(resources[jobtype].getQValue(i, 0)) * nearestDepo.getResourceCost(i);
+                    int numJobs = (int) Math.floor(nearestDepo.getResources()[i].getCurQuantity() / Math.ceil(resources[jobtype].getQValue(i, 0)));
+                    if (numJobs < minJobs) {
+                        minJobs = numJobs;
+                    }
                 }
-                //state.printlnSynchronized("Resource [" + i + "] used = " + resourcesUsed[i] + " resource Usage = " + resourceUsage.getQValue(i,0));
-                resourcesUsed[i] = 0; // reset
             }
-            resourceUsage.oneUpdate(oneUpdateGamma);
-        }
+            if (suficientResources == false) {
+                continue;// we can't purchase resources for this job type because there aren't enough resources.
+            }
 
 
-        // really i should learn which of the job types i do and what they need resource wise
-        // then I can buy as many of those
-
-
-        // now go in and buy up them resources!
-        for (Resource r : nearestDepo.getResources()) {
-            int numShouldBuy = Math.min((int) r.getCurQuantity(), (int) Math.min(bounty / nearestDepo.getResourceCost(r.getResourceType()), (int) Math.round(resourceUsage.getQValue(r.getResourceType(), 0)) - myResources[r.getResourceType()]));
-
-            state.printlnSynchronized("number should buy = " + numShouldBuy);
-
-            if (numShouldBuy > 0) {
-                //logger.debug("Agent id " + id + " buying resouce " + r.getResourceType()  + " of quantity " + numShouldBuy + " qval = " + resourceUsage.getQValue(r.getResourceType(), 0));
-
-                //logger.debug("Agent id {} buying resource type {} quant {} total price = {} my bounty = {}", id, r.getResourceType(), numShouldBuy, numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()), bounty);
-                while (numShouldBuy * nearestDepo.getResourceCost(r.getResourceType()) > bounty) {
-                    numShouldBuy--;
-                }
-                bounty -= nearestDepo.buy(r.getResourceType(), numShouldBuy);
-                myResources[r.getResourceType()] += numShouldBuy;
+            // we can do up to my budget but if there aren't enough resources then can only do minjobs
+            int numJobsWithCash = (int) Math.min(Math.floor(budget / costPerJob), minJobs);
+            for (int i = 0; i < state.numResourceTypes; i++) {
+                int numShouldBuy = numJobsWithCash * (int) Math.ceil(resources[jobtype].getQValue(i, 0));
+                bounty -= nearestDepo.buy(i, numShouldBuy);
+                myResources[i] += numShouldBuy;
                 failedJob = null;// reset failed job because I've now bought resources
-                didAction = true;
             }
         }
 

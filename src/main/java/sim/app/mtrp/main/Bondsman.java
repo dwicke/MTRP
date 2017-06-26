@@ -4,6 +4,8 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 
+import java.util.TreeMap;
+
 /**
  * The agents come here to get the available tasks.
  * Created by drew on 2/20/17.
@@ -159,6 +161,5 @@ public class Bondsman implements Steppable {
     public int getLengthNotStale() {
         return lengthNotStale;
     }
-
 
 }

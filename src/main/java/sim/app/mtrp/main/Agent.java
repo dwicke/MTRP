@@ -6,6 +6,9 @@ import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Double2D;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 
 /**
  * Created by drew on 2/20/17.
@@ -184,6 +187,11 @@ public abstract class Agent implements Steppable {
      */
     public abstract Task getAvailableTask();
 
+    public Task[] getTasksWithinRangeAsArray(Task[] tasks) {
+        Bag b = getTasksWithinRange(tasks);
+        return (Task[]) b.toArray(new Task[b.size()]);
+    }
+
     public Bag getTasksWithinRange(Task[] tasks) {
         //Task[] tasks = state.getBondsman().getAvailableTasks();
         if (tasks.length == 0) {
@@ -351,6 +359,11 @@ public abstract class Agent implements Steppable {
     }
 
 
+    public Task[] getNonCommittedTasksAsArray() {
+        Bag b = getNonCommittedTasks();
+        return (Task[]) b.toArray(new Task[b.size()]);
+    }
+
 
     public Bag getNonCommittedTasks() {
         Bag closestWithinRange = getTasksWithinRange(state.getBondsman().getAvailableTasks());
@@ -362,6 +375,34 @@ public abstract class Agent implements Steppable {
             }
         }
         return nonCommitedTasks;
+    }
+
+    public TreeMap<Double,Integer> getPercentageJobTypes(Task[] tasks) {
+
+        TreeMap<Double, Integer> percentJobTypes = new TreeMap<Double, Integer>();
+        TreeMap<Integer, Double> jobTypeToNumber = new TreeMap<Integer, Double>();
+        for (Task t : tasks) {
+            if (jobTypeToNumber.containsKey(t.getJob().getJobType())) {
+                jobTypeToNumber.put(t.getJob().getJobType(), jobTypeToNumber.get(t.getJob().getJobType()) + 1);
+            } else {
+                jobTypeToNumber.put(t.getJob().getJobType(), 1.0);
+            }
+        }
+        double epsilon = .0001;
+        for (Map.Entry<Integer, Double> en: jobTypeToNumber.entrySet()) {
+            double percent = en.getValue() / (double) tasks.length;
+            if (percentJobTypes.containsKey(percent)) {
+                double key = percent+(epsilon * state.random.nextDouble());
+                while(percentJobTypes.containsKey(key)) {
+                    key = percent+(epsilon * state.random.nextDouble());
+                }
+                percentJobTypes.put(key, en.getKey());
+            } else {
+                percentJobTypes.put(percent, en.getKey());
+            }
+        }
+
+        return percentJobTypes;
     }
 
     public int getNumTimeStepsFromLocation(Double2D dest) {
