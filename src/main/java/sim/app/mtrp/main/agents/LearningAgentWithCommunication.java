@@ -47,9 +47,22 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             }
             // this is ORing...
             // so if i have
+            // but say i have a bunch of neighborhoods and the jobs appear a lot more slowly
+            // say 400 neighborhoods and 20 agents and the tasks appear at a rate of 1 per 1000 timesteps for each neighborhood
+            // then there is much more interaction between the agents than if the tasks were being generated at a much faster rate
+            // therefore, i think i need to make the decision not based on the number of agents compared to the number of neighborhood
+            // but consider the
+            // The ratio of agent to neighborhood is not sufficient as the rate at which tasks are generated in the neighborhood is important as well
+            // numN
 
-            if (state.numAgents <= state.getNeighborhoods().length) {
+            // if the agent to task density in the neighborhood is high then we want to coordinate based on signalling?
+            // then if it is low then we should
+
+            if (state.numAgents == state.getNeighborhoods().length) {
                 confidence = pTable.getQValue(t.getNeighborhood().getId(), 0);
+            } else if (state.numAgents < state.getNeighborhoods().length) {
+                double weight = Math.max(0, ((double)  state.getNeighborhoods().length - state.numAgents) / (double) state.getNeighborhoods().length);
+                confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
             } else if ( state.getNeighborhoods().length > 1) {
                 double weight = Math.max(0, ((double) state.numAgents - state.getNeighborhoods().length) / (double) state.numAgents);
                 confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);

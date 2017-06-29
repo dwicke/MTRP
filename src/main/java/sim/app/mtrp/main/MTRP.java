@@ -663,4 +663,7 @@ public class MTRP extends SimState {
         return totalFuelPurchased;
     }
 
+    public void setStepsize(double stepsize) {
+        this.stepsize = stepsize;
+    }
 }
