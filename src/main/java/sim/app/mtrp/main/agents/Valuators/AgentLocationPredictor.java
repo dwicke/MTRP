@@ -18,7 +18,6 @@ public class AgentLocationPredictor {
 
     int numAgentsEst = 0;
     Map<Task, Integer> agentLocations = new HashMap<Task, Integer>(); // location and time at job
-    Map<Task, Integer> lastSeenLocation = new HashMap<Task, Integer>(); // last location seen and time estimated gone
 
     MTRP state;
 
@@ -48,56 +47,16 @@ public class AgentLocationPredictor {
             numAgentsEst = newAgentLocations.size() + oldAgentLocations.size();
         }
 
-        if (agentLocations.isEmpty() && lastSeenLocation.isEmpty() && !newAgentLocations.isEmpty()) {
+        if (agentLocations.isEmpty() && !newAgentLocations.isEmpty()) {
             agentLocations.putAll(newAgentLocations);
         } else {
 
-            Map<Task, Integer> prevAgentLocations = new HashMap<Task, Integer>();
-            for (Map.Entry<Task, Integer> en : agentLocations.entrySet()) {
-                if (!oldAgentLocations.containsKey(en.getKey())) {
-                    // we are going over each of the locations we thought we knew and if
-                    // the task was completed it is now a prev agent location
-                    prevAgentLocations.put(en.getKey(), 1);
-                }
-            }
+
 
             agentLocations.clear();
             agentLocations.putAll(oldAgentLocations);
 
-            // update the time the agent has been gone
-            for (Task key : lastSeenLocation.keySet()) {
-                lastSeenLocation.put(key, lastSeenLocation.get(key) + 1);
-            }
 
-            // now to see about adding in the new agent locations...
-            // they could be new agents or they could be old agents that are appearing again
-            if (lastSeenLocation.size() > 0 && agentLocations.size() < numAgentsEst) {
-
-                // then we have agents that are new that were previosly seen elsewhere that should be removed
-                // so i'm just going to get the closest ones
-                for (Map.Entry<Task, Integer> en : newAgentLocations.entrySet()) {
-
-                    Double2D closest = null;
-
-                    // this is wrong!!!  i know exactly how long the agent has been gone so I can know for pretty sure exactly which task he has gone
-                    // to next!  WAIT can't do that because of jumpship!  so i have to do the heuristic method by distance.
-                    for (Map.Entry<Task, Integer> ol : lastSeenLocation.entrySet()) {
-//                        if (Math.abs(getNumTimeStepsFromLocation(en.getKey(), ol.getKey()) - ol.getValue()) <= 2) {
-//                            //state.printlnSynchronized("num steps = " + getNumTimeStepsFromLocation(en.getKey(), ol.getKey()) + " num i counted = " + ol.getValue());
-//                            closest = ol.getKey();
-//                            break;
-//                        }
-                        if (closest == null || en.getKey().getLocation().distance(ol.getKey().getLocation()) < en.getKey().getLocation().distance(closest)) {
-                            closest = ol.getKey().getLocation();
-                        }
-                    }
-                    lastSeenLocation.remove(closest);
-                }
-
-            }
-
-            // add the new previous locations to the last seen locations
-            lastSeenLocation.putAll(prevAgentLocations);
             agentLocations.putAll(newAgentLocations);
 
 
@@ -115,9 +74,6 @@ public class AgentLocationPredictor {
         return agentLocations;
     }
 
-    public Map<Task, Integer> getLastSeenLocation() {
-        return lastSeenLocation;
-    }
 
     public int getNumAgentsInNeighborhood(Neighborhood n) {
 
@@ -133,8 +89,6 @@ public class AgentLocationPredictor {
     public Map<Task, Integer> getAllAgentLocations() {
         Map<Task, Integer> allLocs = new HashMap<Task, Integer>();
         allLocs.putAll(agentLocations);
-        allLocs.putAll(lastSeenLocation);
-
         return allLocs;
     }
 

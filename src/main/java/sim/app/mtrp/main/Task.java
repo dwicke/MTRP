@@ -114,4 +114,12 @@ public class Task {
     public Job getJob() {
         return job;
     }
+
+    public void setBaseBounty(double baseBounty) {
+        job.setCurrentBounty(baseBounty);
+    }
+
+    public void setBountyRate(double bountyrate) {
+        job.setBountyRate(bountyrate);
+    }
 }

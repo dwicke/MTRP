@@ -12,6 +12,11 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     QTable agentSuccess;
 
+    //what is the average distance I will jumpship
+    // so basically if the distance to the task is less than this then I will signal?
+    double totalJumpshipDist;
+    int numJumpships = 0;
+
     public LearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
         agentSuccess = new QTable(state.getNumAgents(), 1, .99, .1, 1.0);
@@ -58,6 +63,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             // if the agent to task density in the neighborhood is high then we want to coordinate based on signalling?
             // then if it is low then we should
 
+
             if (state.numAgents == state.getNeighborhoods().length) {
                 confidence = pTable.getQValue(t.getNeighborhood().getId(), 0);
             } else if (state.numAgents < state.getNeighborhoods().length) {
@@ -67,6 +73,10 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 double weight = Math.max(0, ((double) state.numAgents - state.getNeighborhoods().length) / (double) state.numAgents);
                 confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
             }
+
+
+
+
 
             double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
             //double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
@@ -79,7 +89,13 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     public boolean travel() {
         boolean hasTraveled = super.travel();
 
-        if (hasTraveled == true && amWorking == false && curJob != null && curJob.getTask().getLocation().distance(this.curLocation) <= state.getThresholdToSignal()) {
+        double signalDist = 0;//state.getThresholdToSignal();
+        if (numJumpships > 0) {
+            signalDist = totalJumpshipDist / numJumpships;
+           // state.printlnSynchronized(" agent id = " + id + " signal dist = " + signalDist);
+        }
+
+        if (hasTraveled == true && amWorking == false && curJob != null && curJob.getTask().getLocation().distance(this.curLocation) <= signalDist) {
             curJob.signal(this);
         }
         return hasTraveled;
@@ -89,7 +105,10 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     public Task handleJumpship(Task bestT) {
        // if (curJob.isSignaled(this)) {
 
-            curJob.unsignal(this);
+        curJob.unsignal(this);
+
+        totalJumpshipDist += getNumTimeStepsFromLocation(curJob.getTask().getLocation(), curLocation);
+        numJumpships++;
             //pTable.update(curJob.getTask().getNeighborhood().getId(), 0, 0.0);
              //pTable.oneUpdate(oneUpdateGamma);
 
