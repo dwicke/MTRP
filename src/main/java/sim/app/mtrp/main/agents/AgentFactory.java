@@ -26,6 +26,8 @@ public class AgentFactory {
                 return new LearningAgentWithCommunication(state, id);
             case 5:
                 return new LearningAgentWithCommunicationGeneral(state, id);
+            case 6:
+                return new NearestFirstWithJump(state, id);
         }
         return null;
     }

@@ -54,7 +54,7 @@ public class LearningAgentWithCommunicationGeneral extends LearningAgentWithJump
             if (!t.getJob().noSignals()) {
                 //state.printlnSynchronized("Time step" + state.schedule.getSteps() + "Job id " + t.getJob().getId() + " is signaled but not by me " + getId());
             }
-            double confidence = 0.0;
+            double confidence = 1.0;
             for (int i = 0; i < state.numAgents; i++) {
                 if (t.getJob().isSignaled(state.getAgents()[i]))
                     confidence *= agentSuccess.getQValue(i, 0);

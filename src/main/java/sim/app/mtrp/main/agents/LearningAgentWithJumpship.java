@@ -1,5 +1,6 @@
 package sim.app.mtrp.main.agents;
 
+import sim.app.mtrp.main.Job;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.util.Bag;
@@ -16,10 +17,12 @@ public class LearningAgentWithJumpship extends LearningAgent {
 
     public Task getAvailableTask(Bag tasks) {
 
+        Job prevJob = null;
         if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
             // then someone beat me to it so learn
             learn(0.0);
             curJob.getTask().decommit(this);// must decommit.
+            prevJob = curJob;
             // and set curJob to null
             curJob = null;
         }
@@ -40,10 +43,24 @@ public class LearningAgentWithJumpship extends LearningAgent {
             bestT = getBestTask(tasks);
         }
 
+        boolean jumped = false;
 
         if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
             bestT = handleJumpship(bestT);
+            jumped = true;
         }
+
+//        if ((prevJob != null && bestT != null) || (jumped == true && bestT != null)) {
+//            // then i've changed jobs somehow either naturally or by jumping ship
+//            // so see if i've also changed neighborhoods
+//            if (prevJob != null && prevJob.getTask().getNeighborhood().getId() != bestT.getNeighborhood().getId()) {
+//                state.printlnSynchronized("I " + id + " have moved neighborhoods!! from " + prevJob.getTask().getNeighborhood().getId() + " to " + bestT.getNeighborhood().getId() + " ptable = " + pTable.getQTableAsString());
+//            } else if (jumped == true && curJob.getTask().getNeighborhood().getId() != bestT.getNeighborhood().getId()){
+//                state.printlnSynchronized("I " + id + " have moved neighborhoods!! " + curJob.getTask().getNeighborhood().getId() + " to " + bestT.getNeighborhood().getId() + " ptable = " + pTable.getQTableAsString());
+//            }
+//        }
+
+
         return bestT;
 
     }

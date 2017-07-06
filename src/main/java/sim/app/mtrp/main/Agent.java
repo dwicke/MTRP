@@ -316,6 +316,7 @@ public abstract class Agent implements Steppable {
     public void work() {
 
 
+
         if (amWorking) {
             // then continue to work
             // see if done the task
@@ -336,6 +337,7 @@ public abstract class Agent implements Steppable {
                 }
             }
         }
+
 
     }
 

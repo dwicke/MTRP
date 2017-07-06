@@ -21,6 +21,7 @@ public class Task {
     Bag committedAgents;
     boolean finished = false;
     Bag blackList; // agents who are not allowed to go after this task
+    boolean dummy = false;
 
     public Task(Neighborhood neighborhood, MTRP state, Double2D location) {
         this.id = taskIDGenerator;
@@ -43,6 +44,10 @@ public class Task {
 //        }
         committedAgents = new Bag();
         blackList = new Bag();
+    }
+
+    public void setDummy(boolean dummy) {
+        this.dummy = dummy;
     }
 
     public void setJob(Job job) {
@@ -121,5 +126,13 @@ public class Task {
 
     public void setBountyRate(double bountyrate) {
         job.setBountyRate(bountyrate);
+    }
+
+    public void setLocation(Double2D newLoc) {
+        this.location = newLoc;
+    }
+
+    public boolean isDummy() {
+        return dummy;
     }
 }
