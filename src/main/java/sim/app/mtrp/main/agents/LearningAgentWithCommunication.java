@@ -95,7 +95,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             }
 
 
-            if (t.getJob().noSignals()) {
+            if (t.getJob().noSignals() && state.numAgents != state.getNumNeighborhoods()) {
                 // I need to see if there are any agents that have signaled nearby
                 Bag nearbyTasks = state.taskPlane.getNeighborsWithinDistance(t.getLocation(), curLocation.distance(t.getLocation()));
                 double nearbyConfidence = 1.0;
@@ -103,7 +103,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                     Task nearTask = (Task) nearbyTasks.get(i);
                     if (!nearTask.getJob().noSignals()) {
                         for (int j = 0; i < state.numAgents; i++) {
-                            if (j != id && nearTask.getJob().isSignaled(state.getAgents()[j]))
+                            if (j != id && nearTask.getJob().getCurWorker() != null && nearTask.getJob().getCurWorker().getId() == state.getAgents()[j].getId())
                                 // TODO: The closer i am to the task that I am interested in
                                 nearbyConfidence *= agentSuccess.getQValue(j, 0);
                         }

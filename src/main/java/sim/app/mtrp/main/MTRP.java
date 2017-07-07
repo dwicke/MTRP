@@ -200,9 +200,9 @@ public class MTRP extends SimState {
 //        locations[3] = new Double2D(100, 100);
 //        locations[4] = new Double2D(25, 25);
 
-//        Double2D[] locations = new Double2D[2];
-//        locations[0] = new Double2D(50,50);
-//        locations[1] = new Double2D(50, 0);
+        Double2D[] locations = new Double2D[2];
+        locations[0] = new Double2D(50,50);
+        locations[1] = new Double2D(50, 0);
 //
 
 
@@ -213,14 +213,14 @@ public class MTRP extends SimState {
             // add it to the plane
 
 
-            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
-                n = new Neighborhood(this, i);
-            }
+//            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
+//                n = new Neighborhood(this, i);
+//            }
 
 
-            neighborhoodPlane.setObjectLocation(n, n.meanLocation);
-//            n.setMeanLocation(locations[i]);
-//            neighborhoodPlane.setObjectLocation(n, locations[i]);
+            //neighborhoodPlane.setObjectLocation(n, n.meanLocation);
+            n.setMeanLocation(locations[i]);
+            neighborhoodPlane.setObjectLocation(n, locations[i]);
 
             neighborhoods[i] = n;//new Neighborhood(this, i);
             // schedule it

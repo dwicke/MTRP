@@ -25,7 +25,7 @@ public class LearningAgent extends Agent {
     double tLearningRate = .5; // set to .1 originally (should be at .95 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .55;
-    double pLearningRate = 0.99;  //.75 is what i used to use... but .99 makes more sens
+    double pLearningRate = .75;//0.99;  //.75 is what i used to use... but .99 makes more sens
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  .002; // was .002
     int numNeighborhoods;
