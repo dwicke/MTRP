@@ -97,7 +97,7 @@ public class Neighborhood implements Steppable{
             double baseBounty = totalTime / count;
             //state.printlnSynchronized("base bounty in neighborhood " + id + " is = " + (totalTime / count));
             genTask.setBaseBounty(baseBounty + 15 * state.maxMeanResourcesNeededForType);
-            double inc = Math.abs(baseBounty - state.getBondsman().getTotalAverageTime()) + .01;
+            double inc = Math.abs(baseBounty - state.getBondsman().getTotalAverageTime()); //+ .01;
             genTask.setBountyRate(inc);
         }
 

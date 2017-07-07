@@ -1,5 +1,6 @@
 package sim.app.mtrp.main.agents;
 
+import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
@@ -97,19 +98,36 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
             if (t.getJob().noSignals() && state.numAgents != state.getNumNeighborhoods()) {
                 // I need to see if there are any agents that have signaled nearby
-                Bag nearbyTasks = state.taskPlane.getNeighborsWithinDistance(t.getLocation(), curLocation.distance(t.getLocation()));
+
                 double nearbyConfidence = 1.0;
-                for (int i =0; i < nearbyTasks.size(); i++) {
-                    Task nearTask = (Task) nearbyTasks.get(i);
-                    if (!nearTask.getJob().noSignals()) {
-                        for (int j = 0; i < state.numAgents; i++) {
-                            if (j != id && nearTask.getJob().getCurWorker() != null && nearTask.getJob().getCurWorker().getId() == state.getAgents()[j].getId())
-                                // TODO: The closer i am to the task that I am interested in
-                                nearbyConfidence *= agentSuccess.getQValue(j, 0);
+                for (int j = 0; j < state.numAgents; j++) {
+                    if (j != id) {
+                        Agent a = state.getAgents()[j];
+                        //&& a.getCurJob().getCurWorker() != null &&  a.getCurJob().getCurWorker().getId() == a.getId()
+                        if (a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
+                        {
+                            nearbyConfidence *= agentSuccess.getQValue(j, 0);
                         }
                     }
                 }
+
+//                Bag nearbyTasks = state.taskPlane.getNeighborsWithinDistance(t.getLocation(), curLocation.distance(t.getLocation()));
+//                double nearbyConfidence = 1.0;
+//                for (int i =0; i < nearbyTasks.size(); i++) {
+//                    Task nearTask = (Task) nearbyTasks.get(i);
+//                    if (!nearTask.getJob().noSignals()) {
+//                        for (int j = 0; j < state.numAgents; j++) {
+//                            //if (j != id && nearTask.getJob().getCurWorker() != null && nearTask.getJob().getCurWorker().getId() == state.getAgents()[j].getId()) {
+//                            if (j != id && nearTask.getJob().isSignaled(state.getAgents()[j])) {
+//                                // TODO: The closer i am to the task that I am interested in
+//                                nearbyConfidence *= agentSuccess.getQValue(j, 0);
+//                            }
+//
+//                        }
+//                    }
+//                }
                 confidence = nearbyConfidence;
+
             }
 
             // this is ORing...
