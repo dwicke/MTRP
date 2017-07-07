@@ -78,7 +78,7 @@ public class MTRP extends SimState {
     @Parameter(names={"--jobLength", "-jl"})
     public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
-    public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
+    public double taskLocLength = 50.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = 20;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
 
     public int numJobTypes = 1; // a job type is the average job length and the average number of resources needed for each type of resource.
@@ -200,6 +200,11 @@ public class MTRP extends SimState {
 //        locations[3] = new Double2D(100, 100);
 //        locations[4] = new Double2D(25, 25);
 
+//        Double2D[] locations = new Double2D[2];
+//        locations[0] = new Double2D(50,50);
+//        locations[1] = new Double2D(50, 0);
+//
+
 
         // First create the neighborhoods.  Use the mean location as the location for the depos
         for (int i = 0; i < numNeighborhoods; i++) {
@@ -214,8 +219,8 @@ public class MTRP extends SimState {
 
 
             neighborhoodPlane.setObjectLocation(n, n.meanLocation);
-            //n.setMeanLocation(locations[i]);
-            //neighborhoodPlane.setObjectLocation(n, locations[i]);
+//            n.setMeanLocation(locations[i]);
+//            neighborhoodPlane.setObjectLocation(n, locations[i]);
 
             neighborhoods[i] = n;//new Neighborhood(this, i);
             // schedule it

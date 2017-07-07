@@ -26,12 +26,12 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         agentSuccess = new QTable(state.getNumAgents(), 1, .99, .1,state.random);
         meanXLocation = new QTable(state.getNumNeighborhoods(), 1, .75, .1, 1.0);
         meanYLocation = new QTable(state.getNumNeighborhoods(), 1, .75, .1, 1.0);
-        dummy = new Task[state.getNumNeighborhoods()];
-        for (int i =0; i < state.getNumNeighborhoods(); i++) {
-            // for each neighborhood we have a dummy task location
-            dummy[i] = new Task(state.getNeighborhoods()[i], state, state.getNeighborhoods()[i].getMeanLocation());
-            dummy[i].setDummy(true);
-        }
+//        dummy = new Task[state.getNumNeighborhoods()];
+//        for (int i =0; i < state.getNumNeighborhoods(); i++) {
+//            // for each neighborhood we have a dummy task location
+//            dummy[i] = new Task(state.getNeighborhoods()[i], state, state.getNeighborhoods()[i].getMeanLocation());
+//            dummy[i].setDummy(true);
+//        }
     }
 
 //    @Override
@@ -106,7 +106,9 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             // if the agent to task density in the neighborhood is high then we want to coordinate based on signalling?
             // then if it is low then we should
 
-
+            // bounty hunters do worse than auctions when the rate at which the tasks are being generated is such that
+            // not all of the agents have something to do.  This would be a light load case.
+            // this is because they think it is worth there while to go chasing after the task...
             if (state.numAgents == state.getNeighborhoods().length) {
                 confidence = pTable.getQValue(t.getNeighborhood().getId(), 0);
             } else if (state.numAgents < state.getNeighborhoods().length) {
@@ -128,9 +130,15 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
 
 
-            double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+            //double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+
+            double costRate = (1-confidence) * (getCost(t) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)));
+
+            double util =  -costRate + ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement())) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+
+
             //double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
-            state.printlnSynchronized("Task is dummy = " + t.isDummy() + " confidence = " + confidence + " util = " + util);
+            //state.printlnSynchronized("Task is dummy = " + t.isDummy() + " confidence = " + confidence + " util = " + util);
 
             return util;
             //return 0; // need to change this.
