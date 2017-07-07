@@ -82,7 +82,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     @Override
     public double getUtility(Task t) {
-        if (t.getJob().isSignaled(this) || t.getJob().noSignals() ) {
+        if (false && t.getJob().isSignaled(this) /*|| t.getJob().noSignals() */ ) {
             return super.getUtility(t);
         } else {
             if (!t.getJob().noSignals()) {
@@ -93,6 +93,25 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 if (t.getJob().isSignaled(state.getAgents()[i]))
                     confidence *= agentSuccess.getQValue(i, 0);
             }
+
+
+            if (t.getJob().noSignals()) {
+                // I need to see if there are any agents that have signaled nearby
+                Bag nearbyTasks = state.taskPlane.getNeighborsWithinDistance(t.getLocation(), curLocation.distance(t.getLocation()));
+                double nearbyConfidence = 1.0;
+                for (int i =0; i < nearbyTasks.size(); i++) {
+                    Task nearTask = (Task) nearbyTasks.get(i);
+                    if (!nearTask.getJob().noSignals()) {
+                        for (int j = 0; i < state.numAgents; i++) {
+                            if (j != id && nearTask.getJob().isSignaled(state.getAgents()[j]))
+                                // TODO: The closer i am to the task that I am interested in
+                                nearbyConfidence *= agentSuccess.getQValue(j, 0);
+                        }
+                    }
+                }
+                confidence = nearbyConfidence;
+            }
+
             // this is ORing...
             // so if i have
             // but say i have a bunch of neighborhoods and the jobs appear a lot more slowly
@@ -118,6 +137,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 double weight = Math.max(0, ((double) state.numAgents - state.getNeighborhoods().length) / (double) state.numAgents);
                 confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
             }
+
 
 
 
