@@ -83,9 +83,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     @Override
     public double getUtility(Task t) {
-        if (false && t.getJob().isSignaled(this) /*|| t.getJob().noSignals() */ ) {
-            return super.getUtility(t);
-        } else {
+
             if (!t.getJob().noSignals()) {
                 //state.printlnSynchronized("Time step" + state.schedule.getSteps() + "Job id " + t.getJob().getId() + " is signaled but not by me " + getId());
             }
@@ -111,21 +109,6 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                     }
                 }
 
-//                Bag nearbyTasks = state.taskPlane.getNeighborsWithinDistance(t.getLocation(), curLocation.distance(t.getLocation()));
-//                double nearbyConfidence = 1.0;
-//                for (int i =0; i < nearbyTasks.size(); i++) {
-//                    Task nearTask = (Task) nearbyTasks.get(i);
-//                    if (!nearTask.getJob().noSignals()) {
-//                        for (int j = 0; j < state.numAgents; j++) {
-//                            //if (j != id && nearTask.getJob().getCurWorker() != null && nearTask.getJob().getCurWorker().getId() == state.getAgents()[j].getId()) {
-//                            if (j != id && nearTask.getJob().isSignaled(state.getAgents()[j])) {
-//                                // TODO: The closer i am to the task that I am interested in
-//                                nearbyConfidence *= agentSuccess.getQValue(j, 0);
-//                            }
-//
-//                        }
-//                    }
-//                }
                 confidence = nearbyConfidence;
 
             }
@@ -157,30 +140,10 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             }
 
 
-
-
-            // how close to the mean location of the tasks that I'm interested in persuing is it?
-//            double taskToMeandist = t.getLocation().distance(meanXLocation.getQValue(t.getNeighborhood().getId(), 0), meanYLocation.getQValue(t.getNeighborhood().getId(), 0));
-//            double taskToMeDist = t.getLocation().distance(curLocation);
-//            double meToMeanDist = curLocation.distance(meanXLocation.getQValue(t.getNeighborhood().getId(), 0), meanYLocation.getQValue(t.getNeighborhood().getId(), 0));
-//
-//            confidence *= (Math.abs(taskToMeDist - meToMeanDist)) / taskToMeandist;
-
-
-
-            //double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-
             double costRate = (1-confidence) * (getCost(t) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)));
-
             double util =  -costRate + ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement())) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
-
-            //double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
-            //state.printlnSynchronized("Task is dummy = " + t.isDummy() + " confidence = " + confidence + " util = " + util);
-
             return util;
-            //return 0; // need to change this.
-        }
     }
 
     @Override

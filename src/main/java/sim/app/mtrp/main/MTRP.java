@@ -200,10 +200,13 @@ public class MTRP extends SimState {
 //        locations[3] = new Double2D(100, 100);
 //        locations[4] = new Double2D(25, 25);
 
-//        Double2D[] locations = new Double2D[2];
+//        Double2D[] locations = new Double2D[4];
 //        locations[0] = new Double2D(50,50);
-//        locations[1] = new Double2D(50, 0);
-////
+//        locations[1] = new Double2D(0, 50);
+//        locations[2] = new Double2D(50, 0);
+//        locations[3] = new Double2D(0, 0);
+
+        ////
 
 
         // First create the neighborhoods.  Use the mean location as the location for the depos
@@ -213,9 +216,9 @@ public class MTRP extends SimState {
             // add it to the plane
 
 
-            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
-                n = new Neighborhood(this, i);
-            }
+//            while (neighborhoodPlane.getNeighborsWithinDistance(n.getMeanLocation(), this.meanDistBetweenNeighborhoods).size() != 0) {
+//                n = new Neighborhood(this, i);
+//            }
 
 
             neighborhoodPlane.setObjectLocation(n, n.meanLocation);
@@ -238,6 +241,7 @@ public class MTRP extends SimState {
         for (int i =0; i < numDepos; i++) {
             // only a single neighborhood per depo
             depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i));
+            //depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i % numNeighborhoods));
             schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
             order++;
         }
@@ -673,5 +677,10 @@ public class MTRP extends SimState {
     }
 
 
+
+    public double getAverageDistance() {
+        if (bondsman == null) { return 0.0;}
+        return neighborhoods[0].getTotalDist() / (double) neighborhoods[0].count;
+    }
 
 }

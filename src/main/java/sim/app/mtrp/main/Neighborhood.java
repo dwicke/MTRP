@@ -21,7 +21,7 @@ public class Neighborhood implements Steppable{
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
-    double timestepsTilNextTask;
+    double timestepsTilNextTask, totalDist;
 
     Task latestTask = null;
 
@@ -58,7 +58,7 @@ public class Neighborhood implements Steppable{
 
     public void generateTasks() {
         if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
-            //if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+         //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
             makeTask();
         } else {
             latestTask = null;
@@ -73,8 +73,8 @@ public class Neighborhood implements Steppable{
 
     }
 
-    public Task makeTask() {
-        // generate a new task
+
+    public Double2D generateLocationInNeighborhood() {
         // first generate its coordinates using a gausian
 //        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
 //        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
@@ -83,13 +83,18 @@ public class Neighborhood implements Steppable{
         double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
         double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
 
+
+
+
         // generate them within the view
         //double x = (state.random.nextDouble(true, true) * state.getSimWidth());
         //double y = (state.random.nextDouble(true, true) * state.getSimHeight());
+        return new Double2D(x, y);
+    }
 
-
-
-        Task genTask = new Task(this, state, new Double2D(x, y));
+    public Task makeTask() {
+        // generate a new task
+        Task genTask = new Task(this, state, generateLocationInNeighborhood());
 
         if (count == 0) {
             genTask.setBaseBounty(totalTime);
@@ -110,6 +115,7 @@ public class Neighborhood implements Steppable{
     public void finishedTask(Task task) {
         totalTime += task.timeNotFinished;
         totalBounty += task.getBounty();
+        totalDist += task.getLocation().distance(meanLocation);
         count++;
         tasks.remove(task);
     }
@@ -176,5 +182,9 @@ public class Neighborhood implements Steppable{
         }else {
             return Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
         }
+    }
+
+    public double getTotalDist() {
+        return totalDist;
     }
 }
