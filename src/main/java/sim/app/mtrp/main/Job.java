@@ -212,4 +212,8 @@ public class Job implements java.io.Serializable  {
     public void setBountyRate(double bountyRate) {
         this.bountyRate = bountyRate;
     }
+
+    public double getBountyRate() {
+        return bountyRate;
+    }
 }
