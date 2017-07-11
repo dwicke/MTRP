@@ -252,12 +252,12 @@ public abstract class Agent implements Steppable {
                 closestWithinRange = d;
             }
         }
-        /*if (closestWithinRange == null) {
-            for (Depo d : depos) {
-                double dist = getNumTimeStepsFromLocation(d.location, loc);
-                state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
-            }
-        }*/
+//        if (closestWithinRange == null) {
+//            for (Depo d : depos) {
+//                double dist = getNumTimeStepsFromLocation(d.location, loc);
+//                state.printlnSynchronized("agent " + id + " curfuel = " + curFuel + " dist = " + dist);
+//            }
+//        }
 
         return closestWithinRange;
 

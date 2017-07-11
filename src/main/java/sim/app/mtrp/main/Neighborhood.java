@@ -21,7 +21,7 @@ public class Neighborhood implements Steppable{
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
-    double timestepsTilNextTask, totalDist;
+    double timestepsTilNextTask, totalDist, totalBr;
 
     Task latestTask = null;
 
@@ -99,17 +99,25 @@ public class Neighborhood implements Steppable{
         if (count == 0) {
             genTask.setBaseBounty(totalTime + 15 * state.maxMeanResourcesNeededForType);
         } else {
-            double baseBounty = (double) totalTime / (double) count + 15 * state.maxMeanResourcesNeededForType;
             //state.printlnSynchronized("base bounty in neighborhood " + id + " is = " + (totalTime / count));
-            genTask.setBaseBounty(baseBounty);
-            double inc = Math.abs(baseBounty - state.getBondsman().getTotalAverageTime()); //+ .01;
-            genTask.setBountyRate(inc);
+            genTask.setBaseBounty(getBaseBounty());
+            double br = getBountyRate(genTask.getLocation());
+            totalBr += br;
+            genTask.setBountyRate(br);
         }
 
         tasks.add(genTask);
         latestTask = genTask;
         totalNumTasksGenerated++;
         return genTask;
+    }
+
+    public double getAverageBountyRate() {
+        if (count == 0) {
+            return 0.0;
+        } else {
+            return (double) totalBr / (double) count;
+        }
     }
 
     public void finishedTask(Task task) {
@@ -172,17 +180,46 @@ public class Neighborhood implements Steppable{
         if(count == 0) {
             return 0.0;
         } else {
-            return totalTime / count;
+            return (double) totalTime / (double) count + 15.0 * (double) state.maxMeanResourcesNeededForType;
         }
     }
 
-    public double getBountyRate() {
+    public double getBountyRate(Double2D loc) {
         if(count == 0) {
             return 1.0;
         }else {
-            return Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
+            // as the number of neighborhoods approaches the number of agents we should go to zero...
+            //return 0.01;//Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
+            // 1/distance to nearest depo!
+            double distFromTaskToDepo = getClosestDepo(loc);
+            if (distFromTaskToDepo < 1.0) {
+                return 0.0;
+            }
+            return getClosestDepo(meanLocation) / distFromTaskToDepo;
         }
     }
+    public double getClosestDepo(Double2D loc) {
+        Depo[] depos = state.getDepos();
+        double curMinDist = Double.MAX_VALUE;
+
+        for (Depo d : depos) {
+            double dist = (int) Math.floor((d.getLocation().distance(loc))/state.getStepsize());//getNumTimeStepsFromLocation(d.location, loc);
+
+            if (dist < curMinDist) {
+                curMinDist = dist;
+            }
+        }
+        /*if (closestWithinRange == null) {
+            for (Depo d : depos) {
+                double dist = getNumTimeStepsFromLocation(d.location, loc);
+                state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
+            }
+        }*/
+
+        return curMinDist;
+
+    }
+
 
     public double getTotalDist() {
         return totalDist;

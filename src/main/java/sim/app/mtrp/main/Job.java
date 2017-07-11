@@ -36,7 +36,7 @@ public class Job implements java.io.Serializable  {
         // now the mean resources:
         resourcesNeeded = new int[state.getNumResourceTypes()];
         for (int i = 0; i < state.numResourceTypes; i++) {
-            resourcesNeeded[i] = state.maxMeanResourcesNeededForType;//state.random.nextInt(state.maxMeanResourcesNeededForType);
+            resourcesNeeded[i] = /*state.maxMeanResourcesNeededForType;// */state.random.nextInt(state.maxMeanResourcesNeededForType);
         }
         this.currentBounty = baseBounty;
     }

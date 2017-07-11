@@ -683,4 +683,9 @@ public class MTRP extends SimState {
         return neighborhoods[0].getTotalDist() / (double) neighborhoods[0].count;
     }
 
+    public double getAverageRevenue() {
+        if (bondsman == null || (bondsman != null && bondsman.getTotalTime() == 0)) { return 0.0;}
+        return (bondsman.getTotalBounty() - depos[0].getTotalFuelPurchased()) / bondsman.getTotalTime();
+    }
+
 }
