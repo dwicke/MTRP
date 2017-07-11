@@ -99,7 +99,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         }
 
         // i need to weight the information
-        double weight = numSignaled / state.numAgents;
+        double weight = numSignaled / (double) state.numAgents;
 
         confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
 
