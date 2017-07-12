@@ -99,6 +99,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         }
 
         // i need to weight the information
+        // i need to account for the single neighborhood case... this is not as good if there is a single neighborhood
+        // as then we don't want to consider the pTable at all.
         double weight = numSignaled / (double) state.numAgents;
 
         confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
