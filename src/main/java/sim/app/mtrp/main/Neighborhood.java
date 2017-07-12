@@ -21,7 +21,7 @@ public class Neighborhood implements Steppable{
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
-    double timestepsTilNextTask, totalDist, totalBr;
+    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty;
 
     Task latestTask = null;
 
@@ -97,7 +97,7 @@ public class Neighborhood implements Steppable{
         Task genTask = new Task(this, state, generateLocationInNeighborhood());
 
         if (count == 0) {
-            genTask.setBaseBounty(totalTime + 15 * state.maxMeanResourcesNeededForType);
+            genTask.setBaseBounty(totalTime + 15 * state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
         } else {
             //state.printlnSynchronized("base bounty in neighborhood " + id + " is = " + (totalTime / count));
             genTask.setBaseBounty(getBaseBounty());
@@ -106,6 +106,7 @@ public class Neighborhood implements Steppable{
             genTask.setBountyRate(br);
         }
 
+        totalBaseBounty += genTask.getBounty();
         tasks.add(genTask);
         latestTask = genTask;
         totalNumTasksGenerated++;
@@ -180,7 +181,7 @@ public class Neighborhood implements Steppable{
         if(count == 0) {
             return 0.0;
         } else {
-            return (double) totalTime / (double) count + 15.0 * (double) state.maxMeanResourcesNeededForType;
+            return (double) totalTime / (double) count + 15.0 * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         }
     }
 
@@ -223,5 +224,13 @@ public class Neighborhood implements Steppable{
 
     public double getTotalDist() {
         return totalDist;
+    }
+
+    public double getTotalBaseBounty() {
+        return totalBaseBounty;
+    }
+
+    public double getTotalBountyRate() {
+        return totalBr;
     }
 }

@@ -688,4 +688,14 @@ public class MTRP extends SimState {
         return (bondsman.getTotalBounty() - depos[0].getTotalFuelPurchased()) / bondsman.getTotalTime();
     }
 
+    public double getAverageBaseBounty() {
+        if (bondsman == null || (bondsman != null && bondsman.getTotalTime() == 0)) { return 0.0;}
+        return bondsman.getAverageBaseBounty();
+    }
+
+    public double getAverageBountyRate() {
+        if (bondsman == null || (bondsman != null && bondsman.getTotalTime() == 0)) { return 0.0;}
+        return bondsman.getAverageBountyRate();
+    }
+
 }

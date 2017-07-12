@@ -18,7 +18,6 @@ import java.util.ArrayList;
  */
 public class LearningAgent extends Agent {
 
-    QTable jobSuccess[];
     public QTable tTable; // for each type of job we learn the
     public QTable pTable; // ptable probability of getting to the task
     double oneUpdateGamma = .001; // .001
@@ -36,10 +35,7 @@ public class LearningAgent extends Agent {
         numNeighborhoods = state.getNumNeighborhoods();
         pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
         tTable = new QTable(state.numJobTypes + state.numEmergentJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
-        jobSuccess = new QTable[state.numNeighborhoods];
-        for (int i = 0; i < jobSuccess.length; i++) {
-            jobSuccess[i]  = new QTable(state.numJobTypes + state.numEmergentJobTypes, 1, jLearningRate, tDiscountBeta, state.random, 1.0, 0.0);
-        }
+
     }
 
     static int beatCounter = 0;
@@ -80,10 +76,10 @@ public class LearningAgent extends Agent {
         }
 
         // epsilon random pick task
-        if (state.random.nextDouble() < epsilonChooseRandomTask && bagOfTasks.size() > 0) {
-            Task randTask = (Task) bagOfTasks.get(state.random.nextInt(bagOfTasks.size()));
-            return randTask;
-        }
+//        if (state.random.nextDouble() < epsilonChooseRandomTask && bagOfTasks.size() > 0) {
+//            Task randTask = (Task) bagOfTasks.get(state.random.nextInt(bagOfTasks.size()));
+//            return randTask;
+//        }
 
         // otherwise just pick it using real method
         Task[] tasks = (Task[]) bagOfTasks.toArray(new Task[bagOfTasks.size()]);
@@ -149,7 +145,7 @@ public class LearningAgent extends Agent {
         pTable.update(curJob.getTask().getNeighborhood().getId(), 0, reward);
         pTable.oneUpdate(oneUpdateGamma);
 
-        jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
+        //jobSuccess[curJob.getTask().getNeighborhood().getId()].update(curJob.getJobType(), 0, reward);
         //jobSuccess[curJob.getTask().getNeighborhood().getId()].oneUpdate(oneUpdateGamma);
 
 
