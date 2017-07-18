@@ -56,19 +56,28 @@ public class Neighborhood implements Steppable{
     }
 
 
+
+
+
     public void generateTasks() {
-        if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
-         //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+
+
+
+        // poisson process by sampling exponential distribution
+        if (state.random.nextDouble() < (1 - Math.exp(-(1.0 / getTimestepsTilNextTask())) ) ) {
+            //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
             makeTask();
         } else {
             latestTask = null;
         }
-//        if (state.hasRandomness) {
-//
+
+
+        // bernolli process by sampling geomtric distribution
+//        if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
+//         //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+//            makeTask();
 //        } else {
-//            if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
-//                makeTask();
-//            }
+//            //latestTask = null;
 //        }
 
     }

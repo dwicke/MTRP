@@ -36,6 +36,7 @@ public abstract class Agent implements Steppable {
     boolean slow = false;
 
 
+
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
 
     public Agent() {}
