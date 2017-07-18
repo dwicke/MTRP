@@ -23,11 +23,15 @@ public class Depo implements Steppable{
         this.id = id;
 
         this.neighborhood = neighborhood;
-        // i might actually want to put it at the mean...??? i'll do that for now...
+//        // i might actually want to put it at the mean...??? i'll do that for now...
         double x = /*state.random.nextGaussian() * state.taskLocStdDev +*/ neighborhood.meanLocation.getX();
         double y = /*state.random.nextGaussian() * state.taskLocStdDev +*/ neighborhood.meanLocation.getY();
-
+//
         location = new Double2D(x, y);
+
+        // this doesn't work well in the two neighborhood case.
+       // location = this.neighborhood.generateLocationInNeighborhood();
+
         state.getDepoPlane().setObjectLocation(this, location);
 
         resources = new Resource[state.numResourceTypes];

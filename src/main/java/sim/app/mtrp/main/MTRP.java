@@ -171,7 +171,7 @@ public class MTRP extends SimState {
         }
 
 
-        printlnSynchronized("Has randomness " + basebounty);
+        printlnSynchronized("Has randomness " + numNeighborhoods);
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
@@ -235,12 +235,12 @@ public class MTRP extends SimState {
 
 
         depos = new Depo[numDepos];
-        Bag shuffledNeighborhoods = new Bag(neighborhoods);
-        shuffledNeighborhoods.shuffle(random);
+        //Bag shuffledNeighborhoods = new Bag(neighborhoods);
+        //shuffledNeighborhoods.shuffle(random);
         // create the depos after the neighborhood as we place the depos in random neighborhoods
         for (int i =0; i < numDepos; i++) {
-            // only a single neighborhood per depo
-            depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i));
+            // pick neighborhood to end up in randomly
+            depos[i] = new Depo(this, i, neighborhoods[random.nextInt(numNeighborhoods)]);
             //depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i % numNeighborhoods));
             schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
             order++;

@@ -58,27 +58,43 @@ public class Neighborhood implements Steppable{
 
 
 
-
+    double lastTime = 0;
+    double totalInterTime = 0;
+    double numTask = 0;
     public void generateTasks() {
 
-
-
         // poisson process by sampling exponential distribution
-        if (state.random.nextDouble() < (1 - Math.exp(-(1.0 / getTimestepsTilNextTask())) ) ) {
-            //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
-            makeTask();
-        } else {
-            latestTask = null;
-        }
+        // I can't do it this way because MASON is a discrete time event simulator
+        // as in this does not produce a poisson distribution with a mean wait time of 1/lambda
+//        if (state.random.nextDouble() < (1 - Math.exp(-(1.0 / getTimestepsTilNextTask())) ) ) {
+//            //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+//            double interTime = state.schedule.getTime() - lastTime;
+//            numTask++;
+//            lastTime = state.schedule.getTime();
+//            totalInterTime += interTime;
+//            state.printlnSynchronized(" average time = " + totalInterTime / numTask);
+//            makeTask();
+//        } else {
+//            latestTask = null;
+//        }
 
 
         // bernolli process by sampling geomtric distribution
-//        if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
-//         //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
-//            makeTask();
-//        } else {
-//            //latestTask = null;
-//        }
+        // i in effect am producing a poisson process.
+        if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
+         //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
+//            double interTime = state.schedule.getTime() - lastTime;
+//            numTask++;
+//            lastTime = state.schedule.getTime();
+//            totalInterTime += interTime;
+//            state.printlnSynchronized(" average time = " + totalInterTime / numTask);
+            makeTask();
+
+        } else {
+            //latestTask = null;
+        }
+
+
 
     }
 
@@ -188,7 +204,7 @@ public class Neighborhood implements Steppable{
 
     public double getBaseBounty() {
         if(count == 0) {
-            return 0.0;
+            return state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         } else {
             return (double) totalTime / (double) count + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         }
@@ -205,7 +221,9 @@ public class Neighborhood implements Steppable{
             if (distFromTaskToDepo < 1.0) {
                 return 0.0;
             }
-            return getClosestDepo(meanLocation) / distFromTaskToDepo;
+            double rate =  getClosestDepo(meanLocation) / distFromTaskToDepo;
+            //state.printlnSynchronized("Rate for tasks = " + rate);
+            return rate;
         }
     }
     public double getClosestDepo(Double2D loc) {
