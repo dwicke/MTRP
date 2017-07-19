@@ -127,6 +127,15 @@ public class Task {
     public void setBountyRate(double bountyrate) {
         job.setBountyRate(bountyrate);
     }
+    public double getBountyRate() {
+        return job.getBountyRate();
+    }
+
+    public double getBaseBounty() { return job.getCurrentBounty();
+    }
+
+
+
 
     public void setLocation(Double2D newLoc) {
         this.location = newLoc;

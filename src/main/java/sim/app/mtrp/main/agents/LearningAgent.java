@@ -95,13 +95,15 @@ public class LearningAgent extends Agent {
         for (Task t : tasks) {
 
             double value = getUtility(t);
-
+            //state.printlnSynchronized("agent id = " + id + " value for task i " + t.getId() + " is = " + value);
             if (value > curMax) {
                 chosenTask = t;
                 curMax = value;
             }
         }
-
+        if (chosenTask == null) {
+           // state.printlnSynchronized("agent id = " + id + " decided none of that tasks were worth going after...");
+        }
 
         return chosenTask;
     }

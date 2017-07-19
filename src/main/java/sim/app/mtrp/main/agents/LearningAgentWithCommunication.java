@@ -13,7 +13,7 @@ import sim.util.Double2D;
 public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     QTable agentSuccess;
-    double agentSuccessLR = .99;
+    double agentSuccessLR = .99;//.99;
     QTable meanJumpshipDist;
     Task[] dummy;
 
@@ -25,6 +25,14 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     public LearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
         agentSuccess = new QTable(state.getNumAgents(), 1, agentSuccessLR, .1,state.random);
+    }
+
+    @Override
+    public Task getAvailableTask() {
+//        agentSuccess.oneUpdate(oneUpdateGamma);
+//        pTable.oneUpdate(oneUpdateGamma);
+
+        return super.getAvailableTask();
     }
 
     @Override
@@ -41,33 +49,59 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         double numSignaled = 0;
         for (int i = 0; i < state.numAgents; i++) {
             Agent a = state.getAgents()[i];
-            if (i != id && t.getJob().isSignaled(state.getAgents()[i])) {
+            if (i != id && t.getJob().isSignaled(a)) {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
-            } else if (i != id && a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
+            }
+            //else if (i != id && a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
+            else if (i != id && a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
             {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
             }
+            if (i == id && t.getJob().isSignaled(a)) {
+                if (curJob == null) {
+                    //state.printlnSynchronized("Agent id = " + id + " task id = " + t.getId() + " has been signaled by me but i am not going after any tasks!!");
+                } else {
+                    //state.printlnSynchronized("Agent id = " + id + " task id =" + t.getId() + " has signalled this task and curtask id = " + curJob.getTask().getId());
+                }
+                confidence = 1.0;
+                break;
+            }
         }
 
         double weight = state.numNeighborhoods == 1 ? 1.0 : numSignaled / (double) state.numAgents;
+        double signalConf = confidence;
 
-        confidence = weight * confidence + (1 - weight) * pTable.getQValue(t.getNeighborhood().getId(), 0);
+
+        double neighborhoodp = getNorm(t);
+
+        confidence = weight * confidence + (1 - weight) * neighborhoodp;
 
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
-        return confidence * (t.getBounty() / totalTime) + confidence * t.getJob().getBountyRate() - (getCost(t) / totalTime);
+        double util =  confidence * (t.getBounty() / totalTime) + confidence * t.getJob().getBountyRate() - (getCost(t) / totalTime);
+        if (util < 0) {
+           // state.printlnSynchronized("Agent id = " + id + " task id = " + t.getId() + " weight = " + weight + " signal confidence = " + signalConf + " num signaled " + numSignaled + " ptable = " + pTable.getQValue(t.getNeighborhood().getId(), 0) + " conf = " + confidence);
+        }
+        return util;
     }
+
+    public double getNorm(Task t) {
+        double ptableSum = 0.0;
+        for (int i = 0; i < state.numNeighborhoods; i++) {
+            ptableSum += pTable.getQValue(i, 0);
+        }
+        double neighborhoodp = pTable.getQValue(t.getNeighborhood().getId(), 0) / ptableSum;
+        return neighborhoodp;
+    }
+
 
     @Override
     public boolean travel() {
         boolean hasTraveled = super.travel();
 
-        double signalDist = 0;//state.getThresholdToSignal();
-        if (numJumpships > 0) {
-            signalDist = totalJumpshipDist / numJumpships;
-        }
+        double signalDist = getSignallingDistance();
 
         if (hasTraveled == true && amWorking == false && curJob != null && curJob.getTask().getLocation().distance(this.curLocation) <= signalDist) {
             curJob.signal(this);
@@ -75,6 +109,14 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         return hasTraveled;
     }
 
+
+    public double getSignallingDistance() {
+        double signalDist = 0;//state.getThresholdToSignal();
+        if (numJumpships > 0) {
+            signalDist = totalJumpshipDist / numJumpships;
+        }
+        return signalDist;
+    }
     @Override
     public Task handleJumpship(Task bestT) {
 

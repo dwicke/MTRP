@@ -63,20 +63,7 @@ public class Neighborhood implements Steppable{
     double numTask = 0;
     public void generateTasks() {
 
-        // poisson process by sampling exponential distribution
-        // I can't do it this way because MASON is a discrete time event simulator
-        // as in this does not produce a poisson distribution with a mean wait time of 1/lambda
-//        if (state.random.nextDouble() < (1 - Math.exp(-(1.0 / getTimestepsTilNextTask())) ) ) {
-//            //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
-//            double interTime = state.schedule.getTime() - lastTime;
-//            numTask++;
-//            lastTime = state.schedule.getTime();
-//            totalInterTime += interTime;
-//            state.printlnSynchronized(" average time = " + totalInterTime / numTask);
-//            makeTask();
-//        } else {
-//            latestTask = null;
-//        }
+
 
 
         // bernolli process by sampling geomtric distribution
@@ -217,34 +204,47 @@ public class Neighborhood implements Steppable{
             // as the number of neighborhoods approaches the number of agents we should go to zero...
             //return 0.01;//Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
             // 1/distance to nearest depo!
-            double distFromTaskToDepo = getClosestDepo(loc);
+            Depo closestDepo = getClosestDepo(loc);
+            double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
+            //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
+
             if (distFromTaskToDepo < 1.0) {
                 return 0.0;
             }
-            double rate =  getClosestDepo(meanLocation) / distFromTaskToDepo;
-            //state.printlnSynchronized("Rate for tasks = " + rate);
-            return rate;
+            //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
+
+            return (double) (state.numNeighborhoods - state.numDepos) / (double) (state.numNeighborhoods);
+
+//            if (this.meanLocation.equals(closestDepo.neighborhood.getMeanLocation())) {
+//
+//            }
+//            double distFromDepoToDepoNeighborhood = stepDistance(closestDepo.getLocation(), closestDepo.neighborhood.meanLocation);
+//            double rateNoDepo =  stepDistance(closestDepo.getLocation(), meanLocation) / distFromDepoToDepoNeighborhood;
+//
+//            //state.printlnSynchronized("Rate for tasks = " + rate);
+//            return rateNoDepo;
+
         }
     }
-    public double getClosestDepo(Double2D loc) {
+
+    public double stepDistance(Double2D d, Double2D loc) {
+        return (int) Math.floor((d.distance(loc))/state.getStepsize());
+    }
+
+    public Depo getClosestDepo(Double2D loc) {
         Depo[] depos = state.getDepos();
         double curMinDist = Double.MAX_VALUE;
-
+        Depo closeset = null;
         for (Depo d : depos) {
             double dist = (int) Math.floor((d.getLocation().distance(loc))/state.getStepsize());//getNumTimeStepsFromLocation(d.location, loc);
 
             if (dist < curMinDist) {
                 curMinDist = dist;
+                closeset = d;
             }
         }
-        /*if (closestWithinRange == null) {
-            for (Depo d : depos) {
-                double dist = getNumTimeStepsFromLocation(d.location, loc);
-                state.printlnSynchronized("agent " + id + "curfuel = " + curFuel + " dist = " + dist);
-            }
-        }*/
 
-        return curMinDist;
+        return closeset;
 
     }
 
