@@ -44,7 +44,8 @@ public class MTRP extends SimState {
     public int agentType = 3;
 
     public int maxCarrySizePerResource = 100; // number of each type of resource I can carry
-    public double startFunds = 100;
+    @Parameter(names={"--startFunds", "-sf"})
+    public double startFunds = 1000;
 
     @Parameter(names={"--fuelCapacity", "-fc"})
     public double fuelCapacity = 3000;
@@ -63,11 +64,15 @@ public class MTRP extends SimState {
 
     @Parameter(names={"--numDepos", "-nd"})
     public int numDepos = 1;
-    public int depoCapacity = 50; // how many resources of each type can the depo carry
+    @Parameter(names={"--depoCapacity", "-dc"})
+    public int depoCapacity = 100; // how many resources of each type can the depo carry
     public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
 
+    @Parameter(names={"--numResourceTypes", "-rt"})
     public int numResourceTypes = 0; // fuel is not a resource included here.
+    @Parameter(names={"--maxCostPerResource", "-cr"})
     public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
+    @Parameter(names={"--maxMeanResourcesNeededForType", "-rn"})
     public int maxMeanResourcesNeededForType = 3; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
@@ -81,6 +86,7 @@ public class MTRP extends SimState {
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = 20;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
 
+    @Parameter(names={"--numJobTypes", "-nj"})
     public int numJobTypes = 1; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
@@ -476,7 +482,7 @@ public class MTRP extends SimState {
         return bondsman.getAvailableTasks().length;
     }
 
-    public int getNumTasksOnBoard() {
+    public int getTotalTasksGenerated() {
         if (bondsman == null) { return 0;}
         return bondsman.getTotalTasksGenerated();
     }

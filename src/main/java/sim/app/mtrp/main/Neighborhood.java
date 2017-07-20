@@ -198,22 +198,28 @@ public class Neighborhood implements Steppable{
     }
 
     public double getBountyRate(Double2D loc) {
+
+
+
+
+
         if(count == 0) {
             return 1.0;
         }else {
             // as the number of neighborhoods approaches the number of agents we should go to zero...
             //return 0.01;//Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
             // 1/distance to nearest depo!
-            Depo closestDepo = getClosestDepo(loc);
-            double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
-            //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
+//            Depo closestDepo = getClosestDepo(loc);
+//            double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
+//            //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
+//
+////            if (distFromTaskToDepo < 1.0) {
+////                return 0.0;
+////            }
 
-            if (distFromTaskToDepo < 1.0) {
-                return 0.0;
-            }
             //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
 
-            return (double) (state.numNeighborhoods - state.numDepos) / (double) (state.numNeighborhoods);
+            return (double) Math.abs(state.numNeighborhoods - state.numDepos) / (double) (state.numNeighborhoods);
 
 //            if (this.meanLocation.equals(closestDepo.neighborhood.getMeanLocation())) {
 //
@@ -225,6 +231,7 @@ public class Neighborhood implements Steppable{
 //            return rateNoDepo;
 
         }
+
     }
 
     public double stepDistance(Double2D d, Double2D loc) {
