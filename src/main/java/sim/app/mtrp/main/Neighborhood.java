@@ -209,13 +209,13 @@ public class Neighborhood implements Steppable{
             // as the number of neighborhoods approaches the number of agents we should go to zero...
             //return 0.01;//Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
             // 1/distance to nearest depo!
-//            Depo closestDepo = getClosestDepo(loc);
-//            double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
-//            //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
-//
-////            if (distFromTaskToDepo < 1.0) {
-////                return 0.0;
-////            }
+            Depo closestDepo = getClosestDepo(loc);
+            double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
+            //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
+
+//            if (distFromTaskToDepo < 1.0) {
+//                return 0.0;
+//            }
 
             //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
 

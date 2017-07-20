@@ -46,7 +46,7 @@ public class AuctionWithResources extends AuctionAgent {
         amWorking = resourceLearner.claimWork(curJob);
         if (amWorking) {
             amWorking = curJob.claimWork(this);
-            state.printlnSynchronized("Am working? = " + amWorking);
+           // state.printlnSynchronized("Am working? = " + amWorking);
         }
     }
 

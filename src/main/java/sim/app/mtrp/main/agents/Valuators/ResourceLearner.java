@@ -194,12 +194,12 @@ public class ResourceLearner {
         if (curJob != null && getTravelConfidence(curJob.getTask()) < .75) {
             needResources = true;
         } else if (curJob != null) {
-            state.printlnSynchronized("Travel confidence = " + getTravelConfidence(curJob.getTask()));
+           // state.printlnSynchronized("Travel confidence = " + getTravelConfidence(curJob.getTask()));
         }
 
         if (curJob == null) {
-            if (bestTask != null)
-                state.printlnSynchronized("time step: " + state.schedule.getSteps() + "Best job id = " + bestTask.getJob().getId() + " confidence = " + getTravelConfidence(bestTask) + " failed Job = "  + failedJob);
+//            if (bestTask != null)
+//                state.printlnSynchronized("time step: " + state.schedule.getSteps() + "Best job id = " + bestTask.getJob().getId() + " confidence = " + getTravelConfidence(bestTask) + " failed Job = "  + failedJob);
             if (bestTask == null) {
                 needResources = true;
             } else if (bestTask != null && getTravelConfidence(bestTask) < .75) {

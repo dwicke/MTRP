@@ -80,9 +80,12 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
-        double util =  confidence * (t.getBounty() / totalTime) + confidence * t.getJob().getBountyRate() - (getCost(t) / totalTime);
+        //double util =  confidence * (t.getBounty() / totalTime) + confidence * t.getJob().getBountyRate() - (getCost(t) / totalTime);
+        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
+        // another way to look at it might be to minimize the expected cost if failed?
+        // double util = (1-confidence) * (-getCost(t) / totalTime);
         if (util < 0) {
-           // state.printlnSynchronized("Agent id = " + id + " task id = " + t.getId() + " weight = " + weight + " signal confidence = " + signalConf + " num signaled " + numSignaled + " ptable = " + pTable.getQValue(t.getNeighborhood().getId(), 0) + " conf = " + confidence);
+           // state.printlnSynchronized("Agent id = " + id + " task id = " + t.getId() + " cost per step = " + (getCost(t) / totalTime) + " bounty/ste = " + (confidence * (t.getBounty() / totalTime) + confidence * t.getJob().getBountyRate()) + " weight = " + weight + " signal confidence = " + signalConf + " num signaled " + numSignaled + " ptable = " + pTable.getQValue(t.getNeighborhood().getId(), 0) + " conf = " + confidence);
         }
         return util;
     }

@@ -65,15 +65,16 @@ public class MTRP extends SimState {
     @Parameter(names={"--numDepos", "-nd"})
     public int numDepos = 1;
     @Parameter(names={"--depoCapacity", "-dc"})
-    public int depoCapacity = 100; // how many resources of each type can the depo carry
-    public int depoRefreshRate = 100; // every one hundred timesteps we refresh the resources in the depo... this also is very arbitrary and could be investigated
+    public int depoCapacity = 1000; // how many resources of each type can the depo carry
+    @Parameter(names={"--depoRefreshRate", "-dr"})
+    public int depoRefreshRate = 10; // (should be more frequent...) every one hundred timesteps we refresh the resources in the depo is too slow...
 
     @Parameter(names={"--numResourceTypes", "-rt"})
     public int numResourceTypes = 0; // fuel is not a resource included here.
     @Parameter(names={"--maxCostPerResource", "-cr"})
     public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
     @Parameter(names={"--maxMeanResourcesNeededForType", "-rn"})
-    public int maxMeanResourcesNeededForType = 3; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
+    public int maxMeanResourcesNeededForType = 10; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
     public double fuelCost = 1.0;
 
