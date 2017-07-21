@@ -6,7 +6,7 @@ package sim.app.mtrp.main;
 public class Resource implements java.io.Serializable {
     private static final long serialVersionUID = 1;
 
-    double buyPrice;
+    private double buyPrice;
     double buybackPrice;
 
     int curQuantity;
@@ -19,7 +19,7 @@ public class Resource implements java.io.Serializable {
         this.quantity = quantity;
         this.curQuantity = quantity;
         this.buybackPrice = buybackPrice;
-        this.buyPrice = buyPrice;
+        this.setBuyPrice(buyPrice);
     }
 
     public void replenish() {
@@ -38,9 +38,9 @@ public class Resource implements java.io.Serializable {
     }
 
     public double buy(int quantityBuying) {
-        revenue += quantityBuying * buyPrice;
+        revenue += quantityBuying * getBuyPrice();
         curQuantity -= quantityBuying;
-        return quantityBuying * buyPrice;
+        return quantityBuying * getBuyPrice();
     }
 
     public double getCurQuantity() {
@@ -54,5 +54,13 @@ public class Resource implements java.io.Serializable {
     @Override
     public String toString() {
         return resourceType + " curQuantity/quantity: " + curQuantity + "/" + quantity;
+    }
+
+    public double getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(double buyPrice) {
+        this.buyPrice = buyPrice;
     }
 }

@@ -64,7 +64,7 @@ public class Depo implements Steppable{
     }
 
     public double getResourceCost(int resourceID) {
-        return resources[resourceID].buyPrice;
+        return resources[resourceID].getBuyPrice();
     }
 
     public double getResourceBuyBackPrice(int resourceID) {

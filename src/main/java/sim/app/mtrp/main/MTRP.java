@@ -25,10 +25,10 @@ public class MTRP extends SimState {
     private List<String> parameters = new ArrayList<String>();
 
     @Parameter(names={"--numAgents", "-na"})
-    public int numAgents = 1;
+    public int numAgents = 4;
 
     @Parameter(names={"--numNeighborhoods", "-n"})
-    public int numNeighborhoods = 1;
+    public int numNeighborhoods = 6;
 
     @Parameter(names={"--simWidth", "-sw"})
     public int simWidth = 100;
@@ -41,7 +41,7 @@ public class MTRP extends SimState {
     // agent params:
 
     @Parameter(names={"--agentType", "-a"})
-    public int agentType = 3;
+    public int agentType = 2;
 
     public int maxCarrySizePerResource = 100; // number of each type of resource I can carry
     @Parameter(names={"--startFunds", "-sf"})
@@ -70,7 +70,7 @@ public class MTRP extends SimState {
     public int depoRefreshRate = 10; // (should be more frequent...) every one hundred timesteps we refresh the resources in the depo is too slow...
 
     @Parameter(names={"--numResourceTypes", "-rt"})
-    public int numResourceTypes = 0; // fuel is not a resource included here.
+    public int numResourceTypes = 3; // fuel is not a resource included here.
     @Parameter(names={"--maxCostPerResource", "-cr"})
     public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
     @Parameter(names={"--maxMeanResourcesNeededForType", "-rn"})
@@ -79,7 +79,7 @@ public class MTRP extends SimState {
     public double fuelCost = 1.0;
 
     @Parameter(names={"--timestepsTilNextTask", "-s"})
-    public int timestepsTilNextTask = 10; // used to calculate the arrival rate of the tasks using a geometric distribution
+    public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     @Parameter(names={"--jobLength", "-jl"})
     public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
@@ -88,7 +88,7 @@ public class MTRP extends SimState {
     public double meanDistBetweenNeighborhoods = 20;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
 
     @Parameter(names={"--numJobTypes", "-nj"})
-    public int numJobTypes = 1; // a job type is the average job length and the average number of resources needed for each type of resource.
+    public int numJobTypes = 3; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:
