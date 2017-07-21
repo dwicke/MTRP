@@ -59,15 +59,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
             }
-            if (i == id && t.getJob().isSignaled(a)) {
-                if (curJob == null) {
-                    //state.printlnSynchronized("Agent id = " + id + " task id = " + t.getId() + " has been signaled by me but i am not going after any tasks!!");
-                } else {
-                    //state.printlnSynchronized("Agent id = " + id + " task id =" + t.getId() + " has signalled this task and curtask id = " + curJob.getTask().getId());
-                }
-                confidence = 1.0;
-                break;
-            }
+
         }
 
         double weight = state.numNeighborhoods == 1 ? 1.0 : numSignaled / (double) state.numAgents;
