@@ -213,13 +213,13 @@ public class Neighborhood implements Steppable{
             double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
             //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
 
-//            if (distFromTaskToDepo < 1.0) {
-//                return 0.0;
-//            }
+            if (distFromTaskToDepo < 1.0) {
+                return 0.0;
+            }
 
-            //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
+            return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
 
-            return (double) Math.abs(state.numNeighborhoods - state.numDepos) / (double) (state.numNeighborhoods);
+            //return (double) Math.abs(state.numNeighborhoods - state.numDepos) / (double) (state.numNeighborhoods);
 
 //            if (this.meanLocation.equals(closestDepo.neighborhood.getMeanLocation())) {
 //
