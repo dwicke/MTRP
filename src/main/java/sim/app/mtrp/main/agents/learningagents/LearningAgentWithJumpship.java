@@ -1,4 +1,4 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.learningagents;
 
 import sim.app.mtrp.main.Job;
 import sim.app.mtrp.main.MTRP;

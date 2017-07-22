@@ -1,4 +1,4 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.comparisonagents;
 
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;

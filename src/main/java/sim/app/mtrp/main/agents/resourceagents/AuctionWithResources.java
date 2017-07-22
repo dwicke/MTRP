@@ -1,10 +1,8 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.resourceagents;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sim.app.mtrp.main.*;
+import sim.app.mtrp.main.agents.comparisonagents.AuctionAgent;
 import sim.app.mtrp.main.agents.Valuators.ResourceLearner;
-import sim.app.mtrp.main.util.QTable;
 
 /**
  *
@@ -14,11 +12,9 @@ import sim.app.mtrp.main.util.QTable;
  *
  * Created by drew on 3/21/17.
  */
-public class SimpleLearningWithResources extends LearningAgentWithCommunication {
-
-
+public class AuctionWithResources extends AuctionAgent {
     ResourceLearner resourceLearner;
-    public SimpleLearningWithResources(MTRP state, int id) {
+    public AuctionWithResources(MTRP state, int id) {
         super(state, id);
         resourceLearner = new ResourceLearner(state);
 
@@ -32,16 +28,14 @@ public class SimpleLearningWithResources extends LearningAgentWithCommunication 
     }
 
     public boolean checkNeedResources(Depo nearestDepo) {
-        boolean needFuel =  super.checkNeedResources(nearestDepo);
-        boolean needOtherResources = resourceLearner.checkNeedResources(nearestDepo, curJob,getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks())));
-        //state.printlnSynchronized("Need fuel = " + needFuel + " need other resources = " + needOtherResources);
-        return needFuel || needOtherResources;
+        return super.checkNeedResources(nearestDepo) || resourceLearner.checkNeedResources(nearestDepo, curJob,getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks())));
     }
 
     @Override
     public boolean buySellTaskResources(Depo nearestDepo) {
         double preBounty = bounty;
-        bounty =  resourceLearner.buySellTaskResources(nearestDepo, bounty, getPercentageJobTypes(getTasksWithinRangeAsArray(state.bondsman.getAvailableTasks())));
+
+        bounty =  resourceLearner.buySellTaskResources(nearestDepo, bounty, getPercentageJobTypes(getNonCommittedTasksAsArray()));
         return preBounty != bounty;// i did something if i have different amount of bounty now.
     }
 
@@ -50,9 +44,7 @@ public class SimpleLearningWithResources extends LearningAgentWithCommunication 
         amWorking = resourceLearner.claimWork(curJob);
         if (amWorking) {
             amWorking = curJob.claimWork(this);
-            //state.printlnSynchronized("Am working? = " + amWorking);
-        } else {
-            //state.printlnSynchronized("Am working? = " + amWorking);
+           // state.printlnSynchronized("Am working? = " + amWorking);
         }
     }
 
@@ -61,8 +53,6 @@ public class SimpleLearningWithResources extends LearningAgentWithCommunication 
     public int[] getMyResources() {
         return resourceLearner.getMyResources();
     }
-
-
 
 
 }

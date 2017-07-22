@@ -1,9 +1,10 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.comparisonagents;
 
 import sim.app.mtrp.main.Depo;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.agents.Valuators.Auction;
+import sim.app.mtrp.main.agents.learningagents.LearningAgent;
 import sim.util.Bag;
 
 /**

@@ -2,9 +2,12 @@ package sim.app.mtrp.main.agents;
 
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
-
-import java.util.HashMap;
-import java.util.Map;
+import sim.app.mtrp.main.agents.comparisonagents.AuctionAgent;
+import sim.app.mtrp.main.agents.comparisonagents.NearestFirstWithJump;
+import sim.app.mtrp.main.agents.learningagents.LearningAgentWithCommunication;
+import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
+import sim.app.mtrp.main.agents.resourceagents.AuctionWithResources;
+import sim.app.mtrp.main.agents.resourceagents.SimpleLearningWithResources;
 
 /**
  * Created by drew on 3/6/17.

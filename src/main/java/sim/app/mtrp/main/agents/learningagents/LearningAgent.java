@@ -1,13 +1,10 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.learningagents;
 
 import sim.app.mtrp.main.Agent;
-import sim.app.mtrp.main.Depo;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
 import sim.util.Bag;
-
-import java.util.ArrayList;
 
 /**
  * Simple bounty hunting agent that cooresponds to the SimpleCostJumpship
@@ -20,7 +17,7 @@ public class LearningAgent extends Agent {
 
     public QTable tTable; // for each type of job we learn the
     public QTable pTable; // ptable probability of getting to the task
-    double oneUpdateGamma = .001; // .001
+    public double oneUpdateGamma = .001; // .001
     double tLearningRate = .5; // set to .1 originally (should be at .95 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .55;

@@ -1,9 +1,6 @@
 package sim.app.mtrp.main.agents.Valuators;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sim.app.mtrp.main.*;
-import sim.app.mtrp.main.agents.SimpleLearningWithResources;
 import sim.app.mtrp.main.util.QTable;
 
 import java.util.Map;

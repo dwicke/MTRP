@@ -1,10 +1,8 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.resourceagents;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sim.app.mtrp.main.*;
+import sim.app.mtrp.main.agents.learningagents.LearningAgentWithCommunication;
 import sim.app.mtrp.main.agents.Valuators.ResourceLearner;
-import sim.app.mtrp.main.util.QTable;
 
 /**
  *
@@ -14,9 +12,11 @@ import sim.app.mtrp.main.util.QTable;
  *
  * Created by drew on 3/21/17.
  */
-public class AuctionWithResources extends AuctionAgent {
+public class SimpleLearningWithResources extends LearningAgentWithCommunication {
+
+
     ResourceLearner resourceLearner;
-    public AuctionWithResources(MTRP state, int id) {
+    public SimpleLearningWithResources(MTRP state, int id) {
         super(state, id);
         resourceLearner = new ResourceLearner(state);
 
@@ -30,14 +30,16 @@ public class AuctionWithResources extends AuctionAgent {
     }
 
     public boolean checkNeedResources(Depo nearestDepo) {
-        return super.checkNeedResources(nearestDepo) || resourceLearner.checkNeedResources(nearestDepo, curJob,getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks())));
+        boolean needFuel =  super.checkNeedResources(nearestDepo);
+        boolean needOtherResources = resourceLearner.checkNeedResources(nearestDepo, curJob,getBestTask(getTasksWithinRange(state.getBondsman().getAvailableTasks())));
+        //state.printlnSynchronized("Need fuel = " + needFuel + " need other resources = " + needOtherResources);
+        return needFuel || needOtherResources;
     }
 
     @Override
     public boolean buySellTaskResources(Depo nearestDepo) {
         double preBounty = bounty;
-
-        bounty =  resourceLearner.buySellTaskResources(nearestDepo, bounty, getPercentageJobTypes(getNonCommittedTasksAsArray()));
+        bounty =  resourceLearner.buySellTaskResources(nearestDepo, bounty, getPercentageJobTypes(getTasksWithinRangeAsArray(state.bondsman.getAvailableTasks())));
         return preBounty != bounty;// i did something if i have different amount of bounty now.
     }
 
@@ -46,7 +48,9 @@ public class AuctionWithResources extends AuctionAgent {
         amWorking = resourceLearner.claimWork(curJob);
         if (amWorking) {
             amWorking = curJob.claimWork(this);
-           // state.printlnSynchronized("Am working? = " + amWorking);
+            //state.printlnSynchronized("Am working? = " + amWorking);
+        } else {
+            //state.printlnSynchronized("Am working? = " + amWorking);
         }
     }
 
@@ -55,6 +59,8 @@ public class AuctionWithResources extends AuctionAgent {
     public int[] getMyResources() {
         return resourceLearner.getMyResources();
     }
+
+
 
 
 }

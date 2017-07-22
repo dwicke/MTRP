@@ -1,8 +1,8 @@
-package sim.app.mtrp.main.agents;
+package sim.app.mtrp.main.agents.oldtestagents;
 
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
-import sim.app.mtrp.main.agents.LearningAgentWithJumpship;
+import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
 import sim.app.mtrp.main.agents.Valuators.AgentLocationPredictor;
 import sim.app.mtrp.main.util.QTable;
 

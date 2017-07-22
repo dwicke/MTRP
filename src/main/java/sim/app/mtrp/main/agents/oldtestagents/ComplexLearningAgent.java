@@ -1,15 +1,10 @@
 package sim.app.mtrp.main.agents.oldtestagents;
 
-import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
-import sim.app.mtrp.main.agents.LearningAgentWithJumpship;
+import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
 import sim.app.mtrp.main.agents.Valuators.AgentLocationPredictor;
-import sim.field.continuous.Continuous2D;
-import sim.util.Double2D;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
