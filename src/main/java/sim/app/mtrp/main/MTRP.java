@@ -70,12 +70,13 @@ public class MTRP extends SimState {
     public int depoRefreshRate = 10; // (should be more frequent...) every one hundred timesteps we refresh the resources in the depo is too slow...
 
     @Parameter(names={"--numResourceTypes", "-rt"})
-    public int numResourceTypes = 3; // fuel is not a resource included here.
+    public int numResourceTypes = 0; // fuel is not a resource included here.
     @Parameter(names={"--maxCostPerResource", "-cr"})
     public double maxCostPerResource = 15.0; // for each type of resource we get the price and set it for all of the depos
     @Parameter(names={"--maxMeanResourcesNeededForType", "-rn"})
     public int maxMeanResourcesNeededForType = 10; // the max mean number of resources needed for each type of resource (so max mean total number of resources would be 18)
 
+    @Parameter(names={"--fuelCost", "-fco"})
     public double fuelCost = 1.0;
 
     @Parameter(names={"--timestepsTilNextTask", "-s"})
@@ -88,7 +89,7 @@ public class MTRP extends SimState {
     public double meanDistBetweenNeighborhoods = 20;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
 
     @Parameter(names={"--numJobTypes", "-nj"})
-    public int numJobTypes = 3; // a job type is the average job length and the average number of resources needed for each type of resource.
+    public int numJobTypes = 1; // a job type is the average job length and the average number of resources needed for each type of resource.
 
 
     // bondsman params:
