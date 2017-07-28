@@ -705,4 +705,10 @@ public class MTRP extends SimState {
         return bondsman.getAverageBountyRate();
     }
 
+    public double getAverageThroughput() {
+        if (bondsman == null || (bondsman != null && bondsman.getCount() == 0)) { return 0.0;}
+        return bondsman.getCount() / schedule.getTime();
+    }
+
+
 }

@@ -3,7 +3,9 @@ package sim.app.mtrp.main.agents;
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.agents.comparisonagents.AuctionAgent;
+import sim.app.mtrp.main.agents.comparisonagents.NearestFirst;
 import sim.app.mtrp.main.agents.comparisonagents.NearestFirstWithJump;
+import sim.app.mtrp.main.agents.comparisonagents.RandomAgent;
 import sim.app.mtrp.main.agents.learningagents.LearningAgentWithCommunication;
 import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
 import sim.app.mtrp.main.agents.resourceagents.AuctionWithResources;
@@ -28,7 +30,9 @@ public class AgentFactory {
             case 4:
                 return new LearningAgentWithCommunication(state, id);
             case 6:
-                return new NearestFirstWithJump(state, id);
+                return new NearestFirst(state, id);
+            case 7:
+                return new RandomAgent(state, id);
         }
         return null;
     }

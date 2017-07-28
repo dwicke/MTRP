@@ -21,7 +21,7 @@ public class Neighborhood implements Steppable{
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
-    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty;
+    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, diffET;
 
     Task latestTask = null;
 
@@ -91,9 +91,10 @@ public class Neighborhood implements Steppable{
 //        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
 //        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
 
+        double neighborhoodLength = state.taskLocLength;// * (1 + 5.0 * state.random.nextDouble(true, true));
         // generate the x and y coordinates within the bounding area of the neighborhood
-        double x = meanLocation.getX() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
-        double y = meanLocation.getY() + (state.random.nextDouble(true, true) * state.taskLocLength) - state.taskLocLength / 2.0;
+        double x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+        double y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
 
 
 
@@ -134,11 +135,20 @@ public class Neighborhood implements Steppable{
     }
 
     public void finishedTask(Task task) {
+
+        double prevET;
+        if (count == 0) {
+            prevET = 0;
+        }
+        else {
+            prevET = ((double)totalTime / (double) count);
+        }
         totalTime += task.timeNotFinished;
         totalBounty += task.getBounty();
         totalDist += task.getLocation().distance(meanLocation);
         count++;
         tasks.remove(task);
+        diffET = Math.abs(prevET - ((double)totalTime / (double) count));
     }
 
     public int getId() {
@@ -190,48 +200,28 @@ public class Neighborhood implements Steppable{
     }
 
     public double getBaseBounty() {
+
+
         if(count == 0) {
             return state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         } else {
-            return (double) totalTime / (double) count + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+        // instead of getting the averagebounty rate i need to get the fuel cost!
+            Depo closestDepo = getClosestDepo(meanLocation);
+            return closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         }
     }
 
     public double getBountyRate(Double2D loc) {
 
+        //Depo closestDepo = getClosestDepo(loc);
+//        double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
 
+//        if (distFromTaskToDepo < 1.0 || stepDistance(closestDepo.getLocation(), meanLocation) < 1) {
+//            return 0.0;
+//        }
 
-
-
-        if(count == 0) {
-            return 1.0;
-        }else {
-            // as the number of neighborhoods approaches the number of agents we should go to zero...
-            //return 0.01;//Math.abs(getBaseBounty() - state.getBondsman().getTotalAverageTime());
-            // 1/distance to nearest depo!
-            Depo closestDepo = getClosestDepo(loc);
-            double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
-            //double distFromTaskToDepo = (int) Math.floor((closest.getLocation().distance(loc))/state.getStepsize());
-
-            if (distFromTaskToDepo < 1.0) {
-                return 0.0;
-            }
-
-            return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
-
-            //return (double) Math.abs(state.numNeighborhoods - state.numDepos) / (double) (state.numNeighborhoods);
-
-//            if (this.meanLocation.equals(closestDepo.neighborhood.getMeanLocation())) {
-//
-//            }
-//            double distFromDepoToDepoNeighborhood = stepDistance(closestDepo.getLocation(), closestDepo.neighborhood.meanLocation);
-//            double rateNoDepo =  stepDistance(closestDepo.getLocation(), meanLocation) / distFromDepoToDepoNeighborhood;
-//
-//            //state.printlnSynchronized("Rate for tasks = " + rate);
-//            return rateNoDepo;
-
-        }
-
+        //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
+        return (stepDistance(loc, meanLocation) ) / (((double) totalTime / (double) count ));
     }
 
     public double stepDistance(Double2D d, Double2D loc) {

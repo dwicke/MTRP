@@ -58,9 +58,8 @@ public class Depo implements Steppable{
     }
 
     public double getFuelCost() {
-        //return state.getFuelCost();
-        return neighborhood.getAverageBountyRate();
-        //return 1.0;
+        //return neighborhood.getAverageBountyRate();
+        return state.getFuelCost();  /// set by the user
     }
 
     public double getResourceCost(int resourceID) {

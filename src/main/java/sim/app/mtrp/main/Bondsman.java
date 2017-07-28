@@ -85,8 +85,8 @@ public class Bondsman implements Steppable {
     }
 
     public double getTotalAverageTime() {
-        int totalTime = 0;
-        int totalCount = 0;
+        double totalTime = 0;
+        double totalCount = 0;
         /*
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
             totalTime += ((Task) task).getTimeNotFinished();
@@ -104,7 +104,7 @@ public class Bondsman implements Steppable {
         }
         if (totalCount == 0)
             return 0;
-        return (double) totalTime / (double) totalCount;
+        return totalTime / totalCount;
 
     }
 

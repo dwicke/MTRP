@@ -25,6 +25,10 @@ public class NearestFirst extends LearningAgent {
             return Double.NEGATIVE_INFINITY;
         }
     }
+    public double getCost(Task t) {
+        // closest depo will never be null because we only consider tasks that are within distance of a depo
+        return getNumTimeStepsFromLocation(t.getLocation());
+    }
 
     // need this here because of the fact that utility is negative so am using negative
     public Task getBestTask(Bag bagOfTasks) {

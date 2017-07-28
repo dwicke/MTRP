@@ -74,7 +74,6 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         return util;
     }
-
     public double getNorm(Task t) {
         double ptableSum = 0.0;
         for (int i = 0; i < state.numNeighborhoods; i++) {

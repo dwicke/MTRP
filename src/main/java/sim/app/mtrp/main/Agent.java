@@ -334,7 +334,12 @@ public abstract class Agent implements Steppable {
                 double dist = getNumTimeStepsFromLocation(curJob.task.getLocation());
                 if (dist == 0) {
                     claimWork();
-                    numTimeStepsWorking = 0;
+                    numTimeStepsWorking = 1;
+                    if (curJob.doWork()) {
+                        //state.printlnSynchronized("agent " + id + " Finished task id = " + curJob.getId());
+                        finishTask();
+                        numTimeStepsWorking = 0;
+                    }
                 }
             }
         }

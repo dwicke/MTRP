@@ -1,6 +1,7 @@
 package sim.app.mtrp.main.agents.learningagents;
 
 import sim.app.mtrp.main.Agent;
+import sim.app.mtrp.main.Depo;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
@@ -82,6 +83,14 @@ public class LearningAgent extends Agent {
         Task[] tasks = (Task[]) bagOfTasks.toArray(new Task[bagOfTasks.size()]);
         Task chosenTask = null;
         double curMax = 0.0;
+
+        // so what if instead we actually had the cost to get to the depo...
+//        Depo closestDepo = getClosestDepo();
+//        if (closestDepo != null) {
+//            curMax = -closestDepo.getFuelCost();
+//        }
+
+
         if (curJob != null) {
             chosenTask = curJob.getTask();
             curMax = getUtility(chosenTask);
