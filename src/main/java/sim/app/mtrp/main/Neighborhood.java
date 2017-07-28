@@ -192,7 +192,7 @@ public class Neighborhood implements Steppable{
     public double getBaseBounty() {
 
         if(count == 0) {
-            return state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+            return taskCompletionValue + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         } else {
             Depo closestDepo = getClosestDepo(meanLocation);
             return taskCompletionValue + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
