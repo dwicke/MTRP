@@ -110,15 +110,13 @@ public class Neighborhood implements Steppable{
         // generate a new task
         Task genTask = new Task(this, state, generateLocationInNeighborhood());
 
-        if (count == 0) {
-            genTask.setBaseBounty(totalTime + state.getMaxCostPerResource() * state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
-        } else {
-            //state.printlnSynchronized("base bounty in neighborhood " + id + " is = " + (totalTime / count));
-            genTask.setBaseBounty(getBaseBounty());
-            double br = getBountyRate(genTask.getLocation());
-            totalBr += br;
-            genTask.setBountyRate(br);
-        }
+
+        //state.printlnSynchronized("base bounty in neighborhood " + id + " is = " + (totalTime / count));
+        genTask.setBaseBounty(getBaseBounty());
+        double br = getBountyRate(genTask.getLocation());
+        totalBr += br;
+        genTask.setBountyRate(br);
+
 
         totalBaseBounty += genTask.getBounty();
         tasks.add(genTask);
@@ -203,6 +201,9 @@ public class Neighborhood implements Steppable{
 
     public double getBountyRate(Double2D loc) {
         Depo closestDepo = getClosestDepo(loc);
+        if (count == 0) {
+            return closestDepo.getFuelCost();
+        }
         return (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count );
     }
 
