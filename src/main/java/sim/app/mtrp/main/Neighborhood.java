@@ -24,6 +24,7 @@ public class Neighborhood implements Steppable{
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty;
 
     Task latestTask = null;
+    double taskCompletionValue = 100.0;
 
     public Neighborhood(MTRP state, int id) {
         this.state = state;
@@ -195,24 +196,14 @@ public class Neighborhood implements Steppable{
         if(count == 0) {
             return state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         } else {
-        // instead of getting the averagebounty rate i need to get the fuel cost!
             Depo closestDepo = getClosestDepo(meanLocation);
-            return 1.0 + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+            return taskCompletionValue + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         }
     }
 
     public double getBountyRate(Double2D loc) {
-
         Depo closestDepo = getClosestDepo(loc);
-//        double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
-
-//        if (distFromTaskToDepo < 1.0 || stepDistance(closestDepo.getLocation(), meanLocation) < 1) {
-//            return 0.0;
-//        }
-
-        //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
-        return ((stepDistance(loc, meanLocation) ) / (((double) totalTime / (double) count )));
-
+        return (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count );
     }
 
     public double stepDistance(Double2D d, Double2D loc) {
