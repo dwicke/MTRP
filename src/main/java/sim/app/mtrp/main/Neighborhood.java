@@ -24,7 +24,7 @@ public class Neighborhood implements Steppable{
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty;
 
     Task latestTask = null;
-    double taskCompletionValue = 100.0;
+    double taskCompletionValue = 1.0;
 
     public Neighborhood(MTRP state, int id) {
         this.state = state;
