@@ -21,7 +21,7 @@ public class Neighborhood implements Steppable{
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
-    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, diffET;
+    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty;
 
     Task latestTask = null;
 
@@ -135,20 +135,11 @@ public class Neighborhood implements Steppable{
     }
 
     public void finishedTask(Task task) {
-
-        double prevET;
-        if (count == 0) {
-            prevET = 0;
-        }
-        else {
-            prevET = ((double)totalTime / (double) count);
-        }
         totalTime += task.timeNotFinished;
         totalBounty += task.getBounty();
         totalDist += task.getLocation().distance(meanLocation);
         count++;
         tasks.remove(task);
-        diffET = Math.abs(prevET - ((double)totalTime / (double) count));
     }
 
     public int getId() {
@@ -201,19 +192,18 @@ public class Neighborhood implements Steppable{
 
     public double getBaseBounty() {
 
-
         if(count == 0) {
             return state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         } else {
         // instead of getting the averagebounty rate i need to get the fuel cost!
             Depo closestDepo = getClosestDepo(meanLocation);
-            return closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+            return 1.0 + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         }
     }
 
     public double getBountyRate(Double2D loc) {
 
-        //Depo closestDepo = getClosestDepo(loc);
+        Depo closestDepo = getClosestDepo(loc);
 //        double distFromTaskToDepo = stepDistance(closestDepo.getLocation(), loc);
 
 //        if (distFromTaskToDepo < 1.0 || stepDistance(closestDepo.getLocation(), meanLocation) < 1) {
@@ -221,7 +211,8 @@ public class Neighborhood implements Steppable{
 //        }
 
         //return stepDistance(closestDepo.getLocation(), meanLocation) / distFromTaskToDepo;
-        return (stepDistance(loc, meanLocation) ) / (((double) totalTime / (double) count ));
+        return ((stepDistance(loc, meanLocation) ) / (((double) totalTime / (double) count )));
+
     }
 
     public double stepDistance(Double2D d, Double2D loc) {
