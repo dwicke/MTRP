@@ -20,7 +20,7 @@ public class NearestFirst extends LearningAgent {
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
         if (t.getNeighborhood().getId() == getId()) {
-            return -getCost(t);
+            return -getNumTimeStepsFromLocation(t.getLocation());
         } else {
             return Double.NEGATIVE_INFINITY;
         }
@@ -29,6 +29,10 @@ public class NearestFirst extends LearningAgent {
         // closest depo will never be null because we only consider tasks that are within distance of a depo
         return getNumTimeStepsFromLocation(t.getLocation());
     }
+
+
+
+
 
     // need this here because of the fact that utility is negative so am using negative
     public Task getBestTask(Bag bagOfTasks) {

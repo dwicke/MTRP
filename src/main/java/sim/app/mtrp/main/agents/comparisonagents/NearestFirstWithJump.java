@@ -20,7 +20,7 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
         if (t.getNeighborhood().getId() == getId()) {
-            return -getCost(t);
+            return -getNumTimeStepsFromLocation(t.getLocation());
         } else {
             return Double.NEGATIVE_INFINITY;
         }
@@ -47,9 +47,6 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
         if (curJob != null) {
             chosenTask = curJob.getTask();
             curMax = getUtility(chosenTask);
-            if (Double.isInfinite(curMax)) {
-                return chosenTask;
-            }
         }
         for (Task t : tasks) {
 

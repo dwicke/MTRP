@@ -92,7 +92,7 @@ public class Neighborhood implements Steppable{
 //        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
 //        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
 
-        double neighborhoodLength = state.taskLocLength;// * (1 + 5.0 * state.random.nextDouble(true, true));
+        double neighborhoodLength = state.taskLocLength;// * (1 + 12.0 * state.random.nextDouble(true, true));
         // generate the x and y coordinates within the bounding area of the neighborhood
         double x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
         double y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
@@ -204,7 +204,10 @@ public class Neighborhood implements Steppable{
         if (count == 0) {
             return closestDepo.getFuelCost();
         }
+        // if some tasks are really suddenly far out this will rise rather quickly, but if it is maintained then the denominator should also rise as well
+        // and should stabilize
         return (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count );
+        //return closestDepo.getFuelCost();
     }
 
     public double stepDistance(Double2D d, Double2D loc) {

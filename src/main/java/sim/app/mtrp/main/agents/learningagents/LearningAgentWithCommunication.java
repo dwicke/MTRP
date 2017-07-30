@@ -60,7 +60,11 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         }
 
+
+
         double weight = state.numNeighborhoods == 1 ? 1.0 : numSignaled / (double) state.numAgents;
+
+
         double signalConf = confidence;
 
 
