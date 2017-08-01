@@ -6,10 +6,13 @@ import sim.app.mtrp.main.agents.comparisonagents.AuctionAgent;
 import sim.app.mtrp.main.agents.comparisonagents.NearestFirst;
 import sim.app.mtrp.main.agents.comparisonagents.NearestFirstWithJump;
 import sim.app.mtrp.main.agents.comparisonagents.RandomAgent;
+import sim.app.mtrp.main.agents.learningagents.LearningAgent;
 import sim.app.mtrp.main.agents.learningagents.LearningAgentWithCommunication;
 import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
+import sim.app.mtrp.main.agents.learningagents.WithExclusivity;
 import sim.app.mtrp.main.agents.resourceagents.AuctionWithResources;
 import sim.app.mtrp.main.agents.resourceagents.SimpleLearningWithResources;
+import sim.app.mtrp.main.agents.resourceagents.WithExclusivityResources;
 
 /**
  * Created by drew on 3/6/17.
@@ -35,6 +38,12 @@ public class AgentFactory {
                 return new NearestFirst(state, id);
             case 7:
                 return new RandomAgent(state, id);
+            case 8:
+                return new LearningAgent(state, id);
+            case 9:
+                return new WithExclusivity(state, id);
+            case 10:
+                return new WithExclusivityResources(state, id);
         }
         return null;
     }
