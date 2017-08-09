@@ -19,7 +19,7 @@ public class LearningAgent extends Agent {
     public QTable tTable; // for each type of job we learn the
     public QTable pTable; // ptable probability of getting to the task
     public double oneUpdateGamma = .001; // .001
-    double tLearningRate = .5; // set to .1 originally (should be at .95 though...) tried .75
+    double tLearningRate = .75; // set to .5 originally (should be at .95 though...) tried .75
     double tDiscountBeta = .1; // not used...
     double jLearningRate = .55;
     double pLearningRate = .75;//0.99;  //.75 is what i used to use... but .99 makes more sens
@@ -51,7 +51,7 @@ public class LearningAgent extends Agent {
 
 
         if (curJob == null) {
-            state.printlnSynchronized("Agent " + getId() + " getting task = " + getBestCounter++);
+            //state.printlnSynchronized("Agent " + getId() + " getting task = " + getBestCounter++);
             Task bestT = getBestTask(tasks);
             return bestT;
         }else {

@@ -73,6 +73,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         confidence = weight * confidence + (1 - weight) * neighborhoodp;
 
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+        //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
         double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
 
@@ -106,7 +107,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         if (numJumpships > 0) {
             signalDist = totalJumpshipDist / numJumpships;
         }
-        return signalDist;
+
+        return signalDist / 2;
     }
     @Override
     public Task handleJumpship(Task bestT) {

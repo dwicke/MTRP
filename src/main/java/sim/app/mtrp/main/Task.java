@@ -33,7 +33,13 @@ public class Task {
         // add it to the continuous2d
         state.getTaskPlane().setObjectLocation(this, this.location);
 
-        //state.printlnSynchronized("Task id: " + id + " location " + location + " discretized: " + state.getTaskPlane().discretize(location,5));
+
+
+        //state.printlnSynchronized("Task id: " + id + " location " + location + " discretized: " + state.getTaskPlane().discretize(location,20));
+        //state.printlnSynchronized("Task id: " + id + " location " + location + " right of y: " + ((location.getX() - neighborhood.meanLocation.getX()) > 0 ? true : false) + " below x: " + ((location.getY() - neighborhood.meanLocation.getY()) > 0 ? true : false));
+
+
+
 
         // now generate the job
         job = state.jobPrototypes[0].buildJob(state, this, id);

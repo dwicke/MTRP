@@ -29,8 +29,9 @@ public class Depo implements Steppable{
 //
 //        location = new Double2D(x, y);
 
-        // this doesn't work well in the two neighborhood case.
-       location = this.neighborhood.generateLocationInNeighborhood();
+       //location = this.neighborhood.generateLocationInNeighborhood();
+
+        location = this.neighborhood.meanLocation;
 
         state.getDepoPlane().setObjectLocation(this, location);
 

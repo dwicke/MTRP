@@ -85,6 +85,7 @@ public abstract class Agent implements Steppable {
         }
         if (!didAction)
             didAction = travel();
+
         if (!didAction)
             work();
 
@@ -113,6 +114,7 @@ public abstract class Agent implements Steppable {
 
     public boolean buyFuel(Depo nearestDepo) {
         // I am! so check if i need fuel or resources
+        // This is not very good way of doing this if there is a long wait time for fuel
         if (curFuel < state.getFuelCapacity() && bounty > 0) {
             // so buy fuel, note that fuel price is 1-to-1 cost
             // buy whatever I can
@@ -120,6 +122,7 @@ public abstract class Agent implements Steppable {
             nearestDepo.buyFuel(fuelBought);
             bounty -= fuelBought * nearestDepo.getFuelCost();
             curFuel += fuelBought;
+            //state.printlnSynchronized("Bought " + fuelBought + " Fuel!");
             return true;
         }
         else {
