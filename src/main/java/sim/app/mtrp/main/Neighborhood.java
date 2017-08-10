@@ -72,7 +72,7 @@ public class Neighborhood implements Steppable{
         if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
          //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
 //            double interTime = state.schedule.getTime() - lastTime;
-//            numTask++;
+            numTask++;
 //            lastTime = state.schedule.getTime();
 //            totalInterTime += interTime;
 //            state.printlnSynchronized(" average time = " + totalInterTime / numTask);

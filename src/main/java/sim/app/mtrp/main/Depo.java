@@ -33,6 +33,11 @@ public class Depo implements Steppable{
 
         location = this.neighborhood.meanLocation;
 
+        // so i go from the index to the center of the grid cell
+        location = getCentral();
+
+
+
         state.getDepoPlane().setObjectLocation(this, location);
 
         resources = new Resource[state.numResourceTypes];
@@ -42,6 +47,34 @@ public class Depo implements Steppable{
         }
 
 
+    }
+
+
+    public Double2D getCentral() {
+
+//        int x = id / 10;
+//        int y = id % 10;
+//
+//        double dx = ((x - 5) * 4 + 2) + location.getX();
+//        double dy = ((y - 5) * 4 + 2) + location.getY();
+
+        int width = (int)Math.sqrt(state.numAgents);
+        if (Math.sqrt(state.numAgents) / width == 1.0) {
+
+            int halfWidth = width / 2;
+            int x = id / width;
+            int y = id % width;
+
+            int length = (int) state.taskLocLength / width;
+            int halfLength = length / 2;
+
+            double dx = ((x - halfWidth) * length + halfLength) + location.getX();
+            double dy = ((y - halfWidth) * length + halfLength) + location.getY();
+
+            return new Double2D(dx, dy);
+        }else {
+            return location;
+        }
     }
 
     public void step(SimState simState) {

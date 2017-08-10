@@ -97,6 +97,13 @@
             <artifactId>rosjava</artifactId>
             <version>0.3.4</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.graphhopper/jsprit-core -->
+        <dependency>
+            <groupId>com.graphhopper</groupId>
+            <artifactId>jsprit-core</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
 
 
     </dependencies>

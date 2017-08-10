@@ -34,7 +34,7 @@ public abstract class Agent implements Steppable {
     double stepsize;
     double originalStepSize = -1;
     boolean slow = false;
-
+    public Depo startDepo = null;
 
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -48,8 +48,14 @@ public abstract class Agent implements Steppable {
         bounty = state.getStartFunds();
         curFuel = state.getFuelCapacity();
         curTotalNumResources = 0;
-        // pick a random depo and start there
-        Depo startDepo = state.getDepos()[state.random.nextInt(state.getDepos().length)];
+        // pick a depo and start there
+
+        if (state.numAgents == state.numDepos) {
+            startDepo = state.getDepos()[id];
+        }
+        else {
+            startDepo = state.getDepos()[state.random.nextInt(state.getDepos().length)];
+        }
         curLocation = new Double2D(startDepo.location.getX(), startDepo.location.getY());
         curDestination = new Double2D(curLocation.getX(), curLocation.getY());
         curDepo = startDepo;

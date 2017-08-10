@@ -43,6 +43,8 @@ public class AgentFactory {
                 return new WithExclusivityResources(state, id);
             case 11:
                 return new FirstComeFirstServe(state, id);
+            case 12:
+                return new TSPSolver(state, id);
         }
         return null;
     }
