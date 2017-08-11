@@ -57,7 +57,7 @@ public class TSPSolver extends LearningAgent {
                 }
             }
             if (!myTasks.isEmpty() ) {
-                state.printlnSynchronized("the size of myTasks = " + myTasks.size());
+                //state.printlnSynchronized("the size of myTasks = " + myTasks.size());
                 solveTSP(myTasks);
             } else {
                 return null;
@@ -73,9 +73,8 @@ public class TSPSolver extends LearningAgent {
          * get a vehicle type-builder and build a type with the typeId "vehicleType" and a capacity of 2
 		 */
 
-        VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleType").addCapacityDimension(0, 2);
-        vehicleTypeBuilder.setFixedCost(100);
-        VehicleType vehicleType = vehicleTypeBuilder.build();
+        VehicleType vehicleType = VehicleTypeImpl.Builder.newInstance("vehicleType").addCapacityDimension(0, Integer.MAX_VALUE).build();
+
 
 		/*
          * get a vehicle-builder and build a vehicle located at (10,10) with type "vehicleType"
@@ -94,7 +93,7 @@ public class TSPSolver extends LearningAgent {
         vrpBuilder.addVehicle(vehicle);
 		for (int i = 0; i < bagOfTasks.size(); i++) {
 		    Task t = (Task) bagOfTasks.get(i);
-            Service service1 = Service.Builder.newInstance(t.getId() + "").addSizeDimension(0, 1).setLocation(Location.Builder.newInstance().setCoordinate(new Coordinate(t.getLocation().getX(), t.getLocation().getY())).setId(t.getId() + "").build()).build();
+            Service service1 = Service.Builder.newInstance(t.getId() + "").setLocation(Location.Builder.newInstance().setCoordinate(new Coordinate(t.getLocation().getX(), t.getLocation().getY())).setId(t.getId() + "").build()).build();
             vrpBuilder.addJob(service1);
 		}
 
@@ -130,7 +129,7 @@ public class TSPSolver extends LearningAgent {
         }else {
             for (int i = 0; i < obj.size(); i++) {
                 Task t = (Task) obj.get(i);
-                state.printlnSynchronized("Task t = " + Integer.parseInt(a.getLocation().getId()));
+                //state.printlnSynchronized("Task t = " + Integer.parseInt(a.getLocation().getId()));
                 if (t.getId() == Integer.parseInt(a.getLocation().getId())) {
                     // then we've got it!
                     activities.removeActivity(a);
