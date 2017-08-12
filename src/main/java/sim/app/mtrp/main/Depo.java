@@ -61,12 +61,12 @@ public class Depo implements Steppable{
         int width = (int)Math.sqrt(state.numAgents);
         if (Math.sqrt(state.numAgents) / width == 1.0) {
 
-            int halfWidth = width / 2;
+            double halfWidth = width / 2.0;
             int x = id / width;
             int y = id % width;
 
-            int length = (int) state.taskLocLength / width;
-            int halfLength = length / 2;
+            double length = state.taskLocLength / width;
+            double halfLength = length / 2.0;
 
             double dx = ((x - halfWidth) * length + halfLength) + location.getX();
             double dy = ((y - halfWidth) * length + halfLength) + location.getY();

@@ -108,7 +108,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             signalDist = totalJumpshipDist / numJumpships;
         }
 
-        return signalDist / 2;
+        return signalDist;
+        //return signalDist / 2;
     }
     @Override
     public Task handleJumpship(Task bestT) {

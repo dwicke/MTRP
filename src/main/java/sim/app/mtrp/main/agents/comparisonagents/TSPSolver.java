@@ -50,8 +50,9 @@ public class TSPSolver extends LearningAgent {
             Bag myTasks = new Bag();
             for (int i = 0; i < bagOfTasks.size(); i++) {
                 Task t = (Task) bagOfTasks.get(i);
-                int cellHalf = (int) (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2;
-                if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX() ) < cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY() ) < cellHalf)
+
+                double cellHalf =  (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2.0;
+                if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX() ) <= cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY() ) <= cellHalf)
                 {
                     myTasks.add(t);
                 }

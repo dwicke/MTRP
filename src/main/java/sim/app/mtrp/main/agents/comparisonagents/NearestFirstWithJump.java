@@ -38,8 +38,8 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
 
 
             // base it off of the x,y distance from start depo location
-            int cellHalf = (int) (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2;
-            if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX() ) < cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY() ) < cellHalf)
+            double cellHalf =  (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2.0;
+            if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX() ) <= cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY() ) <= cellHalf)
             {
                 return -getNumTimeStepsFromLocation(t.getLocation());
             }
