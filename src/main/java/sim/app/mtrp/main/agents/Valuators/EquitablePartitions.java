@@ -26,15 +26,17 @@ public class EquitablePartitions {
     PowerDiagram diagram;
 
     public EquitablePartitions(MTRP state) {
+
         this.state = state;
-    }
-
-
-    public void init() {
         diagram = new PowerDiagram();
 
         // normal list based on an array
         sites = new OpenList();
+    }
+
+
+    public void init() {
+
 
 
         // create a root polygon which limits the voronoi diagram.
@@ -50,7 +52,7 @@ public class EquitablePartitions {
 
         // create 100 points (sites) and set random positions in the rectangle defined above.
         for (int i = 0; i < state.numAgents; i++) {
-            Site site = new Site(state.random.nextInt(width), state.random.nextInt(width));
+            Site site = new Site(state.agents[i].curLocation.getX(), state.agents[i].curLocation.getY());
             // we could also set a different weighting to some sites
             // site.setWeight(30)
             sites.add(site);
@@ -69,6 +71,12 @@ public class EquitablePartitions {
     }
 
 
+    public void computeDiagram() {
+        diagram.setSites(sites);
+        diagram.computeDiagram();
+    }
+
+
     /*
         each agent calls this with their id
      */
@@ -78,13 +86,21 @@ public class EquitablePartitions {
         double u = 0.0;
         for (int j = 0; j < sites.get(id).getNeighbours().size(); j++) {
 
+            state.printlnSynchronized(polygon.toString());
             double gamma = 1.0 / (2.0 * sites.get(id).distance(sites.get(id).getNeighbours().get(j)));
+            state.printlnSynchronized("gamma = " + gamma);
             double rateInMe = (1.0 / Math.pow(getRateInPolygon(polygon), 2));
+            state.printlnSynchronized(" rate in me = " + rateInMe);
             double rateInNeighbor = (1.0 / Math.pow(getRateInPolygon(sites.get(id).getNeighbours().get(j).getPolygon()), 2));
+            state.printlnSynchronized(" rate in neighbor = " + rateInMe);
 
-            PolygonSimple neighbor = sites.get(id).getNeighbours().get(j).getPolygon();
-            double lineIntegral = getBoarderRate(neighbor, polygon);
-            u += gamma * (rateInNeighbor - rateInMe) * lineIntegral;
+            if ((rateInNeighbor - rateInMe) != 0) {
+                state.printlnSynchronized(" diff was not zero!" + (rateInNeighbor - rateInMe));
+                PolygonSimple neighbor = sites.get(id).getNeighbours().get(j).getPolygon();
+                double lineIntegral = getBoarderRate(neighbor, polygon);
+
+                u += gamma * (rateInNeighbor - rateInMe) * lineIntegral;
+            }
         }
 
         sites.get(id).setWeight(sites.get(id).getWeight() - u);

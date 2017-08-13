@@ -45,6 +45,8 @@ public class AgentFactory {
                 return new FirstComeFirstServe(state, id);
             case 12:
                 return new TSPSolver(state, id);
+            case 13:
+                return new EquitableAgent(state, id);
         }
         return null;
     }

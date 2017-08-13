@@ -25,7 +25,7 @@ public abstract class Agent implements Steppable {
     protected Job curJob;
     protected boolean amWorking = false;
     Double2D curDestination;
-    protected Double2D curLocation;
+    public Double2D curLocation;
     boolean needResources;
     double fuelEpsilon = 2; // min amount of fuel
     Depo curDepo;
