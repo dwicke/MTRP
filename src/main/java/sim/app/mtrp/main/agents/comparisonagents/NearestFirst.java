@@ -62,7 +62,7 @@ public class NearestFirst extends LearningAgent {
         for (Task t : tasks) {
 
             double value = getUtility(t);
-            if (value > curMax) {
+            if (value > curMax && value != Double.NEGATIVE_INFINITY) {
                 chosenTask = t;
                 curMax = value;
             }

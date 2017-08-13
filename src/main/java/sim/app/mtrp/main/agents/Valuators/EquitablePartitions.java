@@ -8,6 +8,7 @@ import sim.app.mtrp.main.MTRP;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by drew on 8/12/17.
@@ -52,7 +53,8 @@ public class EquitablePartitions {
 
         // create 100 points (sites) and set random positions in the rectangle defined above.
         for (int i = 0; i < state.numAgents; i++) {
-            Site site = new Site(state.agents[i].curLocation.getX(), state.agents[i].curLocation.getY());
+            Site site = new Site(state.random.nextInt(width), state.random.nextInt(height));
+            //Site site = new Site(state.agents[i].curLocation.getX() + (state.taskLocLength / 2) , state.agents[i].curLocation.getY() + (state.taskLocLength / 2));
             // we could also set a different weighting to some sites
             // site.setWeight(30)
             sites.add(site);
@@ -86,16 +88,24 @@ public class EquitablePartitions {
         double u = 0.0;
         for (int j = 0; j < sites.get(id).getNeighbours().size(); j++) {
 
-            state.printlnSynchronized(polygon.toString());
-            double gamma = 1.0 / (2.0 * sites.get(id).distance(sites.get(id).getNeighbours().get(j)));
-            state.printlnSynchronized("gamma = " + gamma);
-            double rateInMe = (1.0 / Math.pow(getRateInPolygon(polygon), 2));
-            state.printlnSynchronized(" rate in me = " + rateInMe);
-            double rateInNeighbor = (1.0 / Math.pow(getRateInPolygon(sites.get(id).getNeighbours().get(j).getPolygon()), 2));
-            state.printlnSynchronized(" rate in neighbor = " + rateInMe);
+            //state.printlnSynchronized(polygon.toString());
 
-            if ((rateInNeighbor - rateInMe) != 0) {
-                state.printlnSynchronized(" diff was not zero!" + (rateInNeighbor - rateInMe));
+            Iterator<kn.uni.voronoitreemap.j2d.Point2D> pr = polygon.iterator();
+//            while(pr.hasNext()) {
+//                //state.printlnSynchronized(pr.next().toString());
+//
+//            }
+
+            double gamma = 1.0 / (2.0 * sites.get(id).distance(sites.get(id).getNeighbours().get(j)));
+            //state.printlnSynchronized("gamma = " + gamma);
+            double denom = Math.pow(getRateInPolygonCliped(polygon), 2);
+            double rateInMe = (1.0 / denom);
+            //state.printlnSynchronized(" rate in me = " + rateInMe);
+            double rateInNeighbor = (1.0 / Math.pow(getRateInPolygonCliped(sites.get(id).getNeighbours().get(j).getPolygon()), 2));
+            //state.printlnSynchronized(" rate in neighbor = " + rateInNeighbor);
+
+            if (rateInNeighbor != rateInMe && rateInMe != Double.POSITIVE_INFINITY && rateInNeighbor != Double.POSITIVE_INFINITY) {
+              //  state.printlnSynchronized(" diff was not zero!" + (rateInNeighbor - rateInMe));
                 PolygonSimple neighbor = sites.get(id).getNeighbours().get(j).getPolygon();
                 double lineIntegral = getBoarderRate(neighbor, polygon);
 
@@ -103,9 +113,24 @@ public class EquitablePartitions {
             }
         }
 
-        sites.get(id).setWeight(sites.get(id).getWeight() - u);
+        sites.get(id).setWeight(sites.get(id).getWeight() + u);
     }
 
+    public static boolean nearlyEqual(double a, double b, double epsilon) {
+        final double absA = Math.abs(a);
+        final double absB = Math.abs(b);
+        final double diff = Math.abs(a - b);
+
+        if (a == b) { // shortcut, handles infinities
+            return true;
+        } else if (a == 0 || b == 0 || diff < Double.MIN_NORMAL) {
+            // a or b is zero or both are extremely close to it
+            // relative error is less meaningful here
+            return diff < (epsilon * Double.MIN_NORMAL);
+        } else { // use relative error
+            return diff / Math.min((absA + absB), Float.MAX_VALUE) < epsilon;
+        }
+    }
 
     /**
      * basically just find the boundry between the neighbor and the polygon
@@ -123,15 +148,21 @@ public class EquitablePartitions {
     public double getBoarderRate(PolygonSimple neighbor, PolygonSimple polygon) {
         ArrayList<kn.uni.voronoitreemap.j2d.Point2D> points = new ArrayList<kn.uni.voronoitreemap.j2d.Point2D>();
         // find the boundry with the neighbor
-        while (neighbor.iterator().hasNext()) {
-            kn.uni.voronoitreemap.j2d.Point2D n = neighbor.iterator().next();
-            while(polygon.iterator().hasNext()) {
-                kn.uni.voronoitreemap.j2d.Point2D p = polygon.iterator().next();
-                if (n.equals(p)) {
+        Iterator<kn.uni.voronoitreemap.j2d.Point2D> neighborIter = neighbor.iterator();
+
+        while (neighborIter.hasNext()) {
+            kn.uni.voronoitreemap.j2d.Point2D n = neighborIter.next();
+            Iterator<kn.uni.voronoitreemap.j2d.Point2D> polyIter = polygon.iterator();
+            while(polyIter.hasNext()) {
+                kn.uni.voronoitreemap.j2d.Point2D p = polyIter.next();
+                //state.printlnSynchronized("The neighbor point is: " + n.toString() + " my point is = " + p.toString());
+                //if (n.x == p.x && n.y == p.y) {
+                if (nearlyEqual(n.x, p.x, 0.00001) && nearlyEqual(n.y, p.y, 0.00001)) {
                     points.add(p);
                 }
             }
         }
+
 
         // get the slope of the boundry
         double slope = (points.get(0).getY() - points.get(1).getY()) / (points.get(0).getX() - points.get(1).getX());
@@ -154,20 +185,23 @@ public class EquitablePartitions {
 
             // then for each clipped polygon find if any of the line segments
             // lie on the boundry
+            if (cliped != null) {
+                Iterator<kn.uni.voronoitreemap.j2d.Point2D> clipIter = cliped.iterator();
 
-            while(cliped.iterator().hasNext()) {
-                kn.uni.voronoitreemap.j2d.Point2D point = cliped.iterator().next();
-                double cSlope = (point.getY() - points.get(1).getY()) / (point.getX() - points.get(1).getX());
-                if (cSlope == slope) {
-                    // then we've got a point on the boundry
-                    seg.add(point);
+                while (clipIter.hasNext()) {
+                    kn.uni.voronoitreemap.j2d.Point2D point = clipIter.next();
+                    double cSlope = (point.getY() - points.get(1).getY()) / (point.getX() - points.get(1).getX());
+                    if (cSlope == slope) {
+                        // then we've got a point on the boundry
+                        seg.add(point);
+                    }
                 }
-            }
-            // find the length of that segment and multiply by (rate / area of neighborhood)
-            if (seg.size() == 2) {
-                state.printlnSynchronized("WOOOHOO we have a segment that is on the boundry with length " + seg.get(0).distance(seg.get(1)));
-                double areaOfNeighborhood = state.taskLocLength * state.taskLocLength;
-                lineIntegral += seg.get(0).distance(seg.get(1)) * ((1.0 / state.neighborhoods[i].getTimestepsTilNextTask()) / (areaOfNeighborhood));
+                // find the length of that segment and multiply by (rate / area of neighborhood)
+                if (seg.size() == 2) {
+                    state.printlnSynchronized("WOOOHOO we have a segment that is on the boundry with length " + seg.get(0).distance(seg.get(1)));
+                    double areaOfNeighborhood = state.taskLocLength * state.taskLocLength;
+                    lineIntegral += seg.get(0).distance(seg.get(1)) * ((1.0 / state.neighborhoods[i].getTimestepsTilNextTask()) / (areaOfNeighborhood));
+                }
             }
 
 
@@ -175,6 +209,38 @@ public class EquitablePartitions {
         return lineIntegral;
     }
 
+
+
+    public double getRateInPolygonCliped(PolygonSimple s) {
+
+        double totalRate = 0.0;
+        for (int i = 0; i < state.neighborhoods.length; i++) {
+
+            // for each neighborhood get the area that intersects with the polygon
+            // and multiply the rate / area of the neighborhood by this area
+            double centerX = state.neighborhoods[i].getMeanLocation().x + (state.taskLocLength / 2);
+            double centerY = state.neighborhoods[i].getMeanLocation().y + (state.taskLocLength / 2);
+
+            PolygonSimple neighborhood = new PolygonSimple(4);
+            neighborhood.add(centerX - (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
+            neighborhood.add(centerX + (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
+            neighborhood.add(centerX + (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
+            neighborhood.add(centerX - (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
+
+
+            double areaOfNeighborhood = state.taskLocLength * state.taskLocLength;
+
+
+            PolygonSimple cl = s.convexClip(neighborhood);
+            if (cl != null) {
+                double areaIntersect = cl.getArea();
+                totalRate += areaIntersect / areaOfNeighborhood * (1.0 / state.neighborhoods[i].getTimestepsTilNextTask());
+            }
+
+        }
+
+        return totalRate;
+    }
 
     public double getRateInPolygon(PolygonSimple s) {
 
