@@ -34,6 +34,7 @@ public class TaskPortrayal extends OvalPortrayal2D {
         graphics.setColor(new Color(0,255,0,alpha));
 
 
+
         // this code was stolen from OvalPortrayal2D
         int x = (int) (info.draw.x - info.draw.width / 2.0);
         int y = (int) (info.draw.y - info.draw.height / 2.0);

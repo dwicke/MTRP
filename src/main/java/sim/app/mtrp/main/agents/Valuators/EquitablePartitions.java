@@ -108,12 +108,17 @@ public class EquitablePartitions {
               //  state.printlnSynchronized(" diff was not zero!" + (rateInNeighbor - rateInMe));
                 PolygonSimple neighbor = sites.get(id).getNeighbours().get(j).getPolygon();
                 double lineIntegral = getBoarderRate(neighbor, polygon);
+                if (lineIntegral != 0) {
+                    u += gamma * (rateInNeighbor - rateInMe) * lineIntegral;
+                }else {
+                    u += gamma * (rateInNeighbor - rateInMe);
+                }
 
-                u += gamma * (rateInNeighbor - rateInMe) * lineIntegral;
+                state.printlnSynchronized("Updated u! gamma = " + gamma + " rateInNeighbor = " + rateInNeighbor + "rateInMe = " + rateInMe + " lineIntegral = " + lineIntegral);
             }
         }
-
-        sites.get(id).setWeight(sites.get(id).getWeight() + u);
+        state.printlnSynchronized("U value = " + u);
+        sites.get(id).setWeight(sites.get(id).getWeight() - u);
     }
 
     public static boolean nearlyEqual(double a, double b, double epsilon) {
@@ -157,7 +162,7 @@ public class EquitablePartitions {
                 kn.uni.voronoitreemap.j2d.Point2D p = polyIter.next();
                 //state.printlnSynchronized("The neighbor point is: " + n.toString() + " my point is = " + p.toString());
                 //if (n.x == p.x && n.y == p.y) {
-                if (nearlyEqual(n.x, p.x, 0.00001) && nearlyEqual(n.y, p.y, 0.00001)) {
+                if (nearlyEqual(n.x, p.x, 0.001) && nearlyEqual(n.y, p.y, 0.001)) {
                     points.add(p);
                 }
             }

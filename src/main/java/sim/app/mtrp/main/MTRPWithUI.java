@@ -62,6 +62,8 @@ public class MTRPWithUI extends GUIState {
             agentsPortrayal.setPortrayalForObject(a, new MovablePortrayal2D(new LabelledPortrayal2D(new AgentPortrayal(a), "id = " + a.id)));
         }
 
+
+
         tasksPortrayal.setField(myState.taskPlane);
         tasksPortrayal.setPortrayalForAll(new MovablePortrayal2D(new TaskPortrayal()));
 

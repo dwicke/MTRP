@@ -18,6 +18,7 @@ public class EquitableAgent extends NearestFirst {
     static EquitablePartitions ep;
     public EquitableAgent(MTRP state, int id) {
         super(state, id);
+        ep = null;
     }
 
     @Override
@@ -32,6 +33,14 @@ public class EquitableAgent extends NearestFirst {
         super.decommitTask();
 
     }
+
+    public PolygonSimple getRegionOfDominance() {
+        if (ep == null) {
+            return null;
+        }
+        return ep.getRegion(id);
+    }
+
     @Override
     public Task getAvailableTask() {
         if (ep == null) {
@@ -41,11 +50,11 @@ public class EquitableAgent extends NearestFirst {
         }
         double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id));
         double overAllRate = (state.numNeighborhoods * (1.0 / state.getTimestepsTilNextTask())) / state.numAgents;
-        state.printlnSynchronized("id = " + id + "  Rate in my polygon " + rateinMyPolygon + " should be " + overAllRate + " difference = " + (overAllRate - rateinMyPolygon));
-        state.printlnSynchronized(" going to update");
+        //state.printlnSynchronized("id = " + id + "  Rate in my polygon " + rateinMyPolygon + " should be " + overAllRate + " difference = " + (overAllRate - rateinMyPolygon));
+        //state.printlnSynchronized(" going to update");
         if (rateinMyPolygon != overAllRate) {
             ep.update(id);
-            state.printlnSynchronized("finished update");
+            //state.printlnSynchronized("finished update");
             ep.computeDiagram();
         }
 
@@ -56,20 +65,20 @@ public class EquitableAgent extends NearestFirst {
     public double getUtility(Task t) {
         PolygonSimple myRegion = ep.getRegion(id);
         Iterator<Point2D> pr = myRegion.iterator();
-        state.printlnSynchronized("My region " + id + " is bounded by:");
-        while(pr.hasNext()) {
-            state.printlnSynchronized(pr.next().toString());
-        }
+//        state.printlnSynchronized("My region " + id + " is bounded by:");
+//        while(pr.hasNext()) {
+//            state.printlnSynchronized(pr.next().toString());
+//        }
 
 
         kn.uni.voronoitreemap.j2d.Point2D tpoint = new kn.uni.voronoitreemap.j2d.Point2D(t.getLocation().getX() + (state.taskLocLength / 2), t.getLocation().getY() + (state.taskLocLength / 2));
-        state.printlnSynchronized("Does it contain " + tpoint.toString());
+        //state.printlnSynchronized("Does it contain " + tpoint.toString());
 
         if (myRegion.contains(tpoint)) {
-            state.printlnSynchronized(" yes!");
+            //state.printlnSynchronized(" yes!");
             return -getNumTimeStepsFromLocation(t.getLocation());
         }
-        state.printlnSynchronized(" no");
+        //state.printlnSynchronized(" no");
         return Double.NEGATIVE_INFINITY;
     }
 
@@ -79,10 +88,10 @@ public class EquitableAgent extends NearestFirst {
 
 
         kn.uni.voronoitreemap.j2d.Point2D tpoint = new kn.uni.voronoitreemap.j2d.Point2D(t.getLocation().getX() + (state.taskLocLength / 2), t.getLocation().getY() + (state.taskLocLength / 2));
-        state.printlnSynchronized("Does it contain " + tpoint.toString());
+        //state.printlnSynchronized("Does it contain " + tpoint.toString());
 
         if (myRegion.contains(tpoint)) {
-            state.printlnSynchronized(" yes!");
+            //state.printlnSynchronized(" yes!");
             return true;
         }
         return false;
