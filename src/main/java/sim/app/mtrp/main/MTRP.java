@@ -248,7 +248,8 @@ public class MTRP extends SimState {
         // create the depos after the neighborhood as we place the depos in random neighborhoods
         for (int i =0; i < numDepos; i++) {
             // pick neighborhood to end up in randomly
-            depos[i] = new Depo(this, i, neighborhoods[random.nextInt(numNeighborhoods)]);
+            depos[i] = new Depo(this, i, neighborhoods[i % numNeighborhoods]);
+            //depos[i] = new Depo(this, i, neighborhoods[random.nextInt(numNeighborhoods)]);
             //depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i % numNeighborhoods));
             schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
             order++;

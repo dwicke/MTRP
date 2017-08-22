@@ -4,6 +4,7 @@ import kn.uni.voronoitreemap.j2d.PolygonSimple;
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
 import sim.app.mtrp.main.agents.comparisonagents.EquitableAgent;
+import sim.app.mtrp.main.agents.learningagents.LearningAgentWithCommunication;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 
@@ -36,6 +37,16 @@ public class AgentPortrayal extends OvalPortrayal2D {
         int width = (int) (info.draw.width);
         int height = (int) (info.draw.height);
         graphics.fillOval(x, y, width, height);
+
+        if (model instanceof LearningAgentWithCommunication) {
+            LearningAgentWithCommunication lawc = (LearningAgentWithCommunication) model;
+            int sigDist = (int)lawc.getSignallingDistance() * 10;
+            int centerx = x - sigDist / 2;
+            int centery = y - sigDist / 2;
+            graphics.drawOval(centerx, centery,  sigDist, sigDist);
+        }
+
+
 
         if(model instanceof EquitableAgent) {
             // then draw the power diagram

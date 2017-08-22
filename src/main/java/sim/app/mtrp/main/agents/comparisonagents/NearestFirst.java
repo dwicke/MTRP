@@ -19,9 +19,18 @@ public class NearestFirst extends LearningAgent {
 
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
-        if (t.getNeighborhood().getId() == getId()) {
-            return -getNumTimeStepsFromLocation(t.getLocation());
-        } else {
+
+        if (state.numNeighborhoods == state.numAgents) {
+            if (t.getNeighborhood().getId() == getId()) {
+                return -getNumTimeStepsFromLocation(t.getLocation());
+            } else {
+                return Double.NEGATIVE_INFINITY;
+            }
+        }else {
+            double cellHalf = (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2.0;
+            if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX()) <= cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY()) <= cellHalf) {
+                return -getNumTimeStepsFromLocation(t.getLocation());
+            }
             return Double.NEGATIVE_INFINITY;
         }
     }

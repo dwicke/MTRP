@@ -48,15 +48,15 @@ public class EquitableAgent extends NearestFirst {
             ep.init();
             ep.computeDiagram();
         }
-        double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id));
+        double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id)) - ep.getRegion(id).getArea();
         double overAllRate = (state.numNeighborhoods * (1.0 / state.getTimestepsTilNextTask())) / state.numAgents;
         //state.printlnSynchronized("id = " + id + "  Rate in my polygon " + rateinMyPolygon + " should be " + overAllRate + " difference = " + (overAllRate - rateinMyPolygon));
         //state.printlnSynchronized(" going to update");
-        if (rateinMyPolygon != overAllRate) {
+        //if (rateinMyPolygon != overAllRate) {
             ep.update(id);
             //state.printlnSynchronized("finished update");
             ep.computeDiagram();
-        }
+       // }
 
         return getAvailableTask(getNonCommittedTasks());
     }
@@ -64,6 +64,17 @@ public class EquitableAgent extends NearestFirst {
     @Override
     public double getUtility(Task t) {
         PolygonSimple myRegion = ep.getRegion(id);
+
+
+            state.printlnSynchronized("my id = " + id + " virtual generator = " + ep.getSite(id).getPoint().toString());
+
+            /*
+            my id = 0 virtual generator = (32.0,6.0)
+my id = 1 virtual generator = (2.0,22.0)
+my id = 2 virtual generator = (32.0,21.0)
+my id = 0 virtual generator = (10.0,32.0)
+             */
+
         Iterator<Point2D> pr = myRegion.iterator();
 //        state.printlnSynchronized("My region " + id + " is bounded by:");
 //        while(pr.hasNext()) {

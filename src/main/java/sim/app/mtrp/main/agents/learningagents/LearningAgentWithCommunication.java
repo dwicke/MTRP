@@ -62,6 +62,10 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
 
 
+        // weight needs to be based on the mean location of the tasks
+        // and what not this is very simplistic
+        /// get the distance to the nearest neighborhood
+        // 1 - (numSignaled / state.numAgents)*(
         double weight = state.numNeighborhoods == 1 ? 1.0 : numSignaled / (double) state.numAgents;
 
 
@@ -85,6 +89,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             ptableSum += pTable.getQValue(i, 0);
         }
         double neighborhoodp = pTable.getQValue(t.getNeighborhood().getId(), 0) / ptableSum;
+        //return pTable.getQValue(t.getNeighborhood().getId(), 0);
         return neighborhoodp;
     }
 

@@ -21,10 +21,10 @@ public class Neighborhood implements Steppable{
 
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
-    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty;
+    double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, timeLastFinished;
 
     Task latestTask = null;
-    double taskCompletionValue = 1.0;
+    double taskCompletionValue = 300.0;
 
     public Neighborhood(MTRP state, int id) {
         this.state = state;
@@ -32,6 +32,19 @@ public class Neighborhood implements Steppable{
 
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
         meanLocation = new Double2D(state.random.nextDouble(true,true)*state.simWidth, state.random.nextDouble(true,true)*state.simHeight);
+
+        if (state.numNeighborhoods == 4) {
+            if (id == 0) {
+                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
+            } else if (id == 1) {
+                meanLocation = new Double2D(0 + 20, 20);
+            } else if (id == 2) {
+                meanLocation = new Double2D(20, state.simHeight - 20);
+            } else if (id == 3) {
+                meanLocation = new Double2D(state.simWidth - 20, 20);
+            }
+        }
+
         // then generate the initial tasks locations
         tasks = new ArrayList<Task>();
         timestepsTilNextTask = state.timestepsTilNextTask;
@@ -135,6 +148,7 @@ public class Neighborhood implements Steppable{
 
     public void finishedTask(Task task) {
         totalTime += task.timeNotFinished;
+        timeLastFinished = state.schedule.getSteps();
         totalBounty += task.getBounty();
         totalDist += task.getLocation().distance(meanLocation);
         count++;
@@ -191,21 +205,24 @@ public class Neighborhood implements Steppable{
 
     public double getBaseBounty() {
 
+
+        Depo closestDepo = getClosestDepo(meanLocation);
         if(count == 0) {
-            return taskCompletionValue + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+            return  taskCompletionValue + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         } else {
-            Depo closestDepo = getClosestDepo(meanLocation);
             return taskCompletionValue + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
         }
     }
 
     public double getBountyRate(Double2D loc) {
         Depo closestDepo = getClosestDepo(loc);
+
+        // if some tasks are really suddenly far out this will rise rather quickly, but if it is maintained then the denominator should also rise as well
+        // and should stabilize
         if (count == 0) {
             return closestDepo.getFuelCost();
         }
-        // if some tasks are really suddenly far out this will rise rather quickly, but if it is maintained then the denominator should also rise as well
-        // and should stabilize
+
         return (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count );
         //return closestDepo.getFuelCost();
     }

@@ -25,6 +25,7 @@ public class EquitablePartitions {
     // normal list based on an array
     OpenList sites;
     PowerDiagram diagram;
+    Site fixedSites[];
 
     public EquitablePartitions(MTRP state) {
 
@@ -33,6 +34,7 @@ public class EquitablePartitions {
 
         // normal list based on an array
         sites = new OpenList();
+        fixedSites = new Site[state.numAgents];
     }
 
 
@@ -44,8 +46,8 @@ public class EquitablePartitions {
         // here it is just a rectangle.
 
         PolygonSimple rootPolygon = new PolygonSimple();
-        int width =  (int) (state.getSimWidth() + state.taskLocLength);
-        int height = (int) (state.getSimHeight() + state.taskLocLength);
+        int width =  (int) (state.getSimWidth()/* + state.taskLocLength*/);
+        int height = (int) (state.getSimHeight() /*+ state.taskLocLength*/);
         rootPolygon.add(0, 0);
         rootPolygon.add(width, 0);
         rootPolygon.add(width, height);
@@ -58,6 +60,7 @@ public class EquitablePartitions {
             // we could also set a different weighting to some sites
             // site.setWeight(30)
             sites.add(site);
+            fixedSites[i] = site;
         }
 
 
@@ -74,7 +77,7 @@ public class EquitablePartitions {
 
 
     public void computeDiagram() {
-        diagram.setSites(sites);
+        //diagram.setSites(sites);
         diagram.computeDiagram();
     }
 
@@ -111,14 +114,15 @@ public class EquitablePartitions {
                 if (lineIntegral != 0) {
                     u += gamma * (rateInNeighbor - rateInMe) * lineIntegral;
                 }else {
-                    u += gamma * (rateInNeighbor - rateInMe);
+                    //u += gamma * (rateInNeighbor - rateInMe);
                 }
 
-                state.printlnSynchronized("Updated u! gamma = " + gamma + " rateInNeighbor = " + rateInNeighbor + "rateInMe = " + rateInMe + " lineIntegral = " + lineIntegral);
+                //state.printlnSynchronized("Updated u! gamma = " + gamma + " rateInNeighbor = " + rateInNeighbor + "rateInMe = " + rateInMe + " lineIntegral = " + lineIntegral);
             }
         }
-        state.printlnSynchronized("U value = " + u);
-        sites.get(id).setWeight(sites.get(id).getWeight() - u);
+        //state.printlnSynchronized("U value = " + (u /  sites.get(id).getNeighbours().size()));
+        sites.get(id).setWeight(sites.get(id).getWeight() - (u ));
+        //state.printlnSynchronized("Weight for id " + id + " weight = " + sites.get(id).getWeight());
     }
 
     public static boolean nearlyEqual(double a, double b, double epsilon) {
@@ -172,12 +176,12 @@ public class EquitablePartitions {
         // get the slope of the boundry
         double slope = (points.get(0).getY() - points.get(1).getY()) / (points.get(0).getX() - points.get(1).getX());
 
-        double lineIntegral = 0.0;
+        double lineIntegral = points.get(0).distance(points.get(1)) * (1 / (state.getSimWidth() + state.taskLocLength));
         // now for each of the neighborhoods clip with my region
         for (int i = 0; i < state.neighborhoods.length; i++) {
 
-            double centerX = state.neighborhoods[i].getMeanLocation().x + (state.taskLocLength / 2);
-            double centerY = state.neighborhoods[i].getMeanLocation().y + (state.taskLocLength / 2);
+            double centerX = state.neighborhoods[i].getMeanLocation().x;// + (state.taskLocLength / 2);
+            double centerY = state.neighborhoods[i].getMeanLocation().y;// + (state.taskLocLength / 2);
 
             PolygonSimple neighborhood = new PolygonSimple(4);
             neighborhood.add(centerX - (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
@@ -203,7 +207,7 @@ public class EquitablePartitions {
                 }
                 // find the length of that segment and multiply by (rate / area of neighborhood)
                 if (seg.size() == 2) {
-                    state.printlnSynchronized("WOOOHOO we have a segment that is on the boundry with length " + seg.get(0).distance(seg.get(1)));
+                    //state.printlnSynchronized("WOOOHOO we have a segment that is on the boundry with length " + seg.get(0).distance(seg.get(1)));
                     double areaOfNeighborhood = state.taskLocLength * state.taskLocLength;
                     lineIntegral += seg.get(0).distance(seg.get(1)) * ((1.0 / state.neighborhoods[i].getTimestepsTilNextTask()) / (areaOfNeighborhood));
                 }
@@ -218,13 +222,13 @@ public class EquitablePartitions {
 
     public double getRateInPolygonCliped(PolygonSimple s) {
 
-        double totalRate = 0.0;
+        double totalRate = s.getArea();
         for (int i = 0; i < state.neighborhoods.length; i++) {
 
             // for each neighborhood get the area that intersects with the polygon
             // and multiply the rate / area of the neighborhood by this area
-            double centerX = state.neighborhoods[i].getMeanLocation().x + (state.taskLocLength / 2);
-            double centerY = state.neighborhoods[i].getMeanLocation().y + (state.taskLocLength / 2);
+            double centerX = state.neighborhoods[i].getMeanLocation().x;// + (state.taskLocLength / 2);
+            double centerY = state.neighborhoods[i].getMeanLocation().y;// + (state.taskLocLength / 2);
 
             PolygonSimple neighborhood = new PolygonSimple(4);
             neighborhood.add(centerX - (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
@@ -239,12 +243,13 @@ public class EquitablePartitions {
             PolygonSimple cl = s.convexClip(neighborhood);
             if (cl != null) {
                 double areaIntersect = cl.getArea();
-                totalRate += areaIntersect / areaOfNeighborhood * (1.0 / state.neighborhoods[i].getTimestepsTilNextTask());
+                //totalRate += areaIntersect / areaOfNeighborhood * (1.0 / state.neighborhoods[i].getTimestepsTilNextTask());
+                totalRate += areaIntersect * (1.0 / state.neighborhoods[i].getTimestepsTilNextTask());
             }
 
         }
 
-        return totalRate;
+        return totalRate /(  (state.getSimWidth() + state.taskLocLength)* (state.getSimWidth() + state.taskLocLength));
     }
 
     public double getRateInPolygon(PolygonSimple s) {
@@ -254,8 +259,8 @@ public class EquitablePartitions {
 
             // for each neighborhood get the area that intersects with the polygon
             // and multiply the rate / area of the neighborhood by this area
-            double centerX = state.neighborhoods[i].getMeanLocation().x + (state.taskLocLength / 2);
-            double centerY = state.neighborhoods[i].getMeanLocation().y + (state.taskLocLength / 2);
+            double centerX = state.neighborhoods[i].getMeanLocation().x;// + (state.taskLocLength / 2);
+            double centerY = state.neighborhoods[i].getMeanLocation().y;// + (state.taskLocLength / 2);
 
             Point2D[] neighborhood = new Point2D[4];
             // top left
@@ -286,8 +291,12 @@ public class EquitablePartitions {
 
 
 
+    public Site getSite(int id) {
+        return fixedSites[id];
+    }
+
     public PolygonSimple getRegion(int id) {
-        return sites.get(id).getPolygon();
+        return fixedSites[id].getPolygon();
     }
 
 
