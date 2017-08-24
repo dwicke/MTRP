@@ -38,6 +38,8 @@ public class LearningAgentWithJumpship extends LearningAgent {
 
         if (curJob != null && ( bestT == null || bestT.getJob().getId() != curJob.getId())) {
             bestT = handleJumpship(bestT);
+        } else {
+            handleMaintain(bestT);
         }
 
 //        if ((prevJob != null && bestT != null) || (jumped == true && bestT != null)) {
@@ -55,6 +57,9 @@ public class LearningAgentWithJumpship extends LearningAgent {
 
     }
 
+    public void handleMaintain(Task bestT) {
+        // does nothing...
+    }
 
     public Task handleJumpship(Task bestT) {
         // then I'm jumping ship and need to decommit and maybe learn too...

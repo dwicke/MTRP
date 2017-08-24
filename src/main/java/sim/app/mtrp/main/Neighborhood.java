@@ -24,14 +24,18 @@ public class Neighborhood implements Steppable{
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, timeLastFinished;
 
     Task latestTask = null;
-    double taskCompletionValue = 300.0;
+    double taskCompletionValue = 3000.0;
+
+    double neighborhoodBounty = 0;
+
+
 
     public Neighborhood(MTRP state, int id) {
         this.state = state;
         this.id = id;
 
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
-        meanLocation = new Double2D(state.random.nextDouble(true,true)*state.simWidth, state.random.nextDouble(true,true)*state.simHeight);
+        meanLocation = new Double2D(20 + state.random.nextDouble(true,true)*(state.simWidth - 40), 20 + state.random.nextDouble(true,true)*(state.simHeight -40));
 
         if (state.numNeighborhoods == 4) {
             if (id == 0) {
@@ -78,7 +82,7 @@ public class Neighborhood implements Steppable{
     public void generateTasks() {
 
 
-
+        neighborhoodBounty++;
 
         // bernolli process by sampling geomtric distribution
         // i in effect am producing a poisson process.
@@ -147,6 +151,7 @@ public class Neighborhood implements Steppable{
     }
 
     public void finishedTask(Task task) {
+        neighborhoodBounty = 0;
         totalTime += task.timeNotFinished;
         timeLastFinished = state.schedule.getSteps();
         totalBounty += task.getBounty();
@@ -205,13 +210,37 @@ public class Neighborhood implements Steppable{
 
     public double getBaseBounty() {
 
-
         Depo closestDepo = getClosestDepo(meanLocation);
+//        double numTasksHere = tasks.size();
+//        double maxOut = 1;
+//        // now get the number of tasks in the other neighborhoods
+//        for (int i = 0; i < state.numNeighborhoods; i++) {
+//            if (i != id && maxOut < state.neighborhoods[i].tasks.size()) {
+//                maxOut = state.neighborhoods[i].tasks.size();
+//            }
+//        }
+
+        double weight = 1;// + (numTasksHere / maxOut);
         if(count == 0) {
-            return  taskCompletionValue + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+            return  weight * (getTaskCompletionValue() + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
         } else {
-            return taskCompletionValue + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes();
+            return weight * (getTaskCompletionValue() + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
         }
+    }
+
+    public double getTaskCompletionValue() {
+//        double sum = 0;
+//        if(tasks.size() == 0) {
+//            return 1.0;
+//        }
+//        for(Task t : tasks) {
+//            sum += t.getTimeNotFinished();
+//        }
+//        if (sum > 0) {
+//            return sum / (double) tasks.size();
+//        }
+//        return 1;
+        return 3600;
     }
 
     public double getBountyRate(Double2D loc) {
@@ -223,8 +252,10 @@ public class Neighborhood implements Steppable{
             return closestDepo.getFuelCost();
         }
 
-        return (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count );
-        //return closestDepo.getFuelCost();
+
+
+        return ( (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count ));
+
     }
 
     public double stepDistance(Double2D d, Double2D loc) {
@@ -260,4 +291,5 @@ public class Neighborhood implements Steppable{
     public double getTotalBountyRate() {
         return totalBr;
     }
+
 }

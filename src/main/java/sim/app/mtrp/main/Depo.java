@@ -31,11 +31,12 @@ public class Depo implements Steppable{
 
        //location = this.neighborhood.generateLocationInNeighborhood();
 
-        //location = this.neighborhood.meanLocation;
+        location = this.neighborhood.meanLocation;
 
         // so i go from the index to the center of the grid cell
-        location = getCentral();
+        //location = getCentral();
 
+        //location = new Double2D(50,50);
 
 
         state.getDepoPlane().setObjectLocation(this, location);

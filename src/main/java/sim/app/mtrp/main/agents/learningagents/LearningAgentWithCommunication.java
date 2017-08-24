@@ -38,6 +38,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         super.learn(reward);
         agentSuccess.update(curJob.getCurWorker().getId(), 0, reward);
         agentSuccess.oneUpdate(oneUpdateGamma);
+
+
     }
 
     @Override
@@ -58,6 +60,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
                 numSignaled++;
             }
 
+
         }
 
 
@@ -66,8 +69,26 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         // and what not this is very simplistic
         /// get the distance to the nearest neighborhood
         // 1 - (numSignaled / state.numAgents)*(
-        double weight = state.numNeighborhoods == 1 ? 1.0 : numSignaled / (double) state.numAgents;
 
+        // This weight is very very important.
+        // basically it adjust whether you should rely on signalling or the neighborhood
+        // we have two major cases where we have the neighborhoods that are seperated
+        // and the other where they overlap
+        // when they are seperate a weight of 0 is best but,
+        // when they overlap a weight of 1 is better
+        // however, this is not
+        double weight = 1;//state.numNeighborhoods == 1 ? 1.0 : numSignaled / (double) state.numAgents;
+        //weight = (numSignaled > 0 || numNeighborhoods == 1) ? 1.0 : 0.0;
+
+        // basically the idea is to use the neighborhood stuff for when we have seperate
+
+        // ratio of number of agents to number of tasks in neighborhood could be the weight?
+        // normalized?
+        // the thing is that how do we get an agent to leave an occupied neighborhood
+        // actually i think this is the best we can do... especially if we want the agents
+        // to go to neighborhoods where they are possibly doing worse off
+        // how high must the bounty go in order for an agent to leave an isolated neighborhood and go after it?
+        // but that is the question we do want the agent to go between the neighborhoods
 
         double signalConf = confidence;
 
@@ -89,7 +110,6 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
             ptableSum += pTable.getQValue(i, 0);
         }
         double neighborhoodp = pTable.getQValue(t.getNeighborhood().getId(), 0) / ptableSum;
-        //return pTable.getQValue(t.getNeighborhood().getId(), 0);
         return neighborhoodp;
     }
 
@@ -112,8 +132,11 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         if (numJumpships > 0) {
             signalDist = totalJumpshipDist / numJumpships;
         }
-
+        //return 40;
         return signalDist;
+
+
+        // not using this
         //return signalDist / 2;
     }
     @Override
@@ -125,6 +148,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         numJumpships++;
         return super.handleJumpship(bestT);
     }
+
+
 
     @Override
     public String toString() {
