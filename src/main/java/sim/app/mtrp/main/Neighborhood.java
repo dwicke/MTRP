@@ -81,8 +81,12 @@ public class Neighborhood implements Steppable{
     double numTask = 0;
     public void generateTasks() {
 
-
-        neighborhoodBounty++;
+        if (count > 0) {
+            neighborhoodBounty += ((double) totalTime / (double) count );
+            //neighborhoodBounty++;
+        } else {
+            neighborhoodBounty++;
+        }
 
         // bernolli process by sampling geomtric distribution
         // i in effect am producing a poisson process.
@@ -158,6 +162,10 @@ public class Neighborhood implements Steppable{
         totalDist += task.getLocation().distance(meanLocation);
         count++;
         tasks.remove(task);
+    }
+
+    public double getNeighborhoodBounty() {
+        return neighborhoodBounty;
     }
 
     public int getId() {

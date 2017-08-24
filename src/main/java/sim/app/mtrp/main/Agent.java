@@ -374,6 +374,7 @@ public abstract class Agent implements Steppable {
     protected void finishTask() {
         amWorking = false;
         bounty += curJob.getCurrentBounty();
+        bounty += curJob.getTask().getNeighborhood().getNeighborhoodBounty();
         curJob.finish();
         curJob = null;
     }

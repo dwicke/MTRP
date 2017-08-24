@@ -11,7 +11,9 @@ import sim.app.mtrp.main.util.QTable;
 public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     QTable agentSuccess;
+    QTable expectedNeighborhoodReward;
     double agentSuccessLR = .99;//.99;
+    double neighRewardLR = .65;
     QTable meanJumpshipDist;
     Task[] dummy;
 
@@ -23,6 +25,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     public LearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
         agentSuccess = new QTable(state.getNumAgents(), 1, agentSuccessLR, .1,state.random);
+        expectedNeighborhoodReward = new QTable(state.getNumNeighborhoods(), 1, neighRewardLR, .1, state.random);
     }
 
     @Override
@@ -39,7 +42,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         agentSuccess.update(curJob.getCurWorker().getId(), 0, reward);
         agentSuccess.oneUpdate(oneUpdateGamma);
 
-
+        // need to learn the expected reward for completing a task in the neighborhood
+        expectedNeighborhoodReward.update(curJob.getTask().getNeighborhood().getId(), 0, curJob.getTask().getNeighborhood().getNeighborhoodBounty());
     }
 
     @Override
@@ -100,8 +104,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
         //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
-        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
-
+        //double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
+        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime) + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
         return util;
     }
     public double getNorm(Task t) {
