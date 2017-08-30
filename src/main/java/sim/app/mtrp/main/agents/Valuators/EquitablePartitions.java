@@ -159,6 +159,8 @@ public class EquitablePartitions {
      * @return
      */
     public double getBoarderRate(PolygonSimple neighbor, PolygonSimple polygon) {
+
+
         ArrayList<kn.uni.voronoitreemap.j2d.Point2D> points = new ArrayList<kn.uni.voronoitreemap.j2d.Point2D>();
         // find the boundry with the neighbor
         Iterator<kn.uni.voronoitreemap.j2d.Point2D> neighborIter = neighbor.iterator();
@@ -182,6 +184,11 @@ public class EquitablePartitions {
 
         if (points.size() == 2) {
 
+            double rateInPerX = getRateInPolygonCliped(polygon) / polygon.getArea();
+            return rateInPerX * points.get(0).distance(points.get(1));
+
+
+/*
             // get the slope of the boundry
             double slope = (points.get(0).getY() - points.get(1).getY()) / (points.get(0).getX() - points.get(1).getX());
 
@@ -229,9 +236,13 @@ public class EquitablePartitions {
             }
             //state.printlnSynchronized("Line integral = " + lineIntegral);
             return lineIntegral;
+            */
         }else {
 
             return 0.0;
+
+
+
         }
 
 
