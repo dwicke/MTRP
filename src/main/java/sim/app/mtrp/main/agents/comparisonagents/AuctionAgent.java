@@ -14,7 +14,7 @@ import sim.util.Bag;
 public class AuctionAgent extends LearningAgent {
 
     QTable expectedNeighborhoodReward;
-    double neighRewardLR = .65;
+    double neighRewardLR = .45;
     public AuctionAgent(MTRP state, int id) {
         super(state, id);
         expectedNeighborhoodReward = new QTable(state.getNumNeighborhoods(), 1, neighRewardLR, .1, state.random);

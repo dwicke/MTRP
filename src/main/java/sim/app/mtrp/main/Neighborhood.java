@@ -36,18 +36,17 @@ public class Neighborhood implements Steppable{
 
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
         meanLocation = new Double2D(20 + state.random.nextDouble(true,true)*(state.simWidth - 40), 20 + state.random.nextDouble(true,true)*(state.simHeight -40));
-
-        if (state.numNeighborhoods == 4) {
-            if (id == 0) {
-                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
-            } else if (id == 1) {
-                meanLocation = new Double2D(0 + 20, 20);
-            } else if (id == 2) {
-                meanLocation = new Double2D(20, state.simHeight - 20);
-            } else if (id == 3) {
-                meanLocation = new Double2D(state.simWidth - 20, 20);
-            }
-        }
+//        if (state.numNeighborhoods == 4) {
+//            if (id == 0) {
+//                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
+//            } else if (id == 1) {
+//                meanLocation = new Double2D(0 + 20, 20);
+//            } else if (id == 2) {
+//                meanLocation = new Double2D(20, state.simHeight - 20);
+//            } else if (id == 3) {
+//                meanLocation = new Double2D(state.simWidth - 20, 20);
+//            }
+//        }
 
         // then generate the initial tasks locations
         tasks = new ArrayList<Task>();

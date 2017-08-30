@@ -26,10 +26,27 @@ public class AgentPortrayal extends OvalPortrayal2D {
     @Override
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
 
+
+
+
         if (model.isAmWorking()) {
-            graphics.setColor(Color.orange);
+            graphics.setColor(Color.yellow);
         } else {
-            graphics.setColor(Color.black);
+            //graphics.setColor(Color.black);
+            switch (model.getId()) {
+                case 0:
+                    graphics.setColor(Color.black);
+                    break;
+                case 1:
+                    graphics.setColor(Color.orange);
+                    break;
+                case 2:
+                    graphics.setColor(Color.RED);
+                    break;
+                case 3:
+                    graphics.setColor(Color.GREEN);
+                    break;
+            }
         }
         // this code was stolen from OvalPortrayal2D
         int x = (int) (info.draw.x - info.draw.width / 2.0);

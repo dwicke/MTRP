@@ -48,7 +48,7 @@ public class EquitableAgent extends NearestFirst {
             ep.init();
             ep.computeDiagram();
         }
-        double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id)) - ep.getRegion(id).getArea();
+        double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id));// - ep.getRegion(id).getArea();
         double overAllRate = (state.numNeighborhoods * (1.0 / state.getTimestepsTilNextTask())) / state.numAgents;
         //state.printlnSynchronized("id = " + id + "  Rate in my polygon " + rateinMyPolygon + " should be " + overAllRate + " difference = " + (overAllRate - rateinMyPolygon));
         //state.printlnSynchronized(" going to update");
@@ -66,7 +66,7 @@ public class EquitableAgent extends NearestFirst {
         PolygonSimple myRegion = ep.getRegion(id);
 
 
-            state.printlnSynchronized("my id = " + id + " virtual generator = " + ep.getSite(id).getPoint().toString());
+            //state.printlnSynchronized("my id = " + id + " virtual generator = " + ep.getSite(id).getPoint().toString());
 
             /*
             my id = 0 virtual generator = (32.0,6.0)
@@ -82,7 +82,7 @@ my id = 0 virtual generator = (10.0,32.0)
 //        }
 
 
-        kn.uni.voronoitreemap.j2d.Point2D tpoint = new kn.uni.voronoitreemap.j2d.Point2D(t.getLocation().getX() + (state.taskLocLength / 2), t.getLocation().getY() + (state.taskLocLength / 2));
+        kn.uni.voronoitreemap.j2d.Point2D tpoint = new kn.uni.voronoitreemap.j2d.Point2D(t.getLocation().getX() , t.getLocation().getY());
         //state.printlnSynchronized("Does it contain " + tpoint.toString());
 
         if (myRegion.contains(tpoint)) {
@@ -98,7 +98,7 @@ my id = 0 virtual generator = (10.0,32.0)
 
 
 
-        kn.uni.voronoitreemap.j2d.Point2D tpoint = new kn.uni.voronoitreemap.j2d.Point2D(t.getLocation().getX() + (state.taskLocLength / 2), t.getLocation().getY() + (state.taskLocLength / 2));
+        kn.uni.voronoitreemap.j2d.Point2D tpoint = new kn.uni.voronoitreemap.j2d.Point2D(t.getLocation().getX() , t.getLocation().getY());
         //state.printlnSynchronized("Does it contain " + tpoint.toString());
 
         if (myRegion.contains(tpoint)) {

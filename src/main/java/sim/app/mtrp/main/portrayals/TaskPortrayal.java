@@ -1,6 +1,7 @@
 package sim.app.mtrp.main.portrayals;
 
 import sim.app.mtrp.main.Task;
+import sim.app.mtrp.main.agents.comparisonagents.EquitableAgent;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 
@@ -31,7 +32,24 @@ public class TaskPortrayal extends OvalPortrayal2D {
         if (alpha > 255) {
             alpha = 255;
         }
-        graphics.setColor(new Color(0,255,0,alpha));
+
+        Color[] colors = {Color.black, Color.orange, Color.red, Color.green};
+        if (t.getState().getAgents().length > 0 && t.getState().getAgents()[0] instanceof EquitableAgent) {
+            boolean setColor = false;
+            for (int i = 0; i < t.getState().getAgents().length; i++) {
+                EquitableAgent a = (EquitableAgent) t.getState().getAgents()[i];
+                if(a.inRegion(t)) {
+                    graphics.setColor(colors[i]);
+                    setColor = true;
+                }
+            }
+            if (!setColor) {
+                graphics.setColor(new Color(0, 0, 255, alpha));
+            }
+        }
+        else {
+            graphics.setColor(new Color(0, 0, 255, alpha));
+        }
 
 
 

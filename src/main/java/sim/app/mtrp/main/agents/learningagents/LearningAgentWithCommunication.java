@@ -13,7 +13,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     QTable agentSuccess;
     QTable expectedNeighborhoodReward;
     double agentSuccessLR = .99;//.99;
-    double neighRewardLR = .65;
+    double neighRewardLR = .45;
     QTable meanJumpshipDist;
     Task[] dummy;
 

@@ -150,4 +150,8 @@ public class Task {
     public boolean isDummy() {
         return dummy;
     }
+
+    public MTRP getState() {
+        return state;
+    }
 }
