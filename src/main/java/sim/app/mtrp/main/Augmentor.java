@@ -94,25 +94,25 @@ public class Augmentor implements Steppable {
         }
 
         // now what if a neighborhood started producing tasks at a much higher rate
-        if (state.isHasSuddenTaskIncrease()) {
-            if (state.schedule.getSteps() % state.getDisasterStep() == 0) {
-                // then start the disaster!
-                inDisaster = state.getNeighborhoods()[state.random.nextInt(state.getNeighborhoods().length)];
-                previousRate = inDisaster.getTimestepsTilNextTask();
-                inDisaster.setTimestepsTilNextTask(state.getNewRate());
-                disasterCount = 0;
-            }
-            if (disasterCount >= 0) {
-                disasterCount++;
-                if (disasterCount % state.getDisasterLength() == 0) {
-                    // disaster ended!
-                    disasterCount = -1;
-                    inDisaster.setTimestepsTilNextTask(previousRate);
-                    inDisaster = null;
-                }
-            }
-
-        }
+//        if (state.isHasSuddenTaskIncrease()) {
+//            if (state.schedule.getSteps() % state.getDisasterStep() == 0) {
+//                // then start the disaster!
+//                inDisaster = state.getNeighborhoods()[state.random.nextInt(state.getNeighborhoods().length)];
+//                previousRate = inDisaster.getTimestepsTilNextTask();
+//                inDisaster.setTimestepsTilNextTask(state.getNewRate());
+//                disasterCount = 0;
+//            }
+//            if (disasterCount >= 0) {
+//                disasterCount++;
+//                if (disasterCount % state.getDisasterLength() == 0) {
+//                    // disaster ended!
+//                    disasterCount = -1;
+//                    inDisaster.setTimestepsTilNextTask(previousRate);
+//                    inDisaster = null;
+//                }
+//            }
+//
+//        }
 
         if (state.isSlower()) {
             if (state.getAgents() != null && regularAgents == null) {
@@ -141,6 +141,27 @@ public class Augmentor implements Steppable {
                     a.getKey().setSlow(false);
                     //state.printlnSynchronized("Set agent " + a.getKey().getId() + " to regular");
 
+                }
+            }
+
+        }
+
+        if (state.isHasSuddenTaskIncrease()) {
+            if (state.schedule.getSteps() % state.getDisasterStep() == 0) {
+                // then start the disaster!
+                state.printlnSynchronized("In disaster");
+                inDisaster = state.getNeighborhoods()[state.random.nextInt(state.getNeighborhoods().length)];
+                previousRate = inDisaster.getTimestepsTilNextTask();
+                inDisaster.setTimestepsTilNextTask(-1);
+                disasterCount = 0;
+            }
+            if (disasterCount >= 0) {
+                disasterCount++;
+                if (disasterCount % state.getDisasterLength() == 0) {
+                    // disaster ended!
+                    disasterCount = -1;
+                    inDisaster.setTimestepsTilNextTask(previousRate);
+                    inDisaster = null;
                 }
             }
 

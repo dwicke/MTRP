@@ -105,7 +105,7 @@ public class AuctionAgent extends LearningAgent {
         //double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-        double util =  ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime) + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
+        double util =  ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)/* + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime)*/);
 
 
         //double util =   (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * t.getJob().getBountyRate() - 0) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));

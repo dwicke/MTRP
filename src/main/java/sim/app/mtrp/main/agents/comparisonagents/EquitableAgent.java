@@ -15,10 +15,10 @@ import java.util.Iterator;
 public class EquitableAgent extends NearestFirst {
 
 
-    static EquitablePartitions ep;
+
     public EquitableAgent(MTRP state, int id) {
         super(state, id);
-        ep = null;
+        setEp(null);
     }
 
     @Override
@@ -35,35 +35,42 @@ public class EquitableAgent extends NearestFirst {
     }
 
     public PolygonSimple getRegionOfDominance() {
-        if (ep == null) {
+        if (getEp() == null) {
             return null;
         }
-        return ep.getRegion(id);
+        return getEp().getRegion(id);
     }
 
     @Override
     public Task getAvailableTask() {
-        if (ep == null) {
-            ep = new EquitablePartitions(state);
-            ep.init();
-            ep.computeDiagram();
+        if (getEp() == null) {
+            setEp(new EquitablePartitions(state));
+            getEp().init();
+            getEp().computeDiagram();
         }
-        double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id));// - ep.getRegion(id).getArea();
-        double overAllRate = (state.numNeighborhoods * (1.0 / state.getTimestepsTilNextTask())) / state.numAgents;
+        //double rateinMyPolygon = ep.getRateInPolygonCliped(ep.getRegion(id));// - ep.getRegion(id).getArea();
+        //double overAllRate = (state.numNeighborhoods * (1.0 / state.getTimestepsTilNextTask())) / state.numAgents;
         //state.printlnSynchronized("id = " + id + "  Rate in my polygon " + rateinMyPolygon + " should be " + overAllRate + " difference = " + (overAllRate - rateinMyPolygon));
         //state.printlnSynchronized(" going to update");
         //if (rateinMyPolygon != overAllRate) {
-            ep.update(id);
+            getEp().update(id);
             //state.printlnSynchronized("finished update");
-            ep.computeDiagram();
+            getEp().computeDiagram();
        // }
 
         return getAvailableTask(getNonCommittedTasks());
     }
 
+    public double getRateInMyPolygon() {
+        if (getEp() == null){
+            return 0.0;
+        }
+        return getEp().getRateInPolygonCliped(getEp().getRegion(id));
+    }
+
     @Override
     public double getUtility(Task t) {
-        PolygonSimple myRegion = ep.getRegion(id);
+        PolygonSimple myRegion = getEp().getRegion(id);
 
 
             //state.printlnSynchronized("my id = " + id + " virtual generator = " + ep.getSite(id).getPoint().toString());
@@ -94,7 +101,7 @@ my id = 0 virtual generator = (10.0,32.0)
     }
 
     public boolean inRegion(Task t) {
-        PolygonSimple myRegion = ep.getRegion(id);
+        PolygonSimple myRegion = getEp().getRegion(id);
 
 
 
@@ -141,5 +148,14 @@ my id = 0 virtual generator = (10.0,32.0)
             }
         }
         return chosenTask;
+    }
+
+
+    public EquitablePartitions getEp() {
+        return state.getEp();
+    }
+
+    public void setEp(EquitablePartitions ep) {
+        state.setEp(ep);
     }
 }

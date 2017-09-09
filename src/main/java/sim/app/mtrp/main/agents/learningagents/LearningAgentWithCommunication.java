@@ -21,6 +21,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     // so basically if the distance to the task is less than this then I will signal?
     double totalJumpshipDist;
     int numJumpships = 0;
+    double maxCommDist = 5000;
 
     public LearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
@@ -51,14 +52,22 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         double confidence = 1.0;
         double numSignaled = 0;
+        // this is a hidden markov model
+        // we have two states:
+        // succeed
+        // fail
+        // we observe the probability of being in the succeed state when we observe
+        // an agent i going after a task
+        // probability of being in the fail state is 1 - this value
+
         for (int i = 0; i < state.numAgents; i++) {
             Agent a = state.getAgents()[i];
-            if (i != id && t.getJob().isSignaled(a)) {
+            if (i != id && t.getJob().isSignaled(a) && this.curLocation.distance(a.curLocation) < maxCommDist) {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
             }
             //else if (i != id && a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
-            else if (i != id && a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
+            else if (i != id && a.getCurJob() != null && this.curLocation.distance(a.curLocation) < maxCommDist && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
             {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
@@ -99,14 +108,16 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         double neighborhoodp = getNorm(t);
 
-        confidence = weight * confidence + (1 - weight) * neighborhoodp;
+        confidence = weight * confidence;// + (1 - weight) * neighborhoodp;
 
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
         //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
         //double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
-        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime) + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
-        return util;
+        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime) /* + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime)*/);
+        double fullVal =  util;// - (1 - confidence) * (2*getCost(t) / totalTime); // add this in to get better results for small rho
+        //state.printlnSynchronized("full value = " + fullVal + " task = " + t.getId() + " for agent id = " + id);
+        return fullVal;
     }
     public double getNorm(Task t) {
         double ptableSum = 0.0;
@@ -157,6 +168,6 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
     @Override
     public String toString() {
-        return super.toString() + " " + pTable.getQTableAsString();
+        return super.toString() + " " + agentSuccess.getQTableAsString();
     }
 }

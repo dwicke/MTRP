@@ -156,7 +156,6 @@ public class StatsPublisher implements Steppable {
             if (timeStats[(int)board.job()] == null) {
                 System.out.println("OHHH Nooo " + (int)board.job());
                 timeStats[(int)board.job()] = new double[(int)maxNumSteps];
-
             }
             timeStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalTime();//board.getTotalOutstandingBounty();
             bountyStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();

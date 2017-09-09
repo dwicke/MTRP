@@ -1,5 +1,7 @@
 package sim.app.mtrp.main.agents.comparisonagents;
 
+import kn.uni.voronoitreemap.j2d.Point2D;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.agents.learningagents.LearningAgent;
@@ -14,13 +16,26 @@ public class NearestFirst extends LearningAgent {
         super(state, id);
     }
 
+
     @Override
     public double getUtility(Task t) {
 
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
 
+
         if (state.numNeighborhoods == state.numAgents) {
+
+//            double centerX = state.neighborhoods[getId()].getMeanLocation().x;// + (state.taskLocLength / 2);
+//            double centerY = state.neighborhoods[getId()].getMeanLocation().y;// + (state.taskLocLength / 2);
+//
+//            PolygonSimple neighborhood = new PolygonSimple(4);
+//            neighborhood.add(centerX - (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
+//            neighborhood.add(centerX + (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
+//            neighborhood.add(centerX + (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
+//            neighborhood.add(centerX - (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
+//
+//            if (neighborhood.contains(new Point2D(t.getLocation().x, t.getLocation().y))) {
             if (t.getNeighborhood().getId() == getId()) {
                 return -getNumTimeStepsFromLocation(t.getLocation());
             } else {

@@ -45,6 +45,7 @@ public class EquitablePartitions {
 
         // create a root polygon which limits the voronoi diagram.
         // here it is just a rectangle.
+        state.printlnSynchronized("Initing");
 
         PolygonSimple rootPolygon = new PolygonSimple();
         int width =  (int) (state.getSimWidth()/* + state.taskLocLength*/);
@@ -57,8 +58,24 @@ public class EquitablePartitions {
         // create 100 points (sites) and set random positions in the rectangle defined above.
         for (int i = 0; i < state.numAgents; i++) {
             // get a random neighborhood and then a random point within it
-            Double2D loc = state.neighborhoods[state.random.nextInt(state.numNeighborhoods)].generateLocationInNeighborhood();
-            Site site = new Site(loc.getX(), loc.getY());
+
+            boolean goodSite = true;
+            Site site;
+            do {
+                goodSite = true;
+                Double2D loc = state.neighborhoods[state.random.nextInt(state.numNeighborhoods)].generateLocationInNeighborhood();
+
+                //Double2D loc = state.depos[i].getLocation();
+
+                site = new Site(loc.getX(), loc.getY());
+                for (int j = 0; j < fixedSites.length; j++) {
+                    if (fixedSites[j] != null && site.distance(fixedSites[j]) < 1) {
+                        // then we need to generate a new site
+                        goodSite = false;
+                        break;
+                    }
+                }
+            }while(goodSite == false);
             //Site site = new Site(state.agents[i].curLocation.getX() + (state.taskLocLength / 2) , state.agents[i].curLocation.getY() + (state.taskLocLength / 2));
             // we could also set a different weighting to some sites
             // site.setWeight(30)
@@ -91,6 +108,10 @@ public class EquitablePartitions {
     public void update(int id) {
 
         PolygonSimple polygon = getRegion(id);
+        if (polygon == null) {
+            state.printlnSynchronized("id " + id + " has a null polygon");
+            return;
+        }
         double u = 0.0;
         for (int j = 0; j < fixedSites[id].getNeighbours().size(); j++) {
 
@@ -160,6 +181,7 @@ public class EquitablePartitions {
      */
     public double getBoarderRate(PolygonSimple neighbor, PolygonSimple polygon) {
 
+        //return 1.0;
 
         ArrayList<kn.uni.voronoitreemap.j2d.Point2D> points = new ArrayList<kn.uni.voronoitreemap.j2d.Point2D>();
         // find the boundry with the neighbor
@@ -184,64 +206,13 @@ public class EquitablePartitions {
 
         if (points.size() == 2) {
 
-            double rateInPerX = getRateInPolygonCliped(polygon) / polygon.getArea();
+            double rateInPerX = getRateInPolygonCliped(polygon);// / polygon.getArea();
+            //state.printlnSynchronized("The line integral is = " + rateInPerX + " and the length = " + points.get(0).distance(points.get(1)) );
             return rateInPerX * points.get(0).distance(points.get(1));
 
-
-/*
-            // get the slope of the boundry
-            double slope = (points.get(0).getY() - points.get(1).getY()) / (points.get(0).getX() - points.get(1).getX());
-
-            double lineIntegral = 0;//points.get(0).distance(points.get(1)) * (1 / (state.getSimWidth() + state.taskLocLength));
-            // now for each of the neighborhoods clip with my region
-            for (int i = 0; i < state.neighborhoods.length; i++) {
-
-                double centerX = state.neighborhoods[i].getMeanLocation().x;// + (state.taskLocLength / 2);
-                double centerY = state.neighborhoods[i].getMeanLocation().y;// + (state.taskLocLength / 2);
-
-                PolygonSimple neighborhood = new PolygonSimple(4);
-                neighborhood.add(centerX - (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
-                neighborhood.add(centerX + (state.taskLocLength / 2), centerY - (state.taskLocLength / 2));
-                neighborhood.add(centerX + (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
-                neighborhood.add(centerX - (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
-
-                PolygonSimple cliped = polygon.convexClip(neighbor);
-                ArrayList<kn.uni.voronoitreemap.j2d.Point2D> seg = new ArrayList<kn.uni.voronoitreemap.j2d.Point2D>();
-
-                // then for each clipped polygon find if any of the line segments
-                // lie on the boundry
-                if (cliped != null) {
-                    Iterator<kn.uni.voronoitreemap.j2d.Point2D> clipIter = cliped.iterator();
-
-                    while (clipIter.hasNext()) {
-                        kn.uni.voronoitreemap.j2d.Point2D point = clipIter.next();
-                        double cSlope = (point.getY() - points.get(1).getY()) / (point.getX() - points.get(1).getX());
-                        //state.printlnSynchronized("slope = " + slope + " cslope = " + cSlope + " diffx = " + (point.getX() - points.get(1).getX()) + " diffy = " + (point.getY() - points.get(1).getY()));
-                        if (cSlope == slope || ((point.getY() - points.get(1).getY()) == 0 && (point.getX() - points.get(1).getX())  == 0)) {
-                            // then we've got a point on the boundry
-                            seg.add(point);
-                        }
-                    }
-                    //state.printlnSynchronized("num points added = " + seg.size());
-                    // find the length of that segment and multiply by the normalized value
-                    if (seg.size() == 2) {
-                        //state.printlnSynchronized("WOOOHOO we have a segment that is on the boundry with length " + seg.get(0).distance(seg.get(1)));
-                        double areaOfNeighborhood = state.taskLocLength * state.taskLocLength;
-                        lineIntegral += (seg.get(0).distance(seg.get(1)) * ((1.0 / state.neighborhoods[i].getTimestepsTilNextTask()))) / ( (1.0 / state.getTimestepsTilNextTask()) * state.numNeighborhoods * areaOfNeighborhood);
-                        //lineIntegral += seg.get(0).distance(seg.get(1)) * ((1.0 / state.neighborhoods[i].getTimestepsTilNextTask()) / (areaOfNeighborhood));
-                    }
-                }
-
-
-            }
-            //state.printlnSynchronized("Line integral = " + lineIntegral);
-            return lineIntegral;
-            */
         }else {
 
             return 0.0;
-
-
 
         }
 
@@ -267,6 +238,11 @@ public class EquitablePartitions {
             neighborhood.add(centerX - (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
 
 
+
+            if (s == null) {
+                totalRate += 0;
+                continue;
+            }
             PolygonSimple cl = s.convexClip(neighborhood);
             if (cl != null) {
                 double areaIntersect = cl.getArea();

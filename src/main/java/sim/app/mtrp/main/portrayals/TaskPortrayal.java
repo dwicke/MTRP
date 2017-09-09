@@ -34,7 +34,7 @@ public class TaskPortrayal extends OvalPortrayal2D {
         }
 
         Color[] colors = {Color.black, Color.orange, Color.red, Color.green};
-        if (t.getState().getAgents().length > 0 && t.getState().getAgents()[0] instanceof EquitableAgent) {
+        if (t.getState().getAgents().length > 0 && t.getState().getAgents().length == 4  && t.getState().getAgents()[0] instanceof EquitableAgent) {
             boolean setColor = false;
             for (int i = 0; i < t.getState().getAgents().length; i++) {
                 EquitableAgent a = (EquitableAgent) t.getState().getAgents()[i];

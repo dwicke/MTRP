@@ -3,6 +3,7 @@ package sim.app.mtrp.main;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import sim.app.mtrp.main.agents.AgentFactory;
+import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
@@ -144,6 +145,10 @@ public class MTRP extends SimState {
 
     @Parameter(names={"--groupLabel", "-gl"})
     public String groupLabel = "NA";
+
+
+
+    public EquitablePartitions ep;
 
     public MTRP(long seed) {
         super(seed);
@@ -712,5 +717,11 @@ public class MTRP extends SimState {
         return bondsman.getCount() / schedule.getTime();
     }
 
+    public EquitablePartitions getEp() {
+        return ep;
+    }
 
+    public void setEp(EquitablePartitions ep) {
+        this.ep = ep;
+    }
 }

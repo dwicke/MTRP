@@ -1,5 +1,7 @@
 package sim.app.mtrp.main;
 
+import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
+import sim.app.mtrp.main.agents.comparisonagents.EquitableAgent;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -24,7 +26,7 @@ public class Neighborhood implements Steppable{
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, timeLastFinished;
 
     Task latestTask = null;
-    double taskCompletionValue = 3000.0;
+    double taskCompletionValue = 3600.0;
 
     double neighborhoodBounty = 0;
 
@@ -48,15 +50,44 @@ public class Neighborhood implements Steppable{
 //            }
 //        }
 
+        if (state.numNeighborhoods == 4) {
+            if (id == 0) {
+                meanLocation = new Double2D(40, 40);
+            } else if (id == 1) {
+                meanLocation = new Double2D(60, 40);
+            } else if (id == 2) {
+                meanLocation = new Double2D(60, 60);
+            } else if (id == 3) {
+                meanLocation = new Double2D(40, 60);
+            }
+        }
+
         // then generate the initial tasks locations
         tasks = new ArrayList<Task>();
         timestepsTilNextTask = state.timestepsTilNextTask;
     }
 
 
+
     public void step(SimState simState) {
         // here we decide if we create a new task
-        generateTasks();
+        if (state.agents.length > 0 && state.agents[0] instanceof EquitableAgent) {
+            boolean shouldGenTasks = true;
+            for(int i = 0; i < state.numAgents; i++) {
+                EquitableAgent a = (EquitableAgent)state.agents[i];
+                if (!EquitablePartitions.nearlyEqual(a.getRateInMyPolygon(), 1.0 / state.numAgents, .05)) {
+                    shouldGenTasks = false;
+                }
+            }
+            if(shouldGenTasks) {
+                generateTasks();
+            }else if (state.schedule.getSteps() == 3000) {
+                EquitableAgent a = (EquitableAgent)state.agents[0];
+                a.setEp(null);
+            }
+        }else {
+            generateTasks();
+        }
     }
 
     public Double2D getMeanLocation() {
@@ -81,15 +112,17 @@ public class Neighborhood implements Steppable{
     public void generateTasks() {
 
         if (count > 0) {
-            neighborhoodBounty += ((double) totalTime / (double) count );
-            //neighborhoodBounty++;
+            //neighborhoodBounty += ((double) totalTime / (double) count );
         } else {
-            neighborhoodBounty++;
+            //neighborhoodBounty++;
         }
 
         // bernolli process by sampling geomtric distribution
         // i in effect am producing a poisson process.
         if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
+
+            //state.printlnSynchronized("rate = " + (1.0 / getTimestepsTilNextTask()));
+
          //   if (state.schedule.getSteps() % state.timestepsTilNextTask == 0) {
 //            double interTime = state.schedule.getTime() - lastTime;
             numTask++;
@@ -231,7 +264,7 @@ public class Neighborhood implements Steppable{
         if(count == 0) {
             return  weight * (getTaskCompletionValue() + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
         } else {
-            return weight * (getTaskCompletionValue() + closestDepo.getFuelCost() * ((double) totalTime / (double) count )+ (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
+            return weight * (getTaskCompletionValue() + closestDepo.getFuelCost() * ((double) totalTime / (double) count ) + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
         }
     }
 
@@ -247,7 +280,7 @@ public class Neighborhood implements Steppable{
 //            return sum / (double) tasks.size();
 //        }
 //        return 1;
-        return 3600;
+        return taskCompletionValue;
     }
 
     public double getBountyRate(Double2D loc) {
@@ -258,7 +291,6 @@ public class Neighborhood implements Steppable{
         if (count == 0) {
             return closestDepo.getFuelCost();
         }
-
 
 
         return ( (stepDistance(loc, closestDepo.getLocation()) * closestDepo.getFuelCost()) / ((double) totalTime / (double) count ));
