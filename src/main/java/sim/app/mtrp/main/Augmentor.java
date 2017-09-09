@@ -151,6 +151,19 @@ public class Augmentor implements Steppable {
                 // then start the disaster!
                 state.printlnSynchronized("In disaster");
                 inDisaster = state.getNeighborhoods()[state.random.nextInt(state.getNeighborhoods().length)];
+
+                state.numNeighborhoods = state.numNeighborhoods - 1;
+                Neighborhood curN[] = new Neighborhood[state.numNeighborhoods];
+                int count = 0;
+                for (int i = 0; i < (state.numNeighborhoods + 1); i++) {
+                    if (state.neighborhoods[i].id != inDisaster.id) {
+                        curN[count] = state.neighborhoods[i];
+                        count++;
+                    }
+                }
+                state.neighborhoods = curN;
+                state.printlnSynchronized("In disaster: NumNeigh = " + state.numNeighborhoods + " lenOf neighs = " + state.neighborhoods.length);
+
                 previousRate = inDisaster.getTimestepsTilNextTask();
                 inDisaster.setTimestepsTilNextTask(-1);
                 disasterCount = 0;
@@ -161,6 +174,24 @@ public class Augmentor implements Steppable {
                     // disaster ended!
                     disasterCount = -1;
                     inDisaster.setTimestepsTilNextTask(previousRate);
+
+                    state.numNeighborhoods = state.numNeighborhoods + 1;
+                    // add back in the neighborhood
+                    Neighborhood curN[] = new Neighborhood[state.numNeighborhoods];
+
+                    state.printlnSynchronized("NumNeigh = " + state.numNeighborhoods + " lenOf neighs = " + state.neighborhoods.length + " curN = " + curN.length);
+
+                    int count = 0;
+                    for (int i = 0; i < state.numNeighborhoods; i++) {
+                        if (i == inDisaster.id) {
+                            curN[i] = inDisaster;
+                        } else{
+                            curN[i] = state.neighborhoods[count];
+                            count++;
+                        }
+                    }
+                    state.neighborhoods = curN;
+
                     inDisaster = null;
                 }
             }

@@ -46,6 +46,11 @@ public class EquitablePartitions {
         // create a root polygon which limits the voronoi diagram.
         // here it is just a rectangle.
         state.printlnSynchronized("Initing");
+        diagram = new PowerDiagram();
+
+        // normal list based on an array
+        sites = new OpenList();
+        fixedSites = new Site[state.numAgents];
 
         PolygonSimple rootPolygon = new PolygonSimple();
         int width =  (int) (state.getSimWidth()/* + state.taskLocLength*/);
@@ -109,7 +114,8 @@ public class EquitablePartitions {
 
         PolygonSimple polygon = getRegion(id);
         if (polygon == null) {
-            state.printlnSynchronized("id " + id + " has a null polygon");
+            //state.printlnSynchronized("id " + id + " has a null polygon");
+            init();// reset and fix
             return;
         }
         double u = 0.0;

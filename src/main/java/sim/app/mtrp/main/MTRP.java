@@ -130,7 +130,7 @@ public class MTRP extends SimState {
     @Parameter(names={"--hasSuddenTaskIncrease", "-i"}, arity = 1)
     public boolean hasSuddenTaskIncrease = false;
     public double newRate = timestepsTilNextTask / 2;
-    public int disasterLength = 2000;
+    public int disasterLength = 30000;
     public int disasterStep = 50000;
 
     public boolean slower = false;
@@ -266,15 +266,6 @@ public class MTRP extends SimState {
         order++;
 
 
-
-        // create the augementor
-        augmentor = new Augmentor(this);
-        schedule.scheduleRepeating(Schedule.EPOCH, order, augmentor);
-        order++;
-
-
-
-
         // create the agents
         agents = new Agent[numAgents];
         for (int i = 0; i < numAgents; i++) {
@@ -283,6 +274,12 @@ public class MTRP extends SimState {
             schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
             order++;
         }
+
+
+        // create the augementor
+        augmentor = new Augmentor(this);
+        schedule.scheduleRepeating(Schedule.EPOCH, order, augmentor);
+        order++;
 
         // create the stat publisher
         statsPublisher = new StatsPublisher(this, 200000, directory);
