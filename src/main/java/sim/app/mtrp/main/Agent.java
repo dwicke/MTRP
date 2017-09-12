@@ -243,6 +243,26 @@ public abstract class Agent implements Steppable {
         return closestWithinRange;
     }
 
+    public Bag getTasksWithinRangeAndAvailable(Bag tasks) {
+        //Task[] tasks = state.getBondsman().getAvailableTasks();
+
+        Bag closestWithinRange = new Bag();
+
+        for (int i =0; i < tasks.numObjs; i++) {
+            Task t = (Task)tasks.get(i);
+            double dist = getNumTimeStepsFromLocation(t.getLocation());
+            Depo d = getClosestDepo(t.getLocation());
+            if (d != null) {
+                double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
+                if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel && t.getIsAvailable()) {
+                    closestWithinRange.add(t);
+                }
+            }
+
+        }
+        return closestWithinRange;
+    }
+
 
 
     public Depo getClosestDepo() {

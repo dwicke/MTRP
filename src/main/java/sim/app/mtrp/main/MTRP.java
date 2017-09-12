@@ -81,11 +81,12 @@ public class MTRP extends SimState {
     public double fuelCost = 1.0;
 
     @Parameter(names={"--timestepsTilNextTask", "-s"})
-    public int timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
+    public double timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     @Parameter(names={"--jobLength", "-jl"})
     public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
+    @Parameter(names={"--taskLocLength", "-tll"})
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = 20;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
 
@@ -438,11 +439,11 @@ public class MTRP extends SimState {
         this.fuelCost = fuelCost;
     }
 
-    public void setTimestepsTilNextTask(int timestepsTilNextTask) {
+    public void setTimestepsTilNextTask(double timestepsTilNextTask) {
         this.timestepsTilNextTask = timestepsTilNextTask;
     }
 
-    public int getTimestepsTilNextTask() {
+    public double getTimestepsTilNextTask() {
         return timestepsTilNextTask;
     }
 

@@ -26,7 +26,7 @@ public class Neighborhood implements Steppable{
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, timeLastFinished;
 
     Task latestTask = null;
-    double taskCompletionValue = 3600.0;
+    double taskCompletionValue = 230400.0;
 
     double neighborhoodBounty = 0;
 
@@ -50,21 +50,52 @@ public class Neighborhood implements Steppable{
 //            }
 //        }
 
-        if (state.numNeighborhoods == 4) {
-            if (id == 0) {
-                meanLocation = new Double2D(40, 40);
-            } else if (id == 1) {
-                meanLocation = new Double2D(60, 40);
-            } else if (id == 2) {
-                meanLocation = new Double2D(60, 60);
-            } else if (id == 3) {
-                meanLocation = new Double2D(40, 60);
-            }
-        }
-
+//        if (state.numNeighborhoods == 4) {
+//            if (id == 0) {
+//                meanLocation = new Double2D(40, 40);
+//            } else if (id == 1) {
+//                meanLocation = new Double2D(60, 40);
+//            } else if (id == 2) {
+//                meanLocation = new Double2D(60, 60);
+//            } else if (id == 3) {
+//                meanLocation = new Double2D(40, 60);
+//            }
+//        }
+        //meanLocation = new Double2D(80, 80);
+        meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+        meanLocation = getCentral();
         // then generate the initial tasks locations
         tasks = new ArrayList<Task>();
         timestepsTilNextTask = state.timestepsTilNextTask;
+    }
+
+
+
+    public Double2D getCentral() {
+
+//        int x = id / 10;
+//        int y = id % 10;
+//
+//        double dx = ((x - 5) * 4 + 2) + location.getX();
+//        double dy = ((y - 5) * 4 + 2) + location.getY();
+
+        int width = (int)Math.sqrt(state.numAgents);
+        if (Math.sqrt(state.numAgents) / width == 1.0) {
+
+            double halfWidth = width / 2.0;
+            int x = id / width;
+            int y = id % width;
+
+            double length = state.simWidth / width;
+            double halfLength = length / 2.0;
+
+            double dx = ((x - halfWidth) * length + halfLength) + meanLocation.getX();
+            double dy = ((y - halfWidth) * length + halfLength) + meanLocation.getY();
+            //state.printlnSynchronized("Dx = " + dx + " dy = " + dy);
+            return new Double2D(dx, dy);
+        }else {
+            return meanLocation;
+        }
     }
 
 
@@ -81,7 +112,7 @@ public class Neighborhood implements Steppable{
             }
             if(shouldGenTasks) {
                 generateTasks();
-            }else if (state.schedule.getSteps() == 3000) {
+            }else if (state.schedule.getSteps() == 30000) {
                 EquitableAgent a = (EquitableAgent)state.agents[0];
                 a.setEp(null);
             }

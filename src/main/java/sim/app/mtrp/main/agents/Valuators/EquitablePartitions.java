@@ -27,7 +27,7 @@ public class EquitablePartitions {
     OpenList sites;
     PowerDiagram diagram;
     Site fixedSites[];
-
+    double learningRate = .001;
     public EquitablePartitions(MTRP state) {
 
         this.state = state;
@@ -71,7 +71,7 @@ public class EquitablePartitions {
                 Double2D loc = state.neighborhoods[state.random.nextInt(state.numNeighborhoods)].generateLocationInNeighborhood();
 
                 //Double2D loc = state.depos[i].getLocation();
-
+                state.printlnSynchronized("Depo loc = " + loc);
                 site = new Site(loc.getX(), loc.getY());
                 for (int j = 0; j < fixedSites.length; j++) {
                     if (fixedSites[j] != null && site.distance(fixedSites[j]) < 1) {
@@ -152,7 +152,7 @@ public class EquitablePartitions {
         }
         //state.printlnSynchronized("U value = " + (u /  sites.get(id).getNeighbours().size()));
         //sites.get(id).setWeight(sites.get(id).getWeight() - (u ));
-        fixedSites[id].setWeight(fixedSites[id].getWeight() - u);
+        fixedSites[id].setWeight(fixedSites[id].getWeight() - learningRate * u);
         //state.printlnSynchronized("Weight for id " + id + " weight = " + sites.get(id).getWeight());
     }
 

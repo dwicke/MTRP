@@ -71,7 +71,7 @@ public class Depo implements Steppable{
 
             double dx = ((x - halfWidth) * length + halfLength) + location.getX();
             double dy = ((y - halfWidth) * length + halfLength) + location.getY();
-
+            //state.printlnSynchronized("Dx = " + dx + " dy = " + dy);
             return new Double2D(dx, dy);
         }else {
             return location;

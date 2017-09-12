@@ -5,6 +5,7 @@ import kn.uni.voronoitreemap.j2d.PolygonSimple;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.agents.learningagents.LearningAgent;
+import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
 
 /**
@@ -55,7 +56,15 @@ public class NearestFirst extends LearningAgent {
     }
 
 
-
+    @Override
+    public Task getAvailableTask() {
+        if (state.numNeighborhoods == state.numAgents) {
+            Bag tasksNearby = new Bag(state.neighborhoods[id].getTasks());
+            Bag inRangeTasks = getTasksWithinRangeAndAvailable(tasksNearby);
+            return getAvailableTask(inRangeTasks);
+        }
+        return super.getAvailableTask();
+    }
 
 
     // need this here because of the fact that utility is negative so am using negative

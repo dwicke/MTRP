@@ -3,10 +3,7 @@ package sim.app.mtrp.main.agents;
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.agents.comparisonagents.*;
-import sim.app.mtrp.main.agents.learningagents.LearningAgent;
-import sim.app.mtrp.main.agents.learningagents.LearningAgentWithCommunication;
-import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
-import sim.app.mtrp.main.agents.learningagents.WithExclusivity;
+import sim.app.mtrp.main.agents.learningagents.*;
 import sim.app.mtrp.main.agents.resourceagents.AuctionWithResources;
 import sim.app.mtrp.main.agents.resourceagents.SimpleLearningWithResources;
 import sim.app.mtrp.main.agents.resourceagents.WithExclusivityResources;
@@ -47,6 +44,8 @@ public class AgentFactory {
                 return new TSPSolver(state, id);
             case 13:
                 return new EquitableAgent(state, id);
+            case 14:
+                return new LocalLearningAgentWithCommunication(state, id);
         }
         return null;
     }
