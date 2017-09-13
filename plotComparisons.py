@@ -16,4 +16,4 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 		for regularOrSudden in os.listdir('/home/drew/tmp/forpaper/{}/{}/'.format(experiments, fuelOrNoFuel)):
 			for interval in os.listdir('/home/drew/tmp/forpaper/{}/{}/{}/'.format(experiments, fuelOrNoFuel,regularOrSudden)):
 				for method in os.listdir('/home/drew/tmp/forpaper/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval)):
-					print("the mean is {}".format(np.mean(np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method)))))
+					print("the service time is {} the file is {} and the mean is {}".format(interval, method, np.mean(np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method)))))
