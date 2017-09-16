@@ -93,7 +93,11 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 			count = 0
 			for (x,y,e) in zip(T, means, err):
 				if not np.all(x == np.zeros((len(x)))):
-					plt.errorbar(x, y, yerr=e, fmt='o', label=indexToName[str(count)])
+					# well these values are not coresponding to those on google!!
+					slope, intercept = np.polyfit(x, y, 1)
+					gammaf = float(math.sqrt(slope))
+					gamma = '{0:.4f}'.format(gammaf)
+					plt.errorbar(x, y, yerr=e, fmt='o', label="{} $\gamma={}$".format(indexToName[str(count)], gamma))
 				count = count + 1
 			plt.xlabel(r'$\frac{\lambda A}{m^2v^2(1-\rho)^2}$')
 			plt.ylabel('Experimental T')
