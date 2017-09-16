@@ -6,6 +6,11 @@ import os
 import math
 import re
 
+
+# some helpful links for the plotting and numpy
+# https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Python_Matplotlib_Cheat_Sheet.pdf
+# https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf
+
 def split_upper(s):
     return " ".join(filter(None, re.split("([A-Z][^A-Z]*)", s)))
 
@@ -22,6 +27,7 @@ numAgents = {'fouragentoneNeighborhood':4, 'fouragentfourneighborhoodSpreadout':
 # 14 is range limited bounty hunting
 agentToIndex = {'0':0,'8':0, '4':1, '6':2, '13':3, '14':4}
 indexToName = {'0':'Auction', '1':'Bounty Hunting', '2':'NN', '3':'Equitable Paritions', '4':'Bounty Hunting With Comm'}
+myTitle = {'fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
 
 
 intervalToIndex = {'8':0, '9':1, '10':2, '11':3, '12':4, '13':5, '14':6, 
@@ -91,8 +97,9 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 				count = count + 1
 			plt.xlabel(r'$\frac{\lambda A}{m^2v^2(1-\rho)^2}$')
 			plt.ylabel('Experimental T')
-			plt.title('{} with {}'.format(experiments, split_upper(fuelOrNoFuel)))
+			plt.title('{} with {}'.format(myTitle[experiments], split_upper(fuelOrNoFuel)))
 			plt.legend()
+			plt.savefig('/home/drew/tmp/figs/{}{}.pdf'.format(experiments,fuelOrNoFuel), transparent=True)
 			plt.show()
 
 
