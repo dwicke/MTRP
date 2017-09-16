@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 import math
 import re
+from sklearn import linear_model
 
 
 # some helpful links for the plotting and numpy
@@ -26,6 +27,7 @@ numAgents = {'fouragentoneNeighborhood':4, 'fouragentfourneighborhoodSpreadout':
 # 4 is jumpship with comms with no range
 # 14 is range limited bounty hunting
 agentToIndex = {'0':0,'8':0, '4':1, '6':2, '13':3, '14':4}
+indexToPointChar = {'0':'o', '1':'x', '2':'s', '3':'D', '4':'^'}
 indexToName = {'0':'Auction', '1':'Bounty Hunting', '2':'NN', '3':'Equitable Paritions', '4':'Bounty Hunting With Comm'}
 myTitle = {'fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
 
@@ -53,13 +55,17 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 
 	for fuelOrNoFuel in os.listdir('/home/drew/tmp/forpaper/{}/'.format(experiments)):
 		for regularOrSudden in os.listdir('/home/drew/tmp/forpaper/{}/{}/'.format(experiments, fuelOrNoFuel)):
-			means = np.zeros((5, 7))
-			err = np.zeros((5,7))
-			T = np.zeros((5,7))
+			means = np.zeros((5, 6))
+			err = np.zeros((5,6))
+			T = np.zeros((5,6))
 			for interval in os.listdir('/home/drew/tmp/forpaper/{}/{}/{}/'.format(experiments, fuelOrNoFuel,regularOrSudden)):
 				for method in os.listdir('/home/drew/tmp/forpaper/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval)):
+					
+					# The thing is that for rho > .8 the equation does not seem to do so well
+					# or the slope changes again and we have a degree two polynomial
+
 					#print("the service time is {} the file is {} and the mean is {}".format(interval, method, np.mean(np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method)))))
-					if "Time" in method and "15" not in interval:
+					if "Time" in method and "15" not in interval and "14" not in interval and "70" not in interval:
 						loadedTxt = np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method))
 						loadedTxt = np.array([y for y in loadedTxt if y != 0.0])
 						if len(loadedTxt) > 40:
@@ -72,6 +78,9 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 						upper = (meanVal + 1.96*(stdVal / math.sqrt(len(loadedTxt))))
 						diff = upper - meanVal
 						sbar = float(interval)
+						if (2*diff) / meanVal > .10:
+							# auction in the seperate neighborhoods does not converge in \bar{s} of 13 and 14
+							print("bad {} {} {} interval {} ratio of width of 95\% confidence interval over mean is greater than 10\% for over 40 experiments an overestimate of 300,000 timesteps to the lower bound on 200*numtasks per serperate neighborhood".format(method, myTitle[experiments], split_upper(fuelOrNoFuel), interval))
 						if 'disaster' not in experiments:
 							rho = (rate * sbar) / numAgent
 							Tval = (rate * area) / (.7*.7*numAgent*numAgent*(1-rho)*(1-rho))
@@ -93,16 +102,29 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 			count = 0
 			for (x,y,e) in zip(T, means, err):
 				if not np.all(x == np.zeros((len(x)))):
-					# well these values are not coresponding to those on google!!
+					# well this has an intercept
+					intercept = np.zeros((len(x)))
 					slope, intercept = np.polyfit(x, y, 1)
+					#c1,c2, intercept = np.polyfit(x, y, 2)
+					# this has a zero intercept (which is what I did on google sheets.)
+					#slope=x.dot(y)/x.dot(x)
+
 					gammaf = float(math.sqrt(slope))
 					gamma = '{0:.4f}'.format(gammaf)
-					plt.errorbar(x, y, yerr=e, fmt='o', label="{} $\gamma={}$".format(indexToName[str(count)], gamma))
+					slopef = '{0:.4f}'.format(slope)
+					a,b,c = plt.errorbar(x, y, yerr=e, fmt='{}'.format(indexToPointChar[str(count)]),  label="{} $\gamma={}$ slope = {}".format(indexToName[str(count)], gamma, slopef))
+					#a,b,c = plt.errorbar(x, y, yerr=e, fmt='o', label="{} $y={}x^2+{}x+{}$".format(indexToName[str(count)], c1,c2,intercept))
+					p = plt.plot(x, x*slope+intercept)
+					#p = plt.plot(x, x*x*c1+x*c2+intercept)
+					p[-1].set_color(a.get_color())
 				count = count + 1
+			#plt.xscale('log')
+			#plt.yscale('log')
 			plt.xlabel(r'$\frac{\lambda A}{m^2v^2(1-\rho)^2}$')
 			plt.ylabel('Experimental T')
 			plt.title('{} with {}'.format(myTitle[experiments], split_upper(fuelOrNoFuel)))
-			plt.legend()
+			plt.legend(fontsize="small")
+
 			plt.savefig('/home/drew/tmp/figs/{}{}.pdf'.format(experiments,fuelOrNoFuel), transparent=True)
 			plt.show()
 
