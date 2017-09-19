@@ -211,14 +211,10 @@ public abstract class Agent implements Steppable {
 
         for (Task t : tasks) {
             double dist = getNumTimeStepsFromLocation(t.getLocation());
-            Depo d = getClosestDepo(t.getLocation());
-            if (d != null) {
-                double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
-                if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel ) {
-                    closestWithinRange.add(t);
-                }
+            double distToDepo = t.getDistanceToClosestDepo();
+            if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel ) {
+                closestWithinRange.add(t);
             }
-
         }
         return closestWithinRange;
     }
@@ -231,14 +227,10 @@ public abstract class Agent implements Steppable {
         for (int i =0; i < tasks.numObjs; i++) {
             Task t = (Task)tasks.get(i);
             double dist = getNumTimeStepsFromLocation(t.getLocation());
-            Depo d = getClosestDepo(t.getLocation());
-            if (d != null) {
-                double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
-                if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel ) {
-                    closestWithinRange.add(t);
-                }
+            double distToDepo = t.getDistanceToClosestDepo();
+            if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel ) {
+                closestWithinRange.add(t);
             }
-
         }
         return closestWithinRange;
     }
@@ -248,12 +240,14 @@ public abstract class Agent implements Steppable {
 
         Bag closestWithinRange = new Bag();
 
-        for (int i =0; i < tasks.numObjs; i++) {
-            Task t = (Task)tasks.get(i);
-            double dist = getNumTimeStepsFromLocation(t.getLocation());
-            Depo d = getClosestDepo(t.getLocation());
-            if (d != null) {
-                double distToDepo = getNumTimeStepsFromLocation(d.location, t.getLocation());
+        for (int i =0; i < tasks.size(); i++) {
+
+            // might be null because it got removed by another agent while the bag was being built
+            if (tasks.get(i) != null) {
+                Task t = (Task)tasks.get(i);
+                double dist = getNumTimeStepsFromLocation(t.getLocation());
+
+                double distToDepo = t.getDistanceToClosestDepo();
                 if ((dist + distToDepo + fuelEpsilon + 1) < this.curFuel && t.getIsAvailable()) {
                     closestWithinRange.add(t);
                 }
@@ -270,11 +264,14 @@ public abstract class Agent implements Steppable {
     }
 
     public Depo getClosestDepo(Double2D loc) {
-        Depo[] depos = state.getDepos();
+        //Depo[] depos = state.getDepos();
         Depo closestWithinRange = null;
         double curMinDist = Double.MAX_VALUE;
-
-        for (Depo d : depos) {
+        // we assume there is a depo within range.
+        Bag depos = state.depoPlane.getNeighborsWithinDistance(curLocation, 35,false);
+        //for (Depo d : depos) {
+        for (int i = 0; i < depos.numObjs; i++) {
+            Depo d = (Depo) depos.get(i);
             double dist = getNumTimeStepsFromLocation(d.location, loc);
 
             if (dist <= this.curFuel && dist < curMinDist) {
@@ -331,6 +328,7 @@ public abstract class Agent implements Steppable {
 
             // now travel there!
             state.getAgentPlane().setObjectLocation(this, curLocation);
+
             curFuel--;
             return true;
         }
@@ -362,7 +360,16 @@ public abstract class Agent implements Steppable {
             if (curJob != null) {
                 double dist = getNumTimeStepsFromLocation(curJob.task.getLocation());
                 if (dist == 0) {
+
                     claimWork();
+                    if (curJob.curWorker == this) {
+
+                    }else if (amWorking == true && curJob.curWorker != this) {
+                        amWorking = false;
+                        // someone beat me and i need to leave... this is a race condition
+                        state.printlnSynchronized("id " + id + " is not going to work on this task" + curJob.id + " because agent id =" + curJob.curWorker.getId() + " is working on it");
+                    }
+                    //state.printlnSynchronized("Id = " + id + " am working  = " + amWorking + " on task id = " + curJob.id);
                     if (amWorking) {
                         numTimeStepsWorking = 1;
                         if (curJob.doWork()) {
@@ -384,7 +391,11 @@ public abstract class Agent implements Steppable {
      */
     public void claimWork() {
         // then I'm at the task!
-        amWorking = curJob.claimWork(this);
+        synchronized (curJob) { // synchronize on the object that is the job i want to claim
+            if (curJob.getIsAvailable()) { // if it is available then I get it otherwise
+                amWorking = curJob.claimWork(this);
+            }
+        }
     }
 
 
@@ -392,11 +403,11 @@ public abstract class Agent implements Steppable {
      * Can overide this method to provide functionallity to learn
      */
     protected void finishTask() {
-        amWorking = false;
-        bounty += curJob.getCurrentBounty();
-        bounty += curJob.getTask().getNeighborhood().getNeighborhoodBounty();
-        curJob.finish();
-        curJob = null;
+            amWorking = false;
+            bounty += curJob.getCurrentBounty();
+            bounty += curJob.getTask().getNeighborhood().getNeighborhoodBounty();
+            curJob.finish();
+            curJob = null; // this is probably what is causing the
     }
 
 
@@ -433,9 +444,13 @@ public abstract class Agent implements Steppable {
         for (Map.Entry<Integer, Double> en: jobTypeToNumber.entrySet()) {
             double percent = en.getValue() / (double) tasks.length;
             if (percentJobTypes.containsKey(percent)) {
-                double key = percent+(epsilon * state.random.nextDouble());
-                while(percentJobTypes.containsKey(key)) {
-                    key = percent+(epsilon * state.random.nextDouble());
+                double key = 0;
+                // sync so can parallelize this
+                synchronized(state.random) {
+                    key = percent + (epsilon * state.random.nextDouble());
+                    while (percentJobTypes.containsKey(key)) {
+                        key = percent + (epsilon * state.random.nextDouble());
+                    }
                 }
                 percentJobTypes.put(key, en.getKey());
             } else {

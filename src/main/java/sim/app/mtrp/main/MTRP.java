@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import sim.app.mtrp.main.agents.AgentFactory;
 import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
+import sim.app.mtrp.main.util.ReentrantContinuous2D;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
@@ -21,6 +22,8 @@ public class MTRP extends SimState {
 
     private static final long serialVersionUID = 1;
     private static String[] myArgs;
+
+
 
     @Parameter
     private List<String> parameters = new ArrayList<String>();
@@ -84,7 +87,7 @@ public class MTRP extends SimState {
     public double timestepsTilNextTask = 30; // used to calculate the arrival rate of the tasks using a geometric distribution
 
     @Parameter(names={"--jobLength", "-jl"})
-    public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
+    public double jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
     public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
     @Parameter(names={"--taskLocLength", "-tll"})
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
@@ -111,6 +114,9 @@ public class MTRP extends SimState {
     public Continuous2D taskPlane;
     public Continuous2D depoPlane;
     public Continuous2D neighborhoodPlane;
+
+
+    public ReentrantContinuous2D rwTaskPlane;
 
 
     // Augmentor stuff
@@ -142,11 +148,13 @@ public class MTRP extends SimState {
     public int deadline = 2000;
 
     @Parameter(names={"--directory", "-y"})
-    public String directory = "/home/drew/tmp";
+    public String directory = "/home/dwicke/tmp";
 
     @Parameter(names={"--groupLabel", "-gl"})
     public String groupLabel = "NA";
 
+
+    public int taskIDGenerator = 0;
 
 
     public EquitablePartitions ep;
@@ -184,11 +192,13 @@ public class MTRP extends SimState {
 
         }
 
-
+        taskIDGenerator = 0;
         printlnSynchronized("Has randomness " + numNeighborhoods);
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
-        taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+        rwTaskPlane = new ReentrantContinuous2D(1.0, getSimWidth(),getSimHeight());
+        taskPlane = rwTaskPlane.getPlane(); // so that single thread stuff still works.  though i don't know how the gui will fare...
+        //taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
 
         jobPrototypes = new Job[numJobTypes + numEmergentJobTypes];
@@ -245,6 +255,12 @@ public class MTRP extends SimState {
             order++;
         }
 
+//        ParallelSequence nps = new ParallelSequence(neighborhoods, 256);
+//        schedule.scheduleRepeating(Schedule.EPOCH, order, nps);
+//        order++;
+
+
+
         //setIncrement(basebounty / (Math.sqrt(Math.pow(getSimHeight(), 2) + Math.pow(getSimWidth(), 2)) * jobLength));
 
 
@@ -257,14 +273,16 @@ public class MTRP extends SimState {
             depos[i] = new Depo(this, i, neighborhoods[i % numNeighborhoods]);
             //depos[i] = new Depo(this, i, neighborhoods[random.nextInt(numNeighborhoods)]);
             //depos[i] = new Depo(this, i, (Neighborhood) shuffledNeighborhoods.get(i % numNeighborhoods));
-            schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
-            order++;
+            if  (numResourceTypes > 0) {
+                schedule.scheduleRepeating(Schedule.EPOCH, order, depos[i], depoRefreshRate);
+                order++;
+            }
         }
 
         // create the bondsman and pass in this
         bondsman = new Bondsman(this);
-        schedule.scheduleRepeating(Schedule.EPOCH, order, bondsman);
-        order++;
+        //schedule.scheduleRepeating(Schedule.EPOCH, order, bondsman);
+        //order++;
 
 
         // create the agents
@@ -272,10 +290,13 @@ public class MTRP extends SimState {
         for (int i = 0; i < numAgents; i++) {
             agents[i] = AgentFactory.buildAgent(this, i, agentType);
             agents[i].setStepsize(getStepsize());
-            schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
-            order++;
+            //schedule.scheduleRepeating(Schedule.EPOCH, order, agents[i]);
+            //
         }
 
+        ParallelSequence ps = new ParallelSequence(agents, 1);
+        schedule.scheduleRepeating(Schedule.EPOCH, order, ps);
+        order++;
 
         // create the augementor
         augmentor = new Augmentor(this);
@@ -293,6 +314,10 @@ public class MTRP extends SimState {
     public void finish() {
         super.finish();
         statsPublisher.finish();
+    }
+
+    public ReentrantContinuous2D getRwTaskPlane() {
+        return rwTaskPlane;
     }
 
     public int getAgentType() {
@@ -447,11 +472,11 @@ public class MTRP extends SimState {
         return timestepsTilNextTask;
     }
 
-    public int getJobLength() {
+    public double getJobLength() {
         return jobLength;
     }
 
-    public void setJobLength(int jobLength) {
+    public void setJobLength(double jobLength) {
         this.jobLength = jobLength;
     }
 

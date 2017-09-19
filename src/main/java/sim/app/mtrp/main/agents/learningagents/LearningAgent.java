@@ -26,7 +26,7 @@ public class LearningAgent extends Agent {
     double pDiscountBeta = .1; // not used...
     double epsilonChooseRandomTask =  .002; // was .002
     int numNeighborhoods;
-
+    double fuelCost = -1;
 
     public LearningAgent(MTRP state, int id) {
         super(state, id);
@@ -84,11 +84,7 @@ public class LearningAgent extends Agent {
         Task chosenTask = null;
         double curMax = 0.0;
 
-        // so what if instead we actually had the cost to get to the depo...
-//        Depo closestDepo = getClosestDepo();
-//        if (closestDepo != null) {
-//            curMax = -closestDepo.getFuelCost();
-//        }
+
 
 
         if (curJob != null) {
@@ -135,7 +131,10 @@ public class LearningAgent extends Agent {
 
     public double getCost(Task t) {
         // closest depo will never be null because we only consider tasks that are within distance of a depo
-        return getNumTimeStepsFromLocation(t.getLocation()) * getClosestDepo(t.getLocation()).getFuelCost();
+        if (fuelCost == -1) {
+            fuelCost = getClosestDepo(t.getLocation()).getFuelCost();
+        }
+        return getNumTimeStepsFromLocation(t.getLocation()) * fuelCost;
     }
 
 

@@ -43,7 +43,7 @@ public class Augmentor implements Steppable {
                     Task randTask = ((Task) state.getTaskPlane().getAllObjects().get(state.random.nextInt(state.getTaskPlane().getAllObjects().size())));
                     if (!ids.contains(randTask.getId())) {
                         ids.add(randTask.getId());
-                        int prevMeanJobLength = randTask.getJob().getMeanJobLength();
+                        double prevMeanJobLength = randTask.getJob().getMeanJobLength();
                         randTask.getJob().setMeanJobLength(randTask.getJob().getMeanJobLength() * 5);
                         //state.printlnSynchronized("Made task " + randTask.getId() + " job length = " + randTask.getJob().getMeanJobLength() + " previously was = " + prevMeanJobLength);
 

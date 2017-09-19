@@ -1,5 +1,7 @@
 package sim.app.mtrp.main;
 
+import sim.app.mtrp.main.util.ReentrantContinuous2D;
+import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
@@ -17,22 +19,30 @@ public class Task {
     int id; // unique id
     Double2D location;
     Job job;
-    int timeNotFinished = 0;
+    int timeNotFinished = -1;
     Bag committedAgents;
     boolean finished = false;
     Bag blackList; // agents who are not allowed to go after this task
     boolean dummy = false;
+    int distanceToClosestDepo;
+
 
     public Task(Neighborhood neighborhood, MTRP state, Double2D location) {
-        this.id = taskIDGenerator;
-        taskIDGenerator++;// increment every new task.
+
+        this.id = state.taskIDGenerator;
+        state.taskIDGenerator++;// increment every new task.
+
         this.neighborhood = neighborhood;
         this.state = state;
 
         this.location = location;
         // add it to the continuous2d
-        state.getTaskPlane().setObjectLocation(this, this.location);
+        ReentrantContinuous2D taskField = state.getRwTaskPlane();
 
+        taskField.setObjectLocation(this, this.location);
+
+        // we assume here that all tasks within the neighborhood are located closest to the depo assigned to the neighborhood.  this is for speed purposes
+        distanceToClosestDepo = (int) Math.floor((this.location.distance(neighborhood.closestDepo.getLocation()))/state.stepsize);
         //state.getTaskPlane().getNeighborsWithinDistance()
 
         //state.printlnSynchronized("Task id: " + id + " location " + location + " discretized: " + state.getTaskPlane().discretize(location,20));
@@ -50,6 +60,10 @@ public class Task {
 //        }
         committedAgents = new Bag();
         blackList = new Bag();
+    }
+
+    public int getDistanceToClosestDepo() {
+        return distanceToClosestDepo;
     }
 
     public void setDummy(boolean dummy) {
@@ -85,10 +99,24 @@ public class Task {
         return job.getIsAvailable();
     }
 
+
+
+
     public void setFinished() {
-        state.getTaskPlane().remove(this);
+        ReentrantContinuous2D plane = state.getRwTaskPlane();
+
+
+        if (plane.exists(this)) {
+            plane.remove(this);
+        }
+        else {
+            state.printlnSynchronized("This task id = " + id + " was attempted to be removed again");
+        }
+
+        timeNotFinished = getTimeNotFinished();
         neighborhood.finishedTask(this);
         finished = true;
+
     }
 
     public boolean getFinished() {
@@ -99,6 +127,9 @@ public class Task {
             timeNotFinished++;
     }
     public int getTimeNotFinished() {
+        if (timeNotFinished == -1) {
+            return (int) (state.schedule.getSteps() - job.stepStarted);
+        }
         return timeNotFinished;
     }
 

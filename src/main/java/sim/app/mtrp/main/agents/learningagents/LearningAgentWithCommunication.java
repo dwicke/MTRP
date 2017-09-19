@@ -1,9 +1,11 @@
 package sim.app.mtrp.main.agents.learningagents;
 
 import sim.app.mtrp.main.Agent;
+import sim.app.mtrp.main.Job;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
+import sim.util.Bag;
 
 /**
  * Created by drew on 5/4/17.
@@ -60,14 +62,21 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         // an agent i going after a task
         // probability of being in the fail state is 1 - this value
 
+        // get the agents that are in my comm range
+
+
+
+
         for (int i = 0; i < state.numAgents; i++) {
             Agent a = state.getAgents()[i];
             if (i != id && t.getJob().isSignaled(a) && this.curLocation.distance(a.curLocation) < maxCommDist) {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
+                continue;
             }
             //else if (i != id && a.getCurJob() != null && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
-            else if (i != id && a.getCurJob() != null && this.curLocation.distance(a.curLocation) < maxCommDist && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
+            Job aCurJob = a.getCurJob(); // do this so that I am not going to get a null pointer if it changes
+            if (i != id && aCurJob != null && this.curLocation.distance(a.curLocation) < maxCommDist && aCurJob.isSignaled(a) && aCurJob.getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
             {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
@@ -75,6 +84,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
 
         }
+
 
 
 
@@ -163,6 +173,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         numJumpships++;
         return super.handleJumpship(bestT);
     }
+
+
 
 
 

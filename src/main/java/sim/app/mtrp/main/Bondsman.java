@@ -147,6 +147,16 @@ public class Bondsman implements Steppable {
         return totalBountyRate / count;
     }
 
+    public double getAverageBountyPaid() {
+        double totalBounty = 0.0;
+        double count = 0.0;
+        for (Neighborhood n : state.neighborhoods) {
+            totalBounty += n.totalBounty;
+            count += n.count;
+        }
+        return totalBounty / count;
+    }
+
 
     public double getCount() {
         double count = 0.0;

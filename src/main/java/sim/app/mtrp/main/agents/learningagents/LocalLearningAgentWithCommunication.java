@@ -4,6 +4,7 @@ import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
+import sim.app.mtrp.main.util.ReentrantContinuous2D;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
 
@@ -12,23 +13,25 @@ import sim.util.Bag;
  */
 public class LocalLearningAgentWithCommunication extends LearningAgentWithCommunication {
 
-    double maxDist = 20;
+    double maxDist = 20; // distance the tasks can comm
 
     public LocalLearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);
-        maxCommDist = 40;
+        maxCommDist = 40; // agents have a great range of comm than the tasks
     }
 
     @Override
     public Task getAvailableTask() {
 
-        Continuous2D taskField = state.getTaskPlane();
-        Bag tasksNearby = taskField.getNeighborsWithinDistance(curLocation, maxDist);
-        // i don't think i need to add my task because i should be going after it so should be within the neighborhood...
-        Bag inRangeTasks = getTasksWithinRangeAndAvailable(tasksNearby);
 
+            ReentrantContinuous2D taskField = state.getRwTaskPlane();
 
-        return getAvailableTask(inRangeTasks);
+            Bag tasksNearby = taskField.getNeighborsWithinDistance(curLocation, maxDist);
+            // i don't think i need to add my task because i should be going after it so should be within the neighborhood...
+            Bag inRangeTasks = getTasksWithinRangeAndAvailable(tasksNearby);
+
+            return getAvailableTask(inRangeTasks);
+
     }
 
 

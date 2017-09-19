@@ -17,10 +17,11 @@ public class Job implements java.io.Serializable  {
     int totalSignals = 0;
     double currentBounty;
     boolean isAvailable;
-    int meanJobLength;
+    double meanJobLength;
     int countWork = 0;
     boolean slow = false;
     double bountyRate = 1.0;
+    long stepStarted = 0;
 
     private Job() {}
 
@@ -59,6 +60,7 @@ public class Job implements java.io.Serializable  {
         job.currentBounty = this.currentBounty;
         job.state = state;
         job.signals = new int[state.numAgents];
+        job.stepStarted = state.schedule.getSteps();
 
 //        for (int i = 0; i < this.resourcesNeeded.length; i++) {
 //            while(state.random.nextDouble() < (1.0 / (double) this.resourcesNeeded[i])) {
@@ -96,7 +98,7 @@ public class Job implements java.io.Serializable  {
     }
 
     public double getCurrentBounty() {
-        return currentBounty;
+        return currentBounty + bountyRate * (state.schedule.getSteps() - stepStarted);
     }
 
     public void setCurrentBounty(double currentBounty) {
@@ -116,7 +118,7 @@ public class Job implements java.io.Serializable  {
         return isAvailable;
     }
 
-    public boolean claimWork(Agent worker) {
+    public synchronized boolean claimWork(Agent worker) {
 
 //        // check if the agent has enough resources
 //        for (int i = 0; i < resourcesNeeded.length; i++) {
@@ -138,9 +140,11 @@ public class Job implements java.io.Serializable  {
     }
 
     public void leaveWork(Agent agent) {
-        curWorker = null;
-        isAvailable = true;
-        countWork = 0;
+        synchronized (this) {
+            curWorker = null;
+            isAvailable = true;
+            countWork = 0;
+        }
     }
 
 
@@ -149,7 +153,9 @@ public class Job implements java.io.Serializable  {
         // geometric distribution.
 
         if (state.hasRandomness) {
-            return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
+            synchronized(state.random) {
+                return state.random.nextDouble() <= (1.0 / (double) this.meanJobLength);
+            }
         }
 
         else {
@@ -171,11 +177,11 @@ public class Job implements java.io.Serializable  {
         task.setFinished();
     }
 
-    public int getMeanJobLength() {
+    public double getMeanJobLength() {
         return meanJobLength;
     }
 
-    public void setMeanJobLength(int meanJobLength) {
+    public void setMeanJobLength(double meanJobLength) {
         this.meanJobLength = meanJobLength;
     }
 

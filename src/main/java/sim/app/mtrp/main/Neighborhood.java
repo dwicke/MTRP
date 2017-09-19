@@ -20,7 +20,7 @@ public class Neighborhood implements Steppable{
 
     Double2D meanLocation;
     ArrayList<Task> tasks;
-
+    Depo closestDepo; // depo's are fixed so only have to get it the first time
     int totalTime, count, totalBounty, totalNumTasksGenerated;
 
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, timeLastFinished;
@@ -148,9 +148,19 @@ public class Neighborhood implements Steppable{
             //neighborhoodBounty++;
         }
 
+        if (closestDepo == null) {
+            closestDepo = getClosestDepo(meanLocation);
+        }
+
         // bernolli process by sampling geomtric distribution
         // i in effect am producing a poisson process.
-        if (state.random.nextDouble() < (1.0 / getTimestepsTilNextTask())) {
+
+        double randVal = 0.0;
+        synchronized (state.random) {
+            randVal = state.random.nextDouble();
+        }
+
+        if (randVal < (1.0 / getTimestepsTilNextTask())) {
 
             //state.printlnSynchronized("rate = " + (1.0 / getTimestepsTilNextTask()));
 
@@ -178,8 +188,14 @@ public class Neighborhood implements Steppable{
 
         double neighborhoodLength = state.taskLocLength;// * (1 + 12.0 * state.random.nextDouble(true, true));
         // generate the x and y coordinates within the bounding area of the neighborhood
-        double x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
-        double y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+        double randX, randY;
+        synchronized (state.random) {
+            randX = state.random.nextDouble(true, true);
+            randY = state.random.nextDouble(true, true);
+        }
+
+        double x = meanLocation.getX() + (randX * neighborhoodLength) - neighborhoodLength / 2.0;
+        double y = meanLocation.getY() + (randY * neighborhoodLength) - neighborhoodLength / 2.0;
 
 
 
@@ -281,7 +297,7 @@ public class Neighborhood implements Steppable{
 
     public double getBaseBounty() {
 
-        Depo closestDepo = getClosestDepo(meanLocation);
+
 //        double numTasksHere = tasks.size();
 //        double maxOut = 1;
 //        // now get the number of tasks in the other neighborhoods
@@ -315,7 +331,7 @@ public class Neighborhood implements Steppable{
     }
 
     public double getBountyRate(Double2D loc) {
-        Depo closestDepo = getClosestDepo(loc);
+
 
         // if some tasks are really suddenly far out this will rise rather quickly, but if it is maintained then the denominator should also rise as well
         // and should stabilize

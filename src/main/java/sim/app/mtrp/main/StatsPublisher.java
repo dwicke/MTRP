@@ -32,6 +32,9 @@ public class StatsPublisher implements Steppable {
     private static int numWritten = 0;
     private static double[][] bountyStats = new double[(int)SimState.totalNumJobs][];
     private static double[][] timeStats = new double[(int)SimState.totalNumJobs][];
+    private static double[][] numAvailableTasks = new double[(int)SimState.totalNumJobs][];
+    private static double[][] bountyAverage = new double[(int)SimState.totalNumJobs][];
+
     private static long[] seeds = new long[(int)SimState.totalNumJobs];
 
     private static Object mutex = new Object();
@@ -42,6 +45,8 @@ public class StatsPublisher implements Steppable {
         directoryName = dir;
         bountyStats[(int)a.job()] = new double[(int)maxNumSteps];
         timeStats[(int)a.job()] = new double[(int)maxNumSteps];
+        numAvailableTasks[(int)a.job()] = new double[(int)maxNumSteps];
+        bountyAverage[(int)a.job()] = new double[(int)maxNumSteps];
     }
 
     public void finish() {
@@ -84,6 +89,30 @@ public class StatsPublisher implements Steppable {
                 if (out != null) {
                     for (int job = 0; job < timeStats.length; job++) {
                         out.println(timeStats[job][((int)maxNumSteps - 1)] );
+                    }
+                    out.close();
+                }
+
+                file = new File(filepath + "/" + board.agentType + "allNumTasksResults.txt");
+                file.getParentFile().mkdirs();
+
+                out = getWriter(file);
+
+                if (out != null) {
+                    for (int job = 0; job < numAvailableTasks.length; job++) {
+                        out.println(numAvailableTasks[job][((int)maxNumSteps - 1)] );
+                    }
+                    out.close();
+                }
+
+                file = new File(filepath + "/" + board.agentType + "allBountyAvgPerTaskResults.txt");
+                file.getParentFile().mkdirs();
+
+                out = getWriter(file);
+
+                if (out != null) {
+                    for (int job = 0; job < bountyAverage.length; job++) {
+                        out.println(bountyAverage[job][((int)maxNumSteps - 1)] );
                     }
                     out.close();
                 }
@@ -157,9 +186,14 @@ public class StatsPublisher implements Steppable {
                 System.out.println("OHHH Nooo " + (int)board.job());
                 timeStats[(int)board.job()] = new double[(int)maxNumSteps];
             }
+            if (numAvailableTasks[(int)board.job()] == null) {
+                System.out.println("OHHH Nooo " + (int)board.job());
+                numAvailableTasks[(int)board.job()] = new double[(int)maxNumSteps];
+            }
             timeStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalTime();//board.getTotalOutstandingBounty();
             bountyStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
-
+            numAvailableTasks[(int)board.job()][(int)state.schedule.getSteps()] = board.getNumberOfAvailableTasks();
+            bountyAverage[(int)board.job()][(int)state.schedule.getSteps()] = board.getBondsman().getAverageBountyPaid();
             seeds[(int)board.job()] = board.seed();
         }
 
