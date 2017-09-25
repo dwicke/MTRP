@@ -42,9 +42,12 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
     @Override
     public void learn(double reward) {
         super.learn(reward);
-        agentSuccess.update(curJob.getCurWorker().getId(), 0, reward);
-        agentSuccess.oneUpdate(oneUpdateGamma);
-
+        Agent curWorker = curJob.getCurWorker();
+        if (curWorker != null) {
+            // may be null due to the curworker jumping ship (see comment in the handlejumpship() in LearningAgentJumpship)
+            agentSuccess.update(curWorker.getId(), 0, reward);
+            agentSuccess.oneUpdate(oneUpdateGamma);
+        }
         // need to learn the expected reward for completing a task in the neighborhood
         expectedNeighborhoodReward.update(curJob.getTask().getNeighborhood().getId(), 0, curJob.getTask().getNeighborhood().getNeighborhoodBounty());
     }

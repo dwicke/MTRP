@@ -117,6 +117,7 @@ public class MTRP extends SimState {
 
 
     public ReentrantContinuous2D rwTaskPlane;
+    public ReentrantContinuous2D rwAgentPlane;
 
 
     // Augmentor stuff
@@ -159,6 +160,9 @@ public class MTRP extends SimState {
 
     public EquitablePartitions ep;
 
+    @Parameter(names={"--numThreads", "-nt"})
+    public int numThreads = 1;
+
     public MTRP(long seed) {
         super(seed);
     }
@@ -196,7 +200,8 @@ public class MTRP extends SimState {
         printlnSynchronized("Has randomness " + numNeighborhoods);
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
-        rwTaskPlane = new ReentrantContinuous2D(1.0, getSimWidth(),getSimHeight());
+
+        rwTaskPlane = new ReentrantContinuous2D(20.0, getSimWidth(),getSimHeight());
         taskPlane = rwTaskPlane.getPlane(); // so that single thread stuff still works.  though i don't know how the gui will fare...
         //taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
@@ -294,7 +299,7 @@ public class MTRP extends SimState {
             //
         }
 
-        ParallelSequence ps = new ParallelSequence(agents, 1);
+        ParallelSequence ps = new ParallelSequence(agents, numThreads);
         schedule.scheduleRepeating(Schedule.EPOCH, order, ps);
         order++;
 

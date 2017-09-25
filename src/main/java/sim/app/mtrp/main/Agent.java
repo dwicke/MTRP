@@ -1,6 +1,7 @@
 package sim.app.mtrp.main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sim.app.mtrp.main.util.ReentrantContinuous2D;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -36,6 +37,8 @@ public abstract class Agent implements Steppable {
     boolean slow = false;
     public Depo startDepo = null;
 
+    public Depo depoLoc[][];
+
 
     final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
 
@@ -60,6 +63,23 @@ public abstract class Agent implements Steppable {
         curDestination = new Double2D(curLocation.getX(), curLocation.getY());
         curDepo = startDepo;
         state.getAgentPlane().setObjectLocation(this, curLocation);
+
+        int numDeposPerRow = (int)Math.sqrt(state.numNeighborhoods);
+        depoLoc = new Depo[numDeposPerRow][];
+        for (int i = 0; i < depoLoc.length; i++) {
+            depoLoc[i] = new Depo[numDeposPerRow];
+        }
+
+        for (int i = 0; i < state.neighborhoods.length; i++) {
+            Neighborhood n = state.neighborhoods[i];
+
+            depoLoc[((int)n.getMeanLocation().getX() )/ (int)state.taskLocLength][((int)n.getMeanLocation().getY() )/ (int)state.taskLocLength] = n.getClosestDepo(n.getMeanLocation());
+           // state.printlnSynchronized("X val = " + ((int)curLocation.getX() )/ (int)state.taskLocLength + " and the y val = " + ((int)curLocation.getY() )/ (int)state.taskLocLength);
+
+        }
+
+
+
     }
 
 
@@ -149,7 +169,7 @@ public abstract class Agent implements Steppable {
         // if not working
         // first analyze my resources and decide if I need to go to a depo
         // only need resources if not at a task and predict that can't do any task with current resources
-        needResources = checkNeedResources(nearestDepo);
+        needResources = false;//checkNeedResources(nearestDepo);
 
         //state.printlnSynchronized("Agent = " + id + "cur fuel = " + curFuel +  " dist = " + dist + " needResources = " + needResources);
         if (!amWorking && needResources) {
@@ -260,7 +280,8 @@ public abstract class Agent implements Steppable {
 
 
     public Depo getClosestDepo() {
-        return getClosestDepo(curLocation);
+        //state.printlnSynchronized("X val = " + ((int)curLocation.getX() )/ (int)state.taskLocLength + " and the y val = " + ((int)curLocation.getY() )/ (int)state.taskLocLength);
+        return depoLoc[((int)curLocation.getX() )/ (int)state.taskLocLength][((int)curLocation.getY() )/ (int)state.taskLocLength];//getClosestDepo(curLocation);
     }
 
     public Depo getClosestDepo(Double2D loc) {
@@ -327,6 +348,7 @@ public abstract class Agent implements Steppable {
             //state.printlnSynchronized("Agent = " + id + " distance traveled = " + curLocation.distance(oldLoc));
 
             // now travel there!
+
             state.getAgentPlane().setObjectLocation(this, curLocation);
 
             curFuel--;

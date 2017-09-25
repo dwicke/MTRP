@@ -77,6 +77,20 @@ public class LearningAgentWithJumpship extends LearningAgent {
         }
 
         if (amWorking == true && curJob.getCurWorker().getId() == id) {
+            // THIS WILL HAPPEN!!! very very very rarely but it can happen
+            //  for example there is this very high bounty task that before had
+            // agent around or nearby that they have now left because say they
+            // went after some other task that had a higher bounty that they could
+            // see that you can't...  So even though you are right directly working
+            // on this task it may be worth your time to go after that task
+            // because of the higher bounty
+            // it might even be that there aren't any other agents near you.
+            // its just the fact that they didn't go after that task that it is now lucrative
+            // enough for you to leave what you are working on to go get that.
+            //  then since we are possibly executing things in threads that we run into a scenario
+            // where i'm leaving work and simultaneously some other agent that has decided to go
+            // after this job sees that you were working on it but now since you aren't and have set
+            // the curworker to null this causes the problem with the learning agent
             curJob.leaveWork(this);
             amWorking = false;
         }
