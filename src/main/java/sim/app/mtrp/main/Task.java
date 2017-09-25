@@ -42,7 +42,8 @@ public class Task {
 
 
         // now generate the job
-        job = state.jobPrototypes[0].buildJob(state, this, id);
+        //job = state.jobPrototypes[0].buildJob(state, this, id);
+        job = state.jobPrototypes[state.random.nextInt(state.numJobTypes)].buildJob(state, this, id);
 //        if (state.hasRandomness) {
 //            job = state.jobPrototypes[state.random.nextInt(state.numJobTypes - state.numEmergentJobTypes)].buildJob(state, this, id);
 //        }else {

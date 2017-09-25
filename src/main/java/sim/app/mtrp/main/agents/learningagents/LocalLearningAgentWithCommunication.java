@@ -12,7 +12,7 @@ import sim.util.Bag;
  */
 public class LocalLearningAgentWithCommunication extends LearningAgentWithCommunication {
 
-    double maxDist = 20;
+    double maxDist = 40;
 
     public LocalLearningAgentWithCommunication(MTRP state, int id) {
         super(state, id);

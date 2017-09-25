@@ -100,6 +100,8 @@ public class MTRP extends SimState {
     @Parameter(names={"--bountyIncrement", "-bi"})
     public double increment = 1.0;
 
+    @Parameter(names={"--hasBountyRate", "-hbr"}, arity = 1)
+    public boolean hasBountyRate = true;
 
     public Bondsman bondsman;
     public Agent agents[];
@@ -692,7 +694,7 @@ public class MTRP extends SimState {
 
     public double getAverageDistance() {
         if (bondsman == null) { return 0.0;}
-        return neighborhoods[0].getTotalDist() / (double) neighborhoods[0].count;
+        return neighborhoods[0].getTotalDist() / (double) neighborhoods[0].getTotalCount();
     }
 
     public double getAverageRevenue() {
@@ -721,5 +723,13 @@ public class MTRP extends SimState {
 
     public void setEp(EquitablePartitions ep) {
         this.ep = ep;
+    }
+
+    public void setHasBountyRate(boolean hasBountyRate) {
+        this.hasBountyRate = hasBountyRate;
+    }
+
+    public boolean isHasBountyRate() {
+        return hasBountyRate;
     }
 }

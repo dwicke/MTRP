@@ -96,8 +96,10 @@ public class Bondsman implements Steppable {
         */
 
         for (Neighborhood n : state.neighborhoods ){
-            totalTime += n.totalTime;
-            totalCount += n.count;
+            for (int i = 0; i < state.numJobTypes; i++) {
+                totalTime += n.totalTime[i];
+                totalCount += n.count[i];
+            }
             // reset
 //            n.totalTime = 0;
 //            n.count = 0;
@@ -112,7 +114,9 @@ public class Bondsman implements Steppable {
         int totalTime = 0;
 
         for (Neighborhood n : state.neighborhoods ){
-            totalTime += n.totalTime;
+            for (int i = 0; i < state.numJobTypes; i++) {
+                totalTime += n.totalTime[i];
+            }
 
         }
 
@@ -151,7 +155,9 @@ public class Bondsman implements Steppable {
     public double getCount() {
         double count = 0.0;
         for (Neighborhood n : state.neighborhoods) {
-            count += n.count;
+            for (int i = 0; i < state.numJobTypes; i++) {
+                count += n.count[i];
+            }
         }
         return count;
     }

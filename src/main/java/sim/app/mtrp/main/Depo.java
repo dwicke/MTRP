@@ -38,6 +38,8 @@ public class Depo implements Steppable{
 
         //location = new Double2D(50,50);
 
+        //location = new Double2D(state.simWidth / 2, state.simHeight / 2);
+
 
         state.getDepoPlane().setObjectLocation(this, location);
 

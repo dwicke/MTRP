@@ -58,9 +58,9 @@ public class AgentPortrayal extends OvalPortrayal2D {
         if (model instanceof LearningAgentWithCommunication) {
             LearningAgentWithCommunication lawc = (LearningAgentWithCommunication) model;
             int sigDist = (int)lawc.getSignallingDistance() * 10;
-            int centerx = x - sigDist / 2;
-            int centery = y - sigDist / 2;
-            graphics.drawOval(centerx, centery,  sigDist, sigDist);
+            int centerx = x - sigDist;// / 2;
+            int centery = y - sigDist;// / 2;
+            graphics.drawOval(centerx, centery,  sigDist * 2, sigDist*2);
         }
 
 
