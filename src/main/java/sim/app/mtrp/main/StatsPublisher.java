@@ -63,8 +63,9 @@ public class StatsPublisher implements Steppable {
                     filepath = directoryName + "/regular/" + board.jobLength;
                 }
 
+                String withRate = (board.hasBountyRate == true) ? "r" : "n";
 
-                File file = new File(filepath + "/" + board.groupLabel +  "BountyResults.txt");
+                File file = new File(filepath + "/" + board.groupLabel+ withRate +  "BountyResults.txt");
                 file.getParentFile().mkdirs();
 
                 PrintWriter out = getWriter(file);
@@ -76,7 +77,8 @@ public class StatsPublisher implements Steppable {
                     out.close();
                 }
 
-                file = new File(filepath + "/" + board.agentType + "allTimeResults.txt");
+
+                file = new File(filepath + "/" + board.agentType + withRate + "allTimeResults.txt");
                 file.getParentFile().mkdirs();
 
                 out = getWriter(file);
