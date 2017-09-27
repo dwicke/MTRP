@@ -38,7 +38,7 @@ public class Augmentor implements Steppable {
             }
         }
         if (state.isHasUnexpectedlyHardJobs()) {
-            if (state.random.nextDouble() <  (1.0 / ((double) state.timestepsTilNextTask * 10.0))) {
+            if (state.random.nextDouble() <  (1.0 / ((double) state.timestepsTilNextTask * 100.0))) {
                 if (state.getTaskPlane().getAllObjects().size() > 0) {
                     Task randTask = ((Task) state.getTaskPlane().getAllObjects().get(state.random.nextInt(state.getTaskPlane().getAllObjects().size())));
                     if (!ids.contains(randTask.getId())) {
