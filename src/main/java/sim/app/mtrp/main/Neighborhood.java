@@ -20,6 +20,7 @@ public class Neighborhood implements Steppable{
 
     Double2D meanLocation;
     ArrayList<Task> tasks;
+    long waitsquared;
 
     int totalTime[], count[];
     int totalBounty, totalNumTasksGenerated;
@@ -27,7 +28,7 @@ public class Neighborhood implements Steppable{
     double timestepsTilNextTask, totalDist, totalBr, totalBaseBounty, timeLastFinished;
 
     Task latestTask = null;
-    double taskCompletionValue = 1600;
+    double taskCompletionValue = 800;
 
     double neighborhoodBounty = 0;
 
@@ -238,6 +239,7 @@ public class Neighborhood implements Steppable{
         neighborhoodBounty = 0;
         totalTime[task.getJob().jobType] += task.timeNotFinished;
         timeLastFinished = state.schedule.getSteps();
+        waitsquared += Math.pow(task.timeNotFinished, 2);
         totalBounty += task.getBounty();
         totalDist += task.getLocation().distance(meanLocation);
         count[task.getJob().jobType]++;
@@ -317,7 +319,7 @@ public class Neighborhood implements Steppable{
         double weight = 1.0;//state.numJobTypes - jobType;//(state.jobLength / (jobType + 1)) / (state.jobLength);// + (numTasksHere / maxOut);
 
         if (state.hasBountyRate == false) {
-            return 5000 * weight;
+            return taskCompletionValue;
         }
 
         // c / (d1 + s1) = k / (d2 + s2)

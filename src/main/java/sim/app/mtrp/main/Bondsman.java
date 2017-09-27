@@ -84,6 +84,20 @@ public class Bondsman implements Steppable {
         return availTasks;
     }
 
+    public double getVarianceTime() {
+
+
+        double avg = getTotalAverageTime();
+        double count = getCount();
+        double waitSquaredTotal = 0.0;
+        for (Neighborhood n : state.neighborhoods ){
+            waitSquaredTotal += n.waitsquared;
+        }
+
+        return waitSquaredTotal / count - avg*avg;
+    }
+
+
     public double getTotalAverageTime() {
         double totalTime = 0;
         double totalCount = 0;

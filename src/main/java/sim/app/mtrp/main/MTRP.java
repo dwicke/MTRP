@@ -479,6 +479,11 @@ public class MTRP extends SimState {
         return bondsman.getTotalAverageTime();
     }
 
+    public double getVarianceTime() {
+        if (bondsman == null) { return 0.0;}
+        return bondsman.getVarianceTime();
+    }
+
 
     public double getTotalOutstandingBounty() {
         if (bondsman == null) { return 0.0;}

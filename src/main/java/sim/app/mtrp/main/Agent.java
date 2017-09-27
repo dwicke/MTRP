@@ -76,7 +76,7 @@ public abstract class Agent implements Steppable {
                 state.printlnSynchronized("going slow");
             }
             originalStepSize = stepsize;
-            stepsize = originalStepSize / 10.0;
+            stepsize = originalStepSize / 2.0;
         }else if (!slow && originalStepSize != -1) {
             stepsize = originalStepSize;
             originalStepSize = -1;
@@ -312,7 +312,7 @@ public abstract class Agent implements Steppable {
 
             double SS = getStepSize();
             if (curJob != null && curJob.isSlow()) {
-                SS /= 2;
+                SS /= 5;
             }
             double numTimeSteps = getNumTimeStepsFromLocation(curDestination);
             if (numTimeSteps == 0) // might need to account for some error here eventually...
