@@ -4,6 +4,8 @@ import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.Depo;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
+import sim.app.mtrp.main.agents.comparisonagents.FirstComeFirstServe;
+import sim.app.mtrp.main.agents.comparisonagents.NearestFirst;
 import sim.app.mtrp.main.util.QTable;
 import sim.util.Bag;
 
@@ -28,6 +30,8 @@ public class LearningAgent extends Agent {
     int numNeighborhoods;
 
 
+
+
     public LearningAgent(MTRP state, int id) {
         super(state, id);
         numNeighborhoods = state.getNumNeighborhoods();
@@ -36,8 +40,13 @@ public class LearningAgent extends Agent {
 
     }
 
+    public LearningAgent() {
+
+    }
+
     static int beatCounter = 0;
     static int getBestCounter = 0;
+
     public Task getAvailableTask(Bag tasks) {
 
         if (!amWorking && curJob != null && !curJob.getIsAvailable()) {
@@ -53,6 +62,7 @@ public class LearningAgent extends Agent {
         if (curJob == null) {
             //state.printlnSynchronized("Agent " + getId() + " getting task = " + getBestCounter++);
             Task bestT = getBestTask(tasks);
+
             return bestT;
         }else {
             return curJob.getTask();
@@ -165,6 +175,8 @@ public class LearningAgent extends Agent {
 
         return pTable.getQTableAsString();
     }
+
+
 
 //    @Override
 //    public String toString() {

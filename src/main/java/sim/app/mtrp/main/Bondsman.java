@@ -124,6 +124,36 @@ public class Bondsman implements Steppable {
 
     }
 
+    public double getJainFairness() {
+        double totalTime = 0;
+        double totalCount = 0;
+        double totalSquaredTime = 0;
+        /*
+        for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
+            totalTime += ((Task) task).getTimeNotFinished();
+        }
+
+        return (double) totalTime / (double) state.getTaskPlane().getAllObjects().toArray().length;
+        */
+
+        for (Neighborhood n : state.neighborhoods ){
+            for (int i = 0; i < state.numJobTypes; i++) {
+                totalSquaredTime += n.totalTime[i] * n.totalTime[i];
+                totalTime += n.totalTime[i];
+                totalCount += n.count[i];
+            }
+            // reset
+//            n.totalTime = 0;
+//            n.count = 0;
+        }
+        if (totalCount == 0)
+            return 0;
+        return Math.pow(totalTime, 2) / (totalSquaredTime * totalCount);
+
+    }
+
+
+
     public double getTotalTime() {
         int totalTime = 0;
 

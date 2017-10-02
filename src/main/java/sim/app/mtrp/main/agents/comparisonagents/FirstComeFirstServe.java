@@ -14,13 +14,18 @@ public class FirstComeFirstServe extends LearningAgent {
         super(state, id);
     }
 
+    public FirstComeFirstServe(MTRP state) {
+        this.state = state;
+    }
+
+
     @Override
     public double getUtility(Task t) {
 
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
         if (t.getNeighborhood().getId() == getId()) {
-            return -t.getTimeNotFinished();
+            return t.getTimeNotFinished();
         } else {
             return Double.NEGATIVE_INFINITY;
         }
@@ -69,4 +74,6 @@ public class FirstComeFirstServe extends LearningAgent {
         }
         return chosenTask;
     }
+
+
 }

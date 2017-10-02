@@ -33,6 +33,8 @@ public class Depo implements Steppable{
 
         location = this.neighborhood.meanLocation;
 
+
+
         // so i go from the index to the center of the grid cell
         //location = getCentral();
 

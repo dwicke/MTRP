@@ -217,7 +217,7 @@ public class Neighborhood implements Steppable{
 
 
         //state.printlnSynchronized("base bounty in neighborhood " + id + " is = " + (totalTime / count));
-        genTask.setBaseBounty(getBaseBounty(genTask.getJob().jobType));
+        genTask.setBaseBounty(getBaseBounty(genTask.getJob().jobType, genTask));
         double br = getBountyRate(genTask.getLocation(),genTask.getJob().jobType);
         totalBr += br;
         genTask.setBountyRate(br);
@@ -305,7 +305,7 @@ public class Neighborhood implements Steppable{
         return tasks.toArray(new Task[tasks.size()]);
     }
 
-    public double getBaseBounty(int jobType) {
+    public double getBaseBounty(int jobType, Task t) {
 
         Depo closestDepo = getClosestDepo(meanLocation);
 //        double numTasksHere = tasks.size();
@@ -326,7 +326,9 @@ public class Neighborhood implements Steppable{
         double weight = 1.0;//state.numJobTypes - jobType;//(state.jobLength / (jobType + 1)) / (state.jobLength);// + (numTasksHere / maxOut);
 
         if (state.hasBountyRate == false) {
-            return taskCompletionValue;
+            return state.basebounty;
+        }else {
+            return closestDepo.getFuelCost()*closestDepo.location.distance(t.getLocation());
         }
 
         // c / (d1 + s1) = k / (d2 + s2)
@@ -338,15 +340,15 @@ public class Neighborhood implements Steppable{
         // will pursue the closest task is not possible
         //
 
-
-        if(thecount == 0) {
-            return  weight * (getTaskCompletionValue(jobType) + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
-        } else {
-            //double expectedDist = state.taskLocLength / (Math.sqrt((1.0 / state.getTimestepsTilNextTask()) * ((double) thetotaltime / (double) thecount )));
-
-            //return weight * (getTaskCompletionValue(jobType) + closestDepo.getFuelCost() * expectedDist + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
-            return  (getTaskCompletionValue(jobType) + closestDepo.getFuelCost() * ((double) thetotaltime / (double) thecount ) + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
-        }
+//
+//        if(thecount == 0) {
+//            return  weight * (getTaskCompletionValue(jobType) + state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
+//        } else {
+//            //double expectedDist = state.taskLocLength / (Math.sqrt((1.0 / state.getTimestepsTilNextTask()) * ((double) thetotaltime / (double) thecount )));
+//
+//            //return weight * (getTaskCompletionValue(jobType) + closestDepo.getFuelCost() * expectedDist + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
+//            return  (getTaskCompletionValue(jobType) + closestDepo.getFuelCost() * ((double) thetotaltime / (double) thecount ) + (double) state.getMaxCostPerResource() * (double) state.maxMeanResourcesNeededForType * state.getNumResourceTypes());
+//        }
     }
 
     public double getTaskCompletionValue(int jobtype) {
@@ -366,7 +368,13 @@ public class Neighborhood implements Steppable{
     }
 
     public double getBountyRate(Double2D loc, int jobtype) {
+
+
         Depo closestDepo = getClosestDepo(loc);
+        if (state.hasBountyRate == false) {
+            return state.increment;
+        }
+
 
         // if some tasks are really suddenly far out this will rise rather quickly, but if it is maintained then the denominator should also rise as well
         // and should stabilize
@@ -380,9 +388,7 @@ public class Neighborhood implements Steppable{
             thecount += count[i];
         }
 
-        if (state.hasBountyRate == false) {
-            return 0;
-        }
+
         //double expectedDist = state.taskLocLength / (Math.sqrt((1.0 / state.getTimestepsTilNextTask()) * ((double) thetotaltime / (double) thecount )));
 
         //return ( (( (state.jobLength / (jobtype + 1))) * closestDepo.getFuelCost()) / ( state.jobLength + expectedDist));

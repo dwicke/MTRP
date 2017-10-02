@@ -37,7 +37,7 @@ public abstract class Agent implements Steppable {
     public Depo startDepo = null;
 
 
-    final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
+//    final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
 
     public Agent() {}
 
@@ -506,5 +506,17 @@ public abstract class Agent implements Steppable {
 
     public void setSlow(boolean slow) {
         this.slow = slow;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCurLocation(Double2D curLocation) {
+        this.curLocation = curLocation;
+    }
+
+    public void setCurJob(Job curJob) {
+        this.curJob = curJob;
     }
 }

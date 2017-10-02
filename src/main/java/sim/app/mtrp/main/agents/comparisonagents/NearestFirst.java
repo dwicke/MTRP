@@ -13,11 +13,15 @@ import sim.util.Bag;
  * Whoever is closest to the task lays claim does not care about the bounty
  * Created by drew on 3/17/17.
  */
-public class NearestFirst extends LearningAgentWithJumpship {
+public class NearestFirst extends LearningAgent {
     public NearestFirst(MTRP state, int id) {
         super(state, id);
     }
 
+
+    public NearestFirst(MTRP state) {
+        this.state = state;
+    }
 
     @Override
     public double getUtility(Task t) {
@@ -103,4 +107,6 @@ public class NearestFirst extends LearningAgentWithJumpship {
         }
         return chosenTask;
     }
+
+
 }

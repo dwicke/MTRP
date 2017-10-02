@@ -479,6 +479,12 @@ public class MTRP extends SimState {
         return bondsman.getTotalAverageTime();
     }
 
+    public double getJainFairness() {
+        // so get the total time the tasks have been waiting
+        if (bondsman == null) { return 0.0;}
+        return bondsman.getJainFairness();
+    }
+
     public double getVarianceTime() {
         if (bondsman == null) { return 0.0;}
         return bondsman.getVarianceTime();
@@ -721,6 +727,9 @@ public class MTRP extends SimState {
         if (bondsman == null || (bondsman != null && bondsman.getCount() == 0)) { return 0.0;}
         return bondsman.getCount() / schedule.getTime();
     }
+
+
+
 
     public EquitablePartitions getEp() {
         return ep;
