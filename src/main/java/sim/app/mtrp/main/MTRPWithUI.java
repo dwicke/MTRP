@@ -8,8 +8,10 @@ import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
+import sim.portrayal.grid.FastValueGridPortrayal2D;
 import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
+import sim.util.gui.SimpleColorMap;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +30,8 @@ public class MTRPWithUI extends GUIState {
     ContinuousPortrayal2D tasksPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D deposPortrayal = new ContinuousPortrayal2D();
 
-
+    // portrayals for where the agents have completed tasks
+    FastValueGridPortrayal2D areaDominance[];
 
 
     public static void main(String[] args) {
@@ -69,8 +72,27 @@ public class MTRPWithUI extends GUIState {
 
         deposPortrayal.setField(myState.depoPlane);
         deposPortrayal.setPortrayalForAll(new MovablePortrayal2D(new DepoPortrayal()));
+        Color colors[] = new Color[4];
+        colors[0] = Color.RED;
+        colors[1] = Color.BLUE;
+        colors[2] = Color.GREEN;
+        colors[3] = Color.BLACK;
+        areaDominance = new FastValueGridPortrayal2D[myState.numAgents];
+        for (int i = 0; i < myState.numAgents; i++) {
+            myState.printlnSynchronized("Making new area");
+            areaDominance[i] = new FastValueGridPortrayal2D("dominance" + i);
+            areaDominance[i].setField(myState.valgrid[i]);
+            areaDominance[i].setMap(new SimpleColorMap(0, MTRP.MAX_TASK, new Color(0,0,0,0), colors[i]));
+        }
+        display.detachAll();
+        display.attach(agentsPortrayal, "Agents");
+        display.attach(tasksPortrayal, "Tasks");
+        display.attach(deposPortrayal, "Depos");
+        for (int i =0; i < areaDominance.length; i++) {
 
-
+            display.attach(areaDominance[i], "Dominance" + i);
+            System.out.println("WOOOHOO");
+        }
         // reschedule the displayer
         display.reset();
 
@@ -89,6 +111,8 @@ public class MTRPWithUI extends GUIState {
         // we now have new grids.  Set up the portrayals to reflect that
         setupPortrayals();
     }
+
+
 
     public void init(Controller c) {
         super.init(c);

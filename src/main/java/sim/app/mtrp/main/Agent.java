@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.field.grid.DoubleGrid2D;
 import sim.util.Bag;
 import sim.util.Double2D;
 
@@ -396,6 +397,7 @@ public abstract class Agent implements Steppable {
         bounty += curJob.getCurrentBounty();
         bounty += curJob.getTask().getNeighborhood().getNeighborhoodBounty();
         curJob.finish();
+        increaseCount(state.valgrid[id], curJob.getTask().getLocation());
         curJob = null;
     }
 
@@ -526,5 +528,15 @@ public abstract class Agent implements Steppable {
 
     public double getFairness() {
         return 0;
+    }
+
+    public void increaseCount(DoubleGrid2D grid, Double2D loc) {
+        int x = (int)loc.getX();
+        int y = (int)loc.getY();
+        grid.field[x][y] += 1;
+        state.printlnSynchronized("id = " + id + " val = " + grid.field[x][y] + " loc = " + x + " " + y);
+        if (grid.field[x][y] > MTRP.MAX_TASK) {
+            grid.field[x][y] = MTRP.MAX_TASK;
+        }
     }
 }

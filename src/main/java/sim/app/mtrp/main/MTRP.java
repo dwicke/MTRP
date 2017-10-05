@@ -6,6 +6,7 @@ import sim.app.mtrp.main.agents.AgentFactory;
 import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
+import sim.field.grid.DoubleGrid2D;
 import sim.util.Bag;
 import sim.util.Double2D;
 
@@ -150,6 +151,8 @@ public class MTRP extends SimState {
     public String groupLabel = "NA";
 
 
+    public DoubleGrid2D valgrid[];
+    public static final double MAX_TASK = 5;
 
     public EquitablePartitions ep;
 
@@ -193,6 +196,10 @@ public class MTRP extends SimState {
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
 
+        valgrid = new DoubleGrid2D[numAgents];
+        for(int i = 0; i < numAgents; i++) {
+            valgrid[i] = new DoubleGrid2D(getSimWidth(),getSimHeight(), 0);
+        }
 
         jobPrototypes = new Job[numJobTypes + numEmergentJobTypes];
         // create the job prototypes
