@@ -36,6 +36,7 @@ public abstract class Agent implements Steppable {
     double originalStepSize = -1;
     boolean slow = false;
     public Depo startDepo = null;
+    double totalArea = 0.0;
 
 
 //    final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -533,10 +534,38 @@ public abstract class Agent implements Steppable {
     public void increaseCount(DoubleGrid2D grid, Double2D loc) {
         int x = (int)loc.getX();
         int y = (int)loc.getY();
-        grid.field[x][y] += 1;
-        state.printlnSynchronized("id = " + id + " val = " + grid.field[x][y] + " loc = " + x + " " + y);
+
+        for(int i = 0; i < state.valgrid.length; i++) {
+            state.valgrid[i].field[x][y] = 0;
+        }
+
+        grid.field[x][y] = 1;
+
+        //state.printlnSynchronized("id = " + id + " val = " + grid.field[x][y] + " loc = " + x + " " + y);
         if (grid.field[x][y] > MTRP.MAX_TASK) {
             grid.field[x][y] = MTRP.MAX_TASK;
         }
+    }
+
+    public double getTotalArea() {
+
+        totalArea = 0;
+        for (int x = 0; x < state.valgrid[id].field.length; x++) {
+            for (int y = 0; y < state.valgrid[id].field.length; y++) {
+                int maxID = 0;
+                double maxVal = state.valgrid[0].field[x][y];
+                for(int i = 0; i < state.valgrid.length; i++) {
+                    if (state.valgrid[i].field[x][y] > maxVal) {
+                        maxVal = state.valgrid[0].field[x][y];
+                        maxID = i;
+                    }
+                }
+                if (maxID == id && maxVal > 0) {
+                    totalArea++;
+                }
+            }
+        }
+
+        return totalArea;
     }
 }
