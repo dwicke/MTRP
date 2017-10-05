@@ -193,6 +193,7 @@ public class MTRP extends SimState {
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
 
+
         jobPrototypes = new Job[numJobTypes + numEmergentJobTypes];
         // create the job prototypes
         for (int i = 0; i < numJobTypes; i++) {
@@ -745,5 +746,18 @@ public class MTRP extends SimState {
 
     public boolean isHasBountyRate() {
         return hasBountyRate;
+    }
+
+    public double getFairness() {
+        if (agents != null) {
+            double totalFairness = 0;
+            double totalCount = 0;
+            for (int i = 0; i < agents.length; i++) {
+                totalFairness += agents[i].getTotalFairness();
+                totalCount += agents[i].getCount();
+            }
+            return totalFairness / totalCount;
+        }
+        return 0;
     }
 }

@@ -519,4 +519,12 @@ public abstract class Agent implements Steppable {
     public void setCurJob(Job curJob) {
         this.curJob = curJob;
     }
+
+
+    public double getTotalFairness() {return 0;}
+    public double getCount() {return 1;}
+
+    public double getFairness() {
+        return 0;
+    }
 }

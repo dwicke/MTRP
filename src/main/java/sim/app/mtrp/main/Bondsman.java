@@ -94,7 +94,7 @@ public class Bondsman implements Steppable {
             waitSquaredTotal += n.waitsquared;
         }
 
-        return waitSquaredTotal / count - avg*avg;
+        return (count / (count - 1))*(waitSquaredTotal / count - ((avg*avg) / (count * count)));
     }
 
 

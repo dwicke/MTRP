@@ -24,11 +24,14 @@ public class FirstComeFirstServe extends LearningAgent {
 
 
         //state.printlnSynchronized("Task " + t.getId() + " cost = " + -getCost(t));
-        if (t.getNeighborhood().getId() == getId()) {
-            return t.getTimeNotFinished();
-        } else {
-            return Double.NEGATIVE_INFINITY;
-        }
+        return t.getTimeNotFinished();
+
+        // the following is for if this actually being used in a MAS and not just to be used within the bounty hunters to determine fairness.
+//        if (t.getNeighborhood().getId() == getId()) {
+//            return t.getTimeNotFinished();
+//        } else {
+//            return Double.NEGATIVE_INFINITY;
+//        }
     }
     public double getCost(Task t) {
         // closest depo will never be null because we only consider tasks that are within distance of a depo
@@ -42,6 +45,7 @@ public class FirstComeFirstServe extends LearningAgent {
     // need this here because of the fact that utility is negative so am using negative
     public Task getBestTask(Bag bagOfTasks) {
         if (bagOfTasks.size() == 0 && curJob == null) {
+            //state.printlnSynchronized("FCFS is null");
             return null; // need to go for resources.
         } else if (bagOfTasks.size() == 0 && curJob != null) {
             return curJob.getTask();

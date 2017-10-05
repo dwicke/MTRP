@@ -32,6 +32,9 @@ public class StatsPublisher implements Steppable {
     private static int numWritten = 0;
     private static double[][] bountyStats = new double[(int)SimState.totalNumJobs][];
     private static double[][] timeStats = new double[(int)SimState.totalNumJobs][];
+    private static double[][] fairStats = new double[(int)SimState.totalNumJobs][];
+    private static double[][] varStats = new double[(int)SimState.totalNumJobs][];
+
     private static long[] seeds = new long[(int)SimState.totalNumJobs];
 
     private static Object mutex = new Object();
@@ -42,6 +45,9 @@ public class StatsPublisher implements Steppable {
         directoryName = dir;
         bountyStats[(int)a.job()] = new double[(int)maxNumSteps];
         timeStats[(int)a.job()] = new double[(int)maxNumSteps];
+        fairStats[(int)a.job()] = new double[(int)maxNumSteps];
+        varStats[(int)a.job()] = new double[(int)maxNumSteps];
+
     }
 
     public void finish() {
@@ -65,7 +71,7 @@ public class StatsPublisher implements Steppable {
 
                 String withRate = (board.hasBountyRate == true) ? "r" : "n";
 
-                File file = new File(filepath + "/" + board.groupLabel+ withRate +  "BountyResults.txt");
+                File file = new File(filepath + "/" + board.groupLabel+ "_" + board.increment + "_"  +  "BountyResults.txt");
                 file.getParentFile().mkdirs();
 
                 PrintWriter out = getWriter(file);
@@ -78,7 +84,7 @@ public class StatsPublisher implements Steppable {
                 }
 
 
-                file = new File(filepath + "/" + board.agentType + withRate + "allTimeResults.txt");
+                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_"  + "allTimeResults.txt");
                 file.getParentFile().mkdirs();
 
                 out = getWriter(file);
@@ -86,6 +92,29 @@ public class StatsPublisher implements Steppable {
                 if (out != null) {
                     for (int job = 0; job < timeStats.length; job++) {
                         out.println(timeStats[job][((int)maxNumSteps - 1)] );
+                    }
+                    out.close();
+                }
+
+                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_" + "allFairResults.txt");
+                file.getParentFile().mkdirs();
+
+                out = getWriter(file);
+
+                if (out != null) {
+                    for (int job = 0; job < fairStats.length; job++) {
+                        out.println(fairStats[job][((int)maxNumSteps - 1)] );
+                    }
+                    out.close();
+                }
+                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "allVarResults.txt");
+                file.getParentFile().mkdirs();
+
+                out = getWriter(file);
+
+                if (out != null) {
+                    for (int job = 0; job < varStats.length; job++) {
+                        out.println(varStats[job][((int)maxNumSteps - 1)] );
                     }
                     out.close();
                 }
@@ -159,8 +188,18 @@ public class StatsPublisher implements Steppable {
                 System.out.println("OHHH Nooo " + (int)board.job());
                 timeStats[(int)board.job()] = new double[(int)maxNumSteps];
             }
+            if (fairStats[(int)board.job()] == null) {
+                System.out.println("OHHH Nooo " + (int)board.job());
+                fairStats[(int)board.job()] = new double[(int)maxNumSteps];
+            }
+            if (varStats[(int)board.job()] == null) {
+                System.out.println("OHHH Nooo " + (int)board.job());
+                varStats[(int)board.job()] = new double[(int)maxNumSteps];
+            }
             timeStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalTime();//board.getTotalOutstandingBounty();
             bountyStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
+            fairStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getFairness();
+            varStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getVarianceTime();
 
             seeds[(int)board.job()] = board.seed();
         }

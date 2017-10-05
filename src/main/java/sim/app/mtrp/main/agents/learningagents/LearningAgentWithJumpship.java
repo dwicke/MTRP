@@ -51,14 +51,18 @@ public class LearningAgentWithJumpship extends LearningAgent {
 //        }
 
         // let the agent jumpship if they have not made it to the job yet.
+        //state.printlnSynchronized("Size of tasks = " + tasks.size());
         Task bestT = getBestTask(tasks);
 
-        nf.setCurLocation(curLocation);
+
         fcfs.setCurLocation(curLocation);
-        nf.setCurJob(curJob);
+
         fcfs.setCurJob(curJob);
-        Task nearest = nf.getBestTask(tasks);
+
+        //Task nearest = nf.getBestTask(tasks);
         Task first = fcfs.getBestTask(tasks);
+
+        //state.printlnSynchronized(" bestT = " + bestT + " first = " + first + " size of tasks = " + tasks.size());
 
 
         boolean shouldPrint = false;
@@ -87,41 +91,30 @@ public class LearningAgentWithJumpship extends LearningAgent {
             if (bestT == null) {
 
             }else {
+
                 count++;
+                if (first == null) {
+                    //state.printlnSynchronized("FCFS returned a null task, but the bestT is not null.  this is bad");
+                }
                 double fairness = (double)bestT.getTimeNotFinished() / (double)first.getTimeNotFinished();
                 totalFairness += fairness;
-                state.printlnSynchronized("Average fairness = " + (totalFairness / count) + " job fairness = " + fairness);
+                //state.printlnSynchronized("Average fairness = " + (totalFairness / count) + " job fairness = " + fairness);
             }
-//
-// else if (nearest.getId() == bestT.getId()) {
-//                state.printlnSynchronized("going after closest task with distance to it: " + nearest.getLocation().distance(curLocation) + " has been waiting: " + nearest.getTimeNotFinished() + " fcfs wait: " + first.getTimeNotFinished() + " fcfs dist = " + first.getLocation().distance(curLocation));
-//                if (nearest.getId() == first.getId()) {
-//                    state.printlnSynchronized("and it is also the fairest");
-//                }
-//
-//            } else if (bestT.getId() == first.getId()) {
-//                //oldestCounter++;
-//                state.printlnSynchronized("going after oldest task " + oldestCounter);
-//            } else if (bestT.getId() < nearest.getId()) {
-//                state.printlnSynchronized("going after older task" + bestT.getId() + " dist = " + bestT.getLocation().distance(curLocation) + " nearest id = " + nearest.getId() + " dist = " + nearest.getLocation().distance(curLocation));
-//                state.printlnSynchronized(" time diff = " + (bestT.getTimeNotFinished() - nearest.getTimeNotFinished()) + " distance diff = " + (bestT.getLocation().distance(curLocation) - nearest.getLocation().distance(curLocation)) + " bounty rate diff = " + (getUtility(bestT) - getUtility(nearest)));
-//            }
         }
-
-//        if ((prevJob != null && bestT != null) || (jumped == true && bestT != null)) {
-//            // then i've changed jobs somehow either naturally or by jumping ship
-//            // so see if i've also changed neighborhoods
-//            if (prevJob != null && prevJob.getTask().getNeighborhood().getId() != bestT.getNeighborhood().getId()) {
-//                state.printlnSynchronized("I " + id + " have moved neighborhoods!! from " + prevJob.getTask().getNeighborhood().getId() + " to " + bestT.getNeighborhood().getId() + " ptable = " + pTable.getQTableAsString());
-//            } else if (jumped == true && curJob.getTask().getNeighborhood().getId() != bestT.getNeighborhood().getId()){
-//                state.printlnSynchronized("I " + id + " have moved neighborhoods!! " + curJob.getTask().getNeighborhood().getId() + " to " + bestT.getNeighborhood().getId() + " ptable = " + pTable.getQTableAsString());
-//            }
-//        }
 
 
         return bestT;
 
     }
+
+    @Override
+    public double getTotalFairness() {
+        return totalFairness;
+    }
+
+    public double getCount() {return count;}
+
+
 
     public void handleMaintain(Task bestT) {
         // does nothing...
