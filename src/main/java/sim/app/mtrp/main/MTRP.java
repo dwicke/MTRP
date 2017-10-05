@@ -152,7 +152,7 @@ public class MTRP extends SimState {
 
 
     public DoubleGrid2D valgrid[];
-    public static final double MAX_TASK = 5;
+    public static final double MAX_TASK = 2;
 
     public EquitablePartitions ep;
 
