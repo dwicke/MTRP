@@ -34,6 +34,7 @@ public class StatsPublisher implements Steppable {
     private static double[][] timeStats = new double[(int)SimState.totalNumJobs][];
     private static double[][] fairStats = new double[(int)SimState.totalNumJobs][];
     private static double[][] varStats = new double[(int)SimState.totalNumJobs][];
+    private static double[][] areaStats = new double[(int)SimState.totalNumJobs][];
 
     private static long[] seeds = new long[(int)SimState.totalNumJobs];
 
@@ -47,6 +48,7 @@ public class StatsPublisher implements Steppable {
         timeStats[(int)a.job()] = new double[(int)maxNumSteps];
         fairStats[(int)a.job()] = new double[(int)maxNumSteps];
         varStats[(int)a.job()] = new double[(int)maxNumSteps];
+        areaStats[(int)a.job()] = new double[(int)maxNumSteps];
 
     }
 

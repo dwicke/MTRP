@@ -536,10 +536,15 @@ public abstract class Agent implements Steppable {
         int y = (int)loc.getY();
 
         for(int i = 0; i < state.valgrid.length; i++) {
-            state.valgrid[i].field[x][y] = 0;
+            if (state.valgrid[i].field[x][y] > 0) {
+                state.valgrid[i].field[x][y] = 0;
+                state.agents[i].decrementTotalArea();
+            }
+
         }
 
         grid.field[x][y] = 1;
+        incrementTotalArea();
 
         //state.printlnSynchronized("id = " + id + " val = " + grid.field[x][y] + " loc = " + x + " " + y);
         if (grid.field[x][y] > MTRP.MAX_TASK) {
@@ -547,25 +552,33 @@ public abstract class Agent implements Steppable {
         }
     }
 
+    public void decrementTotalArea() {
+        totalArea--;
+    }
+
+    public void incrementTotalArea() {
+        totalArea++;
+    }
+
     public double getTotalArea() {
-
-        totalArea = 0;
-        for (int x = 0; x < state.valgrid[id].field.length; x++) {
-            for (int y = 0; y < state.valgrid[id].field.length; y++) {
-                int maxID = 0;
-                double maxVal = state.valgrid[0].field[x][y];
-                for(int i = 0; i < state.valgrid.length; i++) {
-                    if (state.valgrid[i].field[x][y] > maxVal) {
-                        maxVal = state.valgrid[i].field[x][y];
-                        maxID = i;
-                    }
-                }
-                if (maxID == id && maxVal > 0) {
-                    totalArea++;
-                }
-            }
-        }
-
         return totalArea;
+//        totalArea = 0;
+//        for (int x = 0; x < state.valgrid[id].field.length; x++) {
+//            for (int y = 0; y < state.valgrid[id].field.length; y++) {
+//                int maxID = 0;
+//                double maxVal = state.valgrid[0].field[x][y];
+//                for(int i = 0; i < state.valgrid.length; i++) {
+//                    if (state.valgrid[i].field[x][y] > maxVal) {
+//                        maxVal = state.valgrid[i].field[x][y];
+//                        maxID = i;
+//                    }
+//                }
+//                if (maxID == id && maxVal > 0) {
+//                    totalArea++;
+//                }
+//            }
+//        }
+//
+//        return totalArea;
     }
 }

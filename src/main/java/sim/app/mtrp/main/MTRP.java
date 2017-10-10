@@ -767,4 +767,21 @@ public class MTRP extends SimState {
         }
         return 0;
     }
+
+
+    public double getAreaStats() {
+        if (agents != null) {
+            double minArea = agents[0].getTotalArea();
+            double maxArea = agents[0].getTotalArea();
+            for (int i = 0; i < agents.length; i++) {
+                if (agents[i].getTotalArea() > maxArea) {
+                    maxArea = agents[i].getTotalArea();
+                } else if (agents[i].getTotalArea() < minArea) {
+                    minArea = agents[i].getTotalArea();
+                }
+            }
+            return minArea / maxArea;
+        }
+        return 0;
+    }
 }
