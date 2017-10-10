@@ -556,7 +556,7 @@ public abstract class Agent implements Steppable {
                 double maxVal = state.valgrid[0].field[x][y];
                 for(int i = 0; i < state.valgrid.length; i++) {
                     if (state.valgrid[i].field[x][y] > maxVal) {
-                        maxVal = state.valgrid[0].field[x][y];
+                        maxVal = state.valgrid[i].field[x][y];
                         maxID = i;
                     }
                 }
