@@ -62,24 +62,24 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         for (int i = 0; i < state.numAgents; i++) {
             Agent a = state.getAgents()[i];
-            if (i != id && t.getJob().isSignaled(a) && this.curLocation.distance(a.curLocation) < maxCommDist) {
-                confidence *= agentSuccess.getQValue(i, 0);
-                numSignaled++;
-            }
-            else if (i != id && a.getCurJob() != null && this.curLocation.distance(a.curLocation) < maxCommDist && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
-            {
-                confidence *= agentSuccess.getQValue(i, 0);
-                numSignaled++;
-            }
 //            if (i != id && t.getJob().isSignaled(a) && this.curLocation.distance(a.curLocation) < maxCommDist) {
 //                confidence *= agentSuccess.getQValue(i, 0);
 //                numSignaled++;
 //            }
-//            else if (i != id && a.getCurJob() != null && this.curLocation.distance(a.curLocation) < maxCommDist && a.getCurJob().isSignaled(a) && a.getNumTimeStepsFromLocation(t.getLocation(), a.getCurJob().getTask().getLocation()) < getNumTimeStepsFromLocation(t.getLocation(), curLocation))
+//            else if (i != id && a.getCurJob() != null && this.curLocation.distance(a.curLocation) < maxCommDist && a.getCurJob().isSignaled(a) && a.getCurJob().getTask().getLocation().distance(t.getLocation()) < curLocation.distance(t.getLocation()))
 //            {
 //                confidence *= agentSuccess.getQValue(i, 0);
 //                numSignaled++;
 //            }
+            if (i != id && t.getJob().isSignaled(a) && this.curLocation.distance(a.curLocation) < maxCommDist) {
+                confidence *= agentSuccess.getQValue(i, 0);
+                numSignaled++;
+            }
+            else if (i != id && a.getCurJob() != null && this.curLocation.distance(a.curLocation) < maxCommDist && a.getCurJob().isSignaled(a) && a.getNumTimeStepsFromLocation(t.getLocation(), a.getCurJob().getTask().getLocation()) < getNumTimeStepsFromLocation(t.getLocation(), curLocation))
+            {
+                confidence *= agentSuccess.getQValue(i, 0);
+                numSignaled++;
+            }
 
 
 
@@ -118,9 +118,9 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         double neighborhoodp = getNorm(t);
 
         confidence = weight * confidence;// + (1 - weight) * neighborhoodp;
-
-        //double totalTime = getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0);
-        double totalTime = t.getLocation().distance(curLocation);//getNumTimeStepsFromLocation(t.getLocation());// + tTable.getQValue(0, 0);
+        //state.printlnSynchronized("actual job mean service time = " + t.getJob().getMeanJobLength() + " learned value = " + tTable.getQValue(t.getJob().getJobType(), 0));
+        double totalTime = getNumTimeStepsFromLocation(t.getLocation()) +  tTable.getQValue(t.getJob().getJobType(), 0);
+        //double totalTime = t.getLocation().distance(curLocation) + tTable.getQValue(t.getJob().getJobType(), 0);
         //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
         //double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
@@ -147,7 +147,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         double signalDist = getSignallingDistance();
 
-        if (hasTraveled == true && amWorking == false && curJob != null && curJob.getTask().getLocation().distance(this.curLocation) <= signalDist) {
+        //if (hasTraveled == true && amWorking == false && curJob != null && curJob.getTask().getLocation().distance(this.curLocation) <= signalDist) {
+        if (hasTraveled == true && amWorking == false && curJob != null && getNumTimeStepsFromLocation(curJob.getTask().getLocation(), curLocation) <= signalDist) {
             curJob.signal(this);
         }
         return hasTraveled;
@@ -171,8 +172,8 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         curJob.unsignal(this);
 
-        //totalJumpshipDist += getNumTimeStepsFromLocation(curJob.getTask().getLocation(), curLocation);
-        totalJumpshipDist += curJob.getTask().getLocation().distance(curLocation);
+        totalJumpshipDist += getNumTimeStepsFromLocation(curJob.getTask().getLocation(), curLocation);
+        //totalJumpshipDist += curJob.getTask().getLocation().distance(curLocation);
         numJumpships++;
         return super.handleJumpship(bestT);
     }

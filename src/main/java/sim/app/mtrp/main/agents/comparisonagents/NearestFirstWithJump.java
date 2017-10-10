@@ -44,7 +44,7 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
 //
 //            if (neighborhood.contains(new Point2D(t.getLocation().x, t.getLocation().y))) {
             if (t.getNeighborhood().getId() == getId()) {
-                return -getNumTimeStepsFromLocation(t.getLocation());
+                return -(getNumTimeStepsFromLocation(t.getLocation()) + t.getJob().getMeanJobLength());
             } else {
                 return Double.NEGATIVE_INFINITY;
             }
