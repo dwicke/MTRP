@@ -29,7 +29,7 @@ public class LearningAgent extends Agent {
     double epsilonChooseRandomTask =  .002; // was .002
     int numNeighborhoods;
 
-    QTable expectedNeighborhoodReward;
+    public QTable expectedNeighborhoodReward;
     double neighRewardLR = .45;
 
 

@@ -13,11 +13,9 @@ import sim.util.Bag;
  */
 public class AuctionAgent extends LearningAgent {
 
-    QTable expectedNeighborhoodReward;
-    double neighRewardLR = .45;
+
     public AuctionAgent(MTRP state, int id) {
         super(state, id);
-        expectedNeighborhoodReward = new QTable(state.getNumNeighborhoods(), 1, neighRewardLR, .1, state.random);
     }
 
 
@@ -25,13 +23,6 @@ public class AuctionAgent extends LearningAgent {
     public Task getAvailableTask() {
         return getAvailableTask(getNonCommittedTasks());
         //return getAvailableTask(getTasksWithinRange(state.getBondsman().getNewTasks()));
-    }
-
-    @Override
-    public void learn(double reward) {
-        super.learn(reward);
-        // need to learn the expected reward for completing a task in the neighborhood
-        expectedNeighborhoodReward.update(curJob.getTask().getNeighborhood().getId(), 0, curJob.getTask().getNeighborhood().getNeighborhoodBounty());
     }
 
     @Override
@@ -105,7 +96,7 @@ public class AuctionAgent extends LearningAgent {
         //double util =   (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
 
         double totalTime = (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-        double util =  ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)/* + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime)*/);
+        double util =  ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime) + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
 
 
         //double util =   (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * t.getJob().getBountyRate() - 0) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
