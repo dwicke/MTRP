@@ -29,6 +29,8 @@ public class LearningAgent extends Agent {
     double epsilonChooseRandomTask =  .002; // was .002
     int numNeighborhoods;
 
+    QTable expectedNeighborhoodReward;
+    double neighRewardLR = .45;
 
 
 
@@ -37,6 +39,7 @@ public class LearningAgent extends Agent {
         numNeighborhoods = state.getNumNeighborhoods();
         pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
         tTable = new QTable(state.numJobTypes + state.numEmergentJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
+        expectedNeighborhoodReward = new QTable(state.getNumNeighborhoods(), 1, neighRewardLR, .1, state.random);
 
     }
 
@@ -136,9 +139,16 @@ public class LearningAgent extends Agent {
 //        //state.printlnSynchronized("Time step = " + state.schedule.getSteps() + " Agent " + getId() + " task id = " + t.getId() + " confidence, numsteps, utility " + confidence + ", " + numSteps + ", " + utility);
 //        return utility;
 
+        double totalTime = getNumTimeStepsFromLocation(t.getLocation()) +  tTable.getQValue(t.getJob().getJobType(), 0);
+        //double totalTime = t.getLocation().distance(curLocation) + tTable.getQValue(t.getJob().getJobType(), 0);
+        //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
+
+        //double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
+        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)  + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
+
         // this seems to work the best!!!!!!!!! for some reason... got to figure this out.
         //double util =  ( confidence *  (t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
-        double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
+        //double util =  ( confidence *  (-getCost(t) + t.getBounty()+ (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0)) * state.getIncrement() - 0)) /  (getNumTimeStepsFromLocation(t.getLocation()) + tTable.getQValue(t.getJob().getJobType(), 0));
         //double util =  ( confidence *  (t.getBounty()+ getNumTimeStepsFromLocation(t.getLocation()) - getCost(t))) /  (getNumTimeStepsFromLocation(t.getLocation()) );
         return util;
     }
@@ -168,6 +178,10 @@ public class LearningAgent extends Agent {
 
 
         tTable.update(curJob.getJobType(), 0, getNumTimeStepsWorking());
+
+        // need to learn the expected reward for completing a task in the neighborhood
+        expectedNeighborhoodReward.update(curJob.getTask().getNeighborhood().getId(), 0, curJob.getTask().getNeighborhood().getNeighborhoodBounty());
+
         //tTable.update(0, 0, getNumTimeStepsWorking());
 
     }

@@ -55,6 +55,18 @@ public class MTRPWithUI extends GUIState {
         return "MTRP with bounty hunting";
     }
 
+
+
+    public Color[] generateColors(int n)
+    {
+        Color[] cols = new Color[n];
+        for(int i = 0; i < n; i++)
+        {
+            cols[i] = Color.getHSBColor((float) i / (float) n, 0.85f, 1.0f);
+        }
+        return cols;
+    }
+
     public void setupPortrayals() {
         MTRP myState = (MTRP) state;
 
@@ -72,11 +84,11 @@ public class MTRPWithUI extends GUIState {
 
         deposPortrayal.setField(myState.depoPlane);
         deposPortrayal.setPortrayalForAll(new MovablePortrayal2D(new DepoPortrayal()));
-        Color colors[] = new Color[4];
-        colors[0] = Color.RED;
-        colors[1] = Color.BLUE;
-        colors[2] = Color.GREEN;
-        colors[3] = Color.BLACK;
+        Color colors[] = generateColors(myState.numAgents);
+//        colors[0] = Color.RED;
+//        colors[1] = Color.BLUE;
+//        colors[2] = Color.GREEN;
+//        colors[3] = Color.BLACK;
         areaDominance = new FastValueGridPortrayal2D[myState.numAgents];
         for (int i = 0; i < myState.numAgents; i++) {
             myState.printlnSynchronized("Making new area");

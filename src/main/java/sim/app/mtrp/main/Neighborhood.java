@@ -156,18 +156,18 @@ public class Neighborhood implements Steppable{
     double numTask = 0;
     public void generateTasks() {
 
-//        double totalAllJobTime =0.0;
-//        double countAll = 0;
-//        for (int i = 0; i < state.numJobTypes; i++) {
-//            totalAllJobTime += totalTime[i];
-//            countAll += count[i];
-//        }
-//
-//        if (countAll > 0) {
-//            neighborhoodBounty += ((double) totalAllJobTime / countAll );
-//        } else {
-//            neighborhoodBounty++;
-//        }
+        double totalAllJobTime =0.0;
+        double countAll = 0;
+        for (int i = 0; i < state.numJobTypes; i++) {
+            totalAllJobTime += totalTime[i];
+            countAll += count[i];
+        }
+
+        if (countAll > 0) {
+            neighborhoodBounty += ((double) totalAllJobTime / countAll );
+        } else {
+            neighborhoodBounty++;
+        }
 
         // bernolli process by sampling geomtric distribution
         // i in effect am producing a poisson process.

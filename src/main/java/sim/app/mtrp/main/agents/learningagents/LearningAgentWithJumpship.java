@@ -5,12 +5,17 @@ import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.agents.comparisonagents.FirstComeFirstServe;
 import sim.app.mtrp.main.agents.comparisonagents.NearestFirst;
+import sim.app.mtrp.main.util.QTable;
 import sim.util.Bag;
 
 /**
  * Created by drew on 4/28/17.
  */
 public class LearningAgentWithJumpship extends LearningAgent {
+
+
+
+
     public LearningAgentWithJumpship(MTRP state, int id) {
         super(state, id);
         nf = new NearestFirst(state);
@@ -113,7 +118,6 @@ public class LearningAgentWithJumpship extends LearningAgent {
     }
 
     public double getCount() {return count;}
-
 
 
     public void handleMaintain(Task bestT) {
