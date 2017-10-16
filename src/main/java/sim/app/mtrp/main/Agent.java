@@ -535,6 +535,10 @@ public abstract class Agent implements Steppable {
         int x = (int)loc.getX();
         int y = (int)loc.getY();
 
+        if (x < 0 || x >= grid.field.length || y < 0 || y >= grid.field[0].length) {
+            return;
+        }
+
         for(int i = 0; i < state.valgrid.length; i++) {
             if (state.valgrid[i].field[x][y] > 0) {
                 state.valgrid[i].field[x][y] = 0;

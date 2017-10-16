@@ -6,6 +6,7 @@ import os
 import math
 import re
 from sklearn import linear_model
+from scipy import stats
 
 
 # some helpful links for the plotting and numpy
@@ -18,25 +19,28 @@ def split_upper(s):
 
 # colors = ['blue', '#9370DB', 'orange', 'yellow', 'green']
 # titles = ['Static Environment', "Emergent Jobs", "Hard Jobs", "Dynamic Agents", "Sudden Tasks"]
-rates = {'fouragentoneNeighborhood':.25, 'fouragentfourneighborhoodSpreadout':.0625, 'oneagentoneneighborhood':.0625, 'OverlapFourAgentFourNeighborhood':.25, 'disaster1':.25, 'disaster2':.1875, 'sixtyfouragents':.8 }
-areas = {'fouragentoneNeighborhood':1600, 'fouragentfourneighborhoodSpreadout':1600, 'oneagentoneneighborhood':1600, 'OverlapFourAgentFourNeighborhood':3600, 'disaster1':3600, 'disaster2':3200, 'sixtyfouragents':102400 }
-numAgents = {'fouragentoneNeighborhood':4, 'fouragentfourneighborhoodSpreadout':1, 'oneagentoneneighborhood':1, 'OverlapFourAgentFourNeighborhood':4, 'disaster1':4, 'disaster2':4, 'sixtyfouragents':64 }
+rates = {'fouragentoneNeighborhood':.25,'fouragentfourNeighborhood':.25, 'fouragentfourneighborhoodSpreadout':.0625, 'oneagentoneneighborhood':.0625, 'OverlapFourAgentFourNeighborhood':.25, 'disaster1':.25, 'disaster2':.1875, 'sixtyfouragents':.8 }
+areas = {'fouragentoneNeighborhood':1600,'fouragentfourNeighborhood': 6400, 'fouragentfourneighborhoodSpreadout':1600, 'oneagentoneneighborhood':1600, 'OverlapFourAgentFourNeighborhood':3600, 'disaster1':3600, 'disaster2':3200, 'sixtyfouragents':102400 }
+numAgents = {'fouragentoneNeighborhood':4,'fouragentfourNeighborhood':4,'fouragentoneNeighborhood':4, 'fouragentfourneighborhoodSpreadout':1, 'oneagentoneneighborhood':1, 'OverlapFourAgentFourNeighborhood':4, 'disaster1':4, 'disaster2':4, 'sixtyfouragents':64 }
 # 8 is used as the auction method for a single agent experiment
 # 13 is equitable partitions with NN
 # 6 is just NN when i split the space
 # 4 is jumpship with comms with no range
 # 14 is range limited bounty hunting
-agentToIndex = {'0':0,'8':0, '4':1, '6':2, '13':3, '14':4}
-indexToPointChar = {'0':'o', '1':'x', '2':'s', '3':'D', '4':'^'}
-indexToName = {'0':'Auction', '1':'Bounty Hunting', '2':'NN', '3':'Equitable Paritions', '4':'Bounty Hunting With Comm'}
-myTitle = {'fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
+agentToIndex = {'0':0,'8':0, '4':1, '6':2, '13':3, '14':4, '5':5}
+indexToPointChar = {'0':'o', '1':'x', '2':'s', '3':'D', '4':'^', '5':'x'}
+indexToName = {'0':'Auction', '1':'Bounty Hunting', '2':'NN', '3':'Equitable Paritions', '4':'Bounty Hunting With Comm', '5':'NN with Task Abandonment'}
+myTitle = {'fouragentfourNeighborhood':'Four Agents 80x80','fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
 
 
 intervalToIndex = {'8':0, '9':1, '10':2, '11':3, '12':4, '13':5, '14':6, 
 					'40':0,'45':1, '50':2, '55':3, '60':4, '65':5, '70':6}
 
+
+startDir = '/home/drew/tmp/forpaper3fourneigh/'
+
 #for i in ["regular", "death", "emergentjobs", "hardjobs", "suddentasks"]:
-for experiments in os.listdir('/home/drew/tmp/forpaper/'):
+for experiments in os.listdir(startDir):
 	
 	if 'fouragentfourneighborhoodRandom' in experiments:
 		continue
@@ -53,20 +57,21 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 		numAgent = numAgents['disaster1']
 
 
-	for fuelOrNoFuel in os.listdir('/home/drew/tmp/forpaper/{}/'.format(experiments)):
-		for regularOrSudden in os.listdir('/home/drew/tmp/forpaper/{}/{}/'.format(experiments, fuelOrNoFuel)):
-			means = np.zeros((5, 6))
-			err = np.zeros((5,6))
-			T = np.zeros((5,6))
-			for interval in os.listdir('/home/drew/tmp/forpaper/{}/{}/{}/'.format(experiments, fuelOrNoFuel,regularOrSudden)):
-				for method in os.listdir('/home/drew/tmp/forpaper/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval)):
+	for fuelOrNoFuel in os.listdir('{}{}/'.format(startDir,experiments)):
+		for regularOrSudden in os.listdir('{}{}/{}/'.format(startDir, experiments, fuelOrNoFuel)):
+			means = np.zeros((6, 6))
+			err = np.zeros((6,6))
+			T = np.zeros((6,6))
+			for interval in os.listdir('{}{}/{}/{}/'.format(startDir, experiments, fuelOrNoFuel,regularOrSudden)):
+				for method in os.listdir('{}{}/{}/{}/{}'.format(startDir, experiments, fuelOrNoFuel,regularOrSudden,interval)):
 					
 					# The thing is that for rho > .8 the equation does not seem to do so well
 					# or the slope changes again and we have a degree two polynomial
 
 					#print("the service time is {} the file is {} and the mean is {}".format(interval, method, np.mean(np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method)))))
-					if "Time" in method and "15" not in interval and "14" not in interval and "70" not in interval:
-						loadedTxt = np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method))
+					if "Time" in method and "0_0.0" not in method and "_0.0_" in method and "15" not in interval and "14" not in interval and "70" not in interval:
+						#loadedTxt = np.loadtxt('/home/drew/tmp/forpaper/{}/{}/{}/{}/{}'.format(experiments, fuelOrNoFuel,regularOrSudden,interval,method))
+						loadedTxt = np.loadtxt('{}{}/{}/{}/{}/{}'.format(startDir, experiments, fuelOrNoFuel,regularOrSudden,interval,method))
 						loadedTxt = np.array([y for y in loadedTxt if y != 0.0])
 						if len(loadedTxt) > 40:
 							# should chop off values that are more than 40
@@ -91,13 +96,16 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 							Tval2 = (rate2 * area2) / (.7*.7*numAgent*numAgent*(1-rho)*(1-rho))
 							Tval = (2./5)*Tval1+(3./5)*Tval2
 						# now set the values
-						agentCode = filter(str.isdigit, method)
+						agentCode = filter(str.isdigit, method.split('_')[0])
 						means[agentToIndex[agentCode]][intervalToIndex[interval]] = meanVal
 						err[agentToIndex[agentCode]][intervalToIndex[interval]] = diff
 						T[agentToIndex[agentCode]][intervalToIndex[interval]] = Tval
 						#print("tval = {}".format(Tval))	
 						#print("mean = {} std = {} lowerend = {} upper = {} diff = {}".format(meanVal, stdVal,lower, upper, (upper - meanVal) ))
 			#print(T)
+				stat, pval = stats.ttest_ind(np.loadtxt('{}{}/{}/{}/{}/{}'.format(startDir, experiments, fuelOrNoFuel,regularOrSudden,interval,"4_0.0_allTimeResults.txt")), np.loadtxt('{}{}/{}/{}/{}/{}'.format(startDir, experiments, fuelOrNoFuel,regularOrSudden,interval,"5_0.0_allTimeResults.txt")))
+				print("interval = {} pval = {}".format(interval, pval))
+
 			# so now i can make the plot
 			count = 0
 			for (x,y,e) in zip(T, means, err):
@@ -125,7 +133,7 @@ for experiments in os.listdir('/home/drew/tmp/forpaper/'):
 			plt.title('{} with {}'.format(myTitle[experiments], split_upper(fuelOrNoFuel)))
 			plt.legend(fontsize="small")
 
-			plt.savefig('/home/drew/tmp/figs/{}{}.pdf'.format(experiments,fuelOrNoFuel), transparent=True)
+			plt.savefig('/home/drew/tmp/figsFF/{}{}.pdf'.format(experiments,fuelOrNoFuel), transparent=True)
 			plt.show()
 
 

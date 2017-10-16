@@ -43,6 +43,14 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
 //            neighborhood.add(centerX - (state.taskLocLength / 2), centerY + (state.taskLocLength / 2));
 //
 //            if (neighborhood.contains(new Point2D(t.getLocation().x, t.getLocation().y))) {
+
+//            double cellHalf = (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2.0;
+//            if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX()) <= cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY()) <= cellHalf) {
+//                return -getNumTimeStepsFromLocation(t.getLocation());
+//            }
+//            return Double.NEGATIVE_INFINITY;
+
+
             if (t.getNeighborhood().getId() == getId()) {
                 return -(getNumTimeStepsFromLocation(t.getLocation()) + t.getJob().getMeanJobLength());
             } else {
@@ -55,6 +63,19 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
             }
             return Double.NEGATIVE_INFINITY;
         }
+
+
+//        if (t.getNeighborhood().getMeanLocation().getX() - t.getLocation().getX() < 0 && id == 0) {
+//            // then we are to the right of the y axis (if y-axis runs down the center of the gaussian)
+//            return -(getNumTimeStepsFromLocation(t.getLocation()) + t.getJob().getMeanJobLength());
+//        } else if (t.getNeighborhood().getMeanLocation().getX() - t.getLocation().getX() >= 0 && id == 1) {
+//            return -(getNumTimeStepsFromLocation(t.getLocation()) + t.getJob().getMeanJobLength());
+//        }
+//
+//        return Double.NEGATIVE_INFINITY;
+
+        //return -(getNumTimeStepsFromLocation(t.getLocation()) + t.getJob().getMeanJobLength());
+
     }
     public double getCost(Task t) {
         // closest depo will never be null because we only consider tasks that are within distance of a depo

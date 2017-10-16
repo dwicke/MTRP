@@ -119,7 +119,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
         //double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
-        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)  + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
+        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)  /*+ (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime)*/);
 
 
         double fullVal =  util;// - (1 - confidence) * (2*getCost(t) / totalTime); // add this in to get better results for small rho

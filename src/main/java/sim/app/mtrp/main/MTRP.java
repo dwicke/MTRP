@@ -99,7 +99,7 @@ public class MTRP extends SimState {
     @Parameter(names={"--basebounty", "-b"})
     public double basebounty = 100;
     @Parameter(names={"--bountyIncrement", "-bi"})
-    public double increment = 1.0;
+    public double increment = 0.0;
 
     @Parameter(names={"--hasBountyRate", "-hbr"}, arity = 1)
     public boolean hasBountyRate = true;
