@@ -97,7 +97,7 @@ public class MTRP extends SimState {
 
     // bondsman params:
     @Parameter(names={"--basebounty", "-b"})
-    public double basebounty = 100;
+    public double basebounty = 500;
     @Parameter(names={"--bountyIncrement", "-bi"})
     public double increment = 0.0;
 

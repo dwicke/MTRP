@@ -34,7 +34,7 @@ public class StatsPublisher implements Steppable {
     private static double[][] timeStats = new double[(int)SimState.totalNumJobs][];
     private static double[][] fairStats = new double[(int)SimState.totalNumJobs][];
     private static double[][] varStats = new double[(int)SimState.totalNumJobs][];
-    private static double[][] areaStats = new double[(int)SimState.totalNumJobs][];
+    //private static double[][] areaStats = new double[(int)SimState.totalNumJobs][];
 
     private static long[] seeds = new long[(int)SimState.totalNumJobs];
 
@@ -48,7 +48,7 @@ public class StatsPublisher implements Steppable {
         timeStats[(int)a.job()] = new double[(int)maxNumSteps];
         fairStats[(int)a.job()] = new double[(int)maxNumSteps];
         varStats[(int)a.job()] = new double[(int)maxNumSteps];
-        areaStats[(int)a.job()] = new double[(int)maxNumSteps];
+       // areaStats[(int)a.job()] = new double[(int)maxNumSteps];
 
     }
 
@@ -121,20 +121,20 @@ public class StatsPublisher implements Steppable {
                     out.close();
                 }
 
-                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_" + "allAreaResults.txt");
-                file.getParentFile().mkdirs();
-
-                out = getWriter(file);
-
-                if (out != null) {
-                    for (int job = 0; job < areaStats.length; job++) {
-                        for (int step = 0; step < areaStats[job].length; step++) {
-                            out.print(areaStats[job][step] + " " );
-                        }
-                        out.println();
-                    }
-                    out.close();
-                }
+//                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_" + "allAreaResults.txt");
+//                file.getParentFile().mkdirs();
+//
+//                out = getWriter(file);
+//
+//                if (out != null) {
+//                    for (int job = 0; job < areaStats.length; job++) {
+//                        for (int step = 0; step < areaStats[job].length; step++) {
+//                            out.print(areaStats[job][step] + " " );
+//                        }
+//                        out.println();
+//                    }
+//                    out.close();
+//                }
 
 
 //                file = new File(filepath + "/graphBountyResults.txt");
@@ -213,15 +213,15 @@ public class StatsPublisher implements Steppable {
                 System.out.println("OHHH Nooo " + (int)board.job());
                 varStats[(int)board.job()] = new double[(int)maxNumSteps];
             }
-            if (areaStats[(int)board.job()] == null) {
-                System.out.println("OHHH Nooo " + (int)board.job());
-                areaStats[(int)board.job()] = new double[(int)maxNumSteps];
-            }
+//            if (areaStats[(int)board.job()] == null) {
+//                System.out.println("OHHH Nooo " + (int)board.job());
+//                areaStats[(int)board.job()] = new double[(int)maxNumSteps];
+//            }
             timeStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalTime();//board.getTotalOutstandingBounty();
             bountyStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getTotalOutstandingBounty();
             fairStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getFairness();
             varStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getVarianceTime();
-            areaStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getAreaStats();
+            //areaStats[(int)board.job()][(int)state.schedule.getSteps()] = board.getAreaStats();
 
 
             seeds[(int)board.job()] = board.seed();
