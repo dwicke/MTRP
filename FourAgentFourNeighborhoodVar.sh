@@ -8,7 +8,7 @@ numNeighborhood=(4 4 4 4 4 4)
 rate=(16 16 16 16 16 16)
 jobLen=(13 12 11 10 9 8)
 numIterations=(300000 300000 300000 300000 300000 300000)
-increment=(0 .0001 .001 .01 .1 1 10 100)
+increment=(0 .0001 .001 .01 .1 1 10)
 
 ## No fuel
 for i in 0 1 2 3 4 5;

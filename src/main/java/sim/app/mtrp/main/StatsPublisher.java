@@ -86,7 +86,7 @@ public class StatsPublisher implements Steppable {
                 }
 
 
-                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_"  + "allTimeResults.txt");
+                file = new File(filepath + "/" + board.groupLabel + "_" + board.increment + "_"  + "allTimeResults.txt");
                 file.getParentFile().mkdirs();
 
                 out = getWriter(file);
@@ -98,7 +98,7 @@ public class StatsPublisher implements Steppable {
                     out.close();
                 }
 
-                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_" + "allFairResults.txt");
+                file = new File(filepath + "/" + board.groupLabel + "_" + board.increment + "_" + "allFairResults.txt");
                 file.getParentFile().mkdirs();
 
                 out = getWriter(file);
@@ -109,7 +109,7 @@ public class StatsPublisher implements Steppable {
                     }
                     out.close();
                 }
-                file = new File(filepath + "/" + board.agentType + "_" + board.increment + "_" + "allVarResults.txt");
+                file = new File(filepath + "/" + board.groupLabel + "_" + board.increment + "_" + "allVarResults.txt");
                 file.getParentFile().mkdirs();
 
                 out = getWriter(file);
