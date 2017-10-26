@@ -2,12 +2,18 @@ package sim.app.mtrp.main.agents.comparisonagents;
 
 import kn.uni.voronoitreemap.j2d.Point2D;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.hull.ConvexHull2D;
+import org.apache.commons.math3.geometry.euclidean.twod.hull.ConvexHullGenerator2D;
+import org.apache.commons.math3.geometry.euclidean.twod.hull.MonotoneChain;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.agents.learningagents.LearningAgent;
 import sim.app.mtrp.main.agents.learningagents.LearningAgentWithJumpship;
 import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
+
+import java.util.ArrayList;
 
 /**
  * Whoever is closest to the task lays claim does not care about the bounty
@@ -85,11 +91,11 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
 
     @Override
     public Task getAvailableTask() {
-        if (state.numNeighborhoods == state.numAgents) {
-            Bag tasksNearby = new Bag(state.neighborhoods[id].getTasks());
-            Bag inRangeTasks = getTasksWithinRangeAndAvailable(tasksNearby);
-            return getAvailableTask(inRangeTasks);
-        }
+//        if (state.numNeighborhoods == state.numAgents) {
+//            Bag tasksNearby = new Bag(state.neighborhoods[id].getTasks());
+//            Bag inRangeTasks = getTasksWithinRangeAndAvailable(tasksNearby);
+//            return getAvailableTask(inRangeTasks);
+//        }
         return super.getAvailableTask();
     }
 
@@ -130,4 +136,46 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
         return chosenTask;
     }
 
+
+    double totalArea, numAreas, areaRatio;
+
+    @Override
+    public double getAreaConvexHullOfMyTasks() {
+
+        if (state.numNeighborhoods == state.numAgents) {
+            Bag tasksNearby = new Bag(state.neighborhoods[id].getTasks());
+            Bag inRangeTasks = getTasksWithinRangeAndAvailable(tasksNearby);
+
+            if (inRangeTasks.size() > 2) {
+                MonotoneChain ch = new MonotoneChain();
+                ArrayList<Vector2D> myTasksLocations = new ArrayList<Vector2D>();
+                for (int i = 0; i < inRangeTasks.size(); i++) {
+                    Task t = (Task) inRangeTasks.get(i);
+                    Vector2D v = new Vector2D(t.getLocation().x, t.getLocation().y);
+                    myTasksLocations.add(v);
+                }
+                double area = ch.generate(myTasksLocations).createRegion().getSize();
+                totalArea += area;
+
+                ArrayList<Vector2D> allTaskLocations = new ArrayList<Vector2D>();
+
+                Bag allInRange = getTasksWithinRange(state.getBondsman().getAvailableTasks());
+                for (int i =0 ; i < allInRange.size(); i++) {
+                    Task t = (Task) allInRange.get(i);
+                    Vector2D v = new Vector2D(t.getLocation().x, t.getLocation().y);
+                    allTaskLocations.add(v);
+                }
+                double fullArea = ch.generate(allTaskLocations).createRegion().getSize();
+                areaRatio += area / fullArea;
+
+                numAreas++;
+                return areaRatio / numAreas;
+            } else {
+                return 0;
+            }
+        }
+
+
+        return super.getAreaConvexHullOfMyTasks();
+    }
 }

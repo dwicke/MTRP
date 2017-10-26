@@ -37,7 +37,9 @@ public abstract class Agent implements Steppable {
     boolean slow = false;
     public Depo startDepo = null;
     double totalArea = 0.0;
-
+    private double totalTimeBetweenTasks, lastTimeFinished;
+    private double numJobsFinished;
+    double totX, totY;
 
 //    final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
 
@@ -397,8 +399,13 @@ public abstract class Agent implements Steppable {
         amWorking = false;
         bounty += curJob.getCurrentBounty();
         bounty += curJob.getTask().getNeighborhood().getNeighborhoodBounty();
+        totX += curJob.getTask().getLocation().x;
+        totY += curJob.getTask().getLocation().y;
         curJob.finish();
         increaseCount(state.valgrid[id], curJob.getTask().getLocation());
+        totalTimeBetweenTasks += state.schedule.getSteps() - lastTimeFinished;
+        lastTimeFinished = state.schedule.getSteps();
+        numJobsFinished++;
         curJob = null;
     }
 
@@ -539,21 +546,22 @@ public abstract class Agent implements Steppable {
             return;
         }
 
-        for(int i = 0; i < state.valgrid.length; i++) {
-            if (state.valgrid[i].field[x][y] > 0) {
-                state.valgrid[i].field[x][y] = 0;
-                state.agents[i].decrementTotalArea();
-            }
+//        for(int i = 0; i < state.valgrid.length; i++) {
+//            if (state.valgrid[i].field[x][y] > 0) {
+//                state.valgrid[i].field[x][y] = 0;
+//                state.agents[i].decrementTotalArea();
+//            }
+//
+//        }
 
-        }
-
-        grid.field[x][y] = 1;
-        incrementTotalArea();
-
-        //state.printlnSynchronized("id = " + id + " val = " + grid.field[x][y] + " loc = " + x + " " + y);
-        if (grid.field[x][y] > MTRP.MAX_TASK) {
-            grid.field[x][y] = MTRP.MAX_TASK;
-        }
+        grid.field[x][y]++;
+//        grid.field[x][y] = 1;
+//        incrementTotalArea();
+//
+//        //state.printlnSynchronized("id = " + id + " val = " + grid.field[x][y] + " loc = " + x + " " + y);
+//        if (grid.field[x][y] > MTRP.MAX_TASK) {
+//            grid.field[x][y] = MTRP.MAX_TASK;
+//        }
     }
 
     public void decrementTotalArea() {
@@ -562,6 +570,15 @@ public abstract class Agent implements Steppable {
 
     public void incrementTotalArea() {
         totalArea++;
+    }
+
+    public double getAvgTimeBetween() {
+        if (numJobsFinished == 0) {
+            return 0;
+        }
+        else {
+            return totalTimeBetweenTasks / numJobsFinished;
+        }
     }
 
     public double getTotalArea() {
@@ -584,5 +601,44 @@ public abstract class Agent implements Steppable {
 //        }
 //
 //        return totalArea;
+    }
+
+    public double getRadius() {
+
+        double smallestDist = 1000000000;
+        // get distance to nearest agent and divide by 2
+        for (int i= 0; i < state.agents.length; i++) {
+            double dist = curLocation.distance(state.agents[i].curLocation);
+            if (dist < smallestDist && i != id) {
+                smallestDist = dist;
+            }
+        }
+        //state.printlnSynchronized("Radius = " + smallestDist);
+        return smallestDist / 2.0;
+    }
+
+
+    public double getAreaConvexHullOfMyTasks() {
+        return 0.0;
+    }
+
+
+    public MTRP getState() {
+        return state;
+    }
+
+    public double getAverageX() {
+        if(numJobsFinished > 0) {
+            state.printlnSynchronized("Agent " + id + " avgX = " + (totX / numJobsFinished));
+            return totX / numJobsFinished;
+        }
+        return 0;
+    }
+
+    public double getAverageY() {
+        if(numJobsFinished > 0) {
+            return totY / numJobsFinished;
+        }
+        return 0;
     }
 }

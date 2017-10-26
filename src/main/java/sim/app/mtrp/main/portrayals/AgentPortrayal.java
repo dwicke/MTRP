@@ -1,6 +1,9 @@
 package sim.app.mtrp.main.portrayals;
 
+import kn.uni.voronoitreemap.datastructure.OpenList;
+import kn.uni.voronoitreemap.diagram.PowerDiagram;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
+import kn.uni.voronoitreemap.j2d.Site;
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
 import sim.app.mtrp.main.agents.comparisonagents.EquitableAgent;
@@ -55,15 +58,44 @@ public class AgentPortrayal extends OvalPortrayal2D {
         int height = (int) (info.draw.height);
         graphics.fillOval(x, y, width, height);
 
-        if (model instanceof LearningAgentWithCommunication) {
-            LearningAgentWithCommunication lawc = (LearningAgentWithCommunication) model;
-            int sigDist = (int)lawc.getSignallingDistance() * 10;
-            int centerx = x - sigDist;// / 2;
-            int centery = y - sigDist;// / 2;
-            graphics.drawOval(centerx, centery,  sigDist * 2, sigDist*2);
+//        if (model instanceof LearningAgentWithCommunication) {
+//            LearningAgentWithCommunication lawc = (LearningAgentWithCommunication) model;
+//            int sigDist = (int)lawc.getSignallingDistance() * 10;
+//            int centerx = x - sigDist;// / 2;
+//            int centery = y - sigDist;// / 2;
+//            graphics.drawOval(centerx, centery,  sigDist * 2, sigDist*2);
+//        }
+
+//        graphics.setColor(Color.black);
+//        graphics.drawOval((int) (x - model.getRadius() * 10), (int)(y - model.getRadius() * 10),  (int)(model.getRadius() * 2 * 10), (int)(model.getRadius()*2 * 10));
+        int scalefactor = 1000 / model.getState().getSimWidth();
+        //graphics.fillRect((int)model.getAverageX() *scalefactor, (int) model.getAverageY()*scalefactor, 10,10);
+
+        OpenList pd = model.getState().getVoronoi();
+        if (pd != null) {
+            for (Site s : pd) {
+                PolygonSimple rd = s.getPolygon();
+                rd.scale(scalefactor);
+                graphics.draw(rd);
+//                rd.getCentroid();
+//                if (rd != null) {
+//                    Iterator<kn.uni.voronoitreemap.j2d.Point2D> ird = rd.iterator();
+//                    kn.uni.voronoitreemap.j2d.Point2D p1 = ird.next();
+//                    kn.uni.voronoitreemap.j2d.Point2D p2 = ird.next();
+//
+//                    //int scalefactor = 1000 / model.getState().getSimWidth();
+//                    graphics.drawLine((int) (p1.x + 0) * scalefactor, (int) p1.y * scalefactor, (int) (p2.x + 0) * scalefactor, (int) p2.y * scalefactor);
+//                    while (ird.hasNext()) {
+//                        kn.uni.voronoitreemap.j2d.Point2D pi1 = ird.next();
+//                        graphics.drawLine((int) (p2.x + 0) * scalefactor, (int) p2.y * scalefactor, (int) (pi1.x + 0) * scalefactor, (int) pi1.y * scalefactor);
+//                        p2 = pi1;
+//                    }
+//                    graphics.drawLine((int) (p1.x + 0) * scalefactor, (int) p1.y * scalefactor, (int) (p2.x + 0) * scalefactor, (int) p2.y * scalefactor);
+//
+//                }
+            }
+
         }
-
-
 
         if(model instanceof EquitableAgent) {
             // then draw the power diagram

@@ -1,9 +1,19 @@
 package sim.app.mtrp.main.agents.learningagents;
 
+import kn.uni.voronoitreemap.datastructure.OpenList;
+import kn.uni.voronoitreemap.diagram.PowerDiagram;
+import kn.uni.voronoitreemap.j2d.Point2D;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
+import kn.uni.voronoitreemap.j2d.Site;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.hull.MonotoneChain;
 import sim.app.mtrp.main.Agent;
 import sim.app.mtrp.main.MTRP;
 import sim.app.mtrp.main.Task;
 import sim.app.mtrp.main.util.QTable;
+import sim.util.Bag;
+
+import java.util.ArrayList;
 
 /**
  * Created by drew on 5/4/17.
@@ -66,6 +76,12 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 //                confidence *= agentSuccess.getQValue(i, 0);
 //                numSignaled++;
 //            }
+
+//            if (this.curLocation.distance(t.getLocation()) > a.curLocation.distance(t.getLocation())){
+//                confidence *= agentSuccess.getQValue(i, 0);
+//                numSignaled++;
+//            }
+
             if (i != id && t.getJob().isSignaled(a) && this.curLocation.distance(a.curLocation) < maxCommDist) {
                 confidence *= agentSuccess.getQValue(i, 0);
                 numSignaled++;
@@ -114,7 +130,7 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
 
         confidence = weight * confidence;// + (1 - weight) * neighborhoodp;
         //state.printlnSynchronized("actual job mean service time = " + t.getJob().getMeanJobLength() + " learned value = " + tTable.getQValue(t.getJob().getJobType(), 0));
-        double totalTime = getNumTimeStepsFromLocation(t.getLocation()) +  tTable.getQValue(t.getJob().getJobType(), 0);
+        double totalTime =  getNumTimeStepsFromLocation(t.getLocation()) +  tTable.getQValue(t.getJob().getJobType(), 0);
         //double totalTime = t.getLocation().distance(curLocation) + tTable.getQValue(t.getJob().getJobType(), 0);
         //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
@@ -173,7 +189,63 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         return super.handleJumpship(bestT);
     }
 
+    double totalArea, numAreas, coverarea, areaRatio;
 
+    @Override
+    public double getAreaConvexHullOfMyTasks() {
+
+
+        PowerDiagram pd = new PowerDiagram();
+        OpenList sites = new OpenList();
+        for (int i = 0; i < state.numAgents; i++) {
+            sites.add(new Site(state.agents[i].curLocation.x, state.agents[i].curLocation.y));
+        }
+
+        pd.setSites(sites);
+        PolygonSimple rootPolygon = new PolygonSimple();
+        int width = (int) (state.getSimWidth()/* + state.taskLocLength*/);
+        int height = (int) (state.getSimHeight() /*+ state.taskLocLength*/);
+        rootPolygon.add(0, 0);
+        rootPolygon.add(width, 0);
+        rootPolygon.add(width, height);
+        rootPolygon.add(0, height);
+        // set the clipping polygon, which limits the power voronoi diagram
+        pd.setClipPoly(rootPolygon);
+
+        // do the computation
+        try {
+            pd.computeDiagram();
+        }catch (Exception e) {
+            return 0;
+        }
+
+        Site mySite = sites.get(id);
+        Bag tasksNearby = getTasksWithinRange(state.getBondsman().getAvailableTasks());
+        ArrayList<Vector2D> myTasksLocations = new ArrayList<Vector2D>();
+        ArrayList<Vector2D> allTaskLocations = new ArrayList<Vector2D>();
+        for (int i = 0; i < tasksNearby.size(); i++) {
+            Task t = (Task) tasksNearby.get(i);
+
+            if (mySite.getPolygon().contains(new Point2D(t.getLocation().x, t.getLocation().y))) {
+                myTasksLocations.add(new Vector2D(t.getLocation().x, t.getLocation().y));
+            }
+            allTaskLocations.add(new Vector2D(t.getLocation().x, t.getLocation().y));
+        }
+        if (myTasksLocations.size() > 2) {
+            MonotoneChain ch = new MonotoneChain();
+            double area = ch.generate(myTasksLocations).createRegion().getSize();
+            double fullArea = ch.generate(allTaskLocations).createRegion().getSize();
+            totalArea += area;
+            coverarea += fullArea;
+            areaRatio += area / fullArea;
+            numAreas++;
+            state.printlnSynchronized("Agent " + id + " average area = " + (areaRatio / numAreas) + " and this ratio = " + area / fullArea);
+            return (areaRatio / numAreas);
+        }
+
+
+        return super.getAreaConvexHullOfMyTasks();
+    }
 
     @Override
     public String toString() {

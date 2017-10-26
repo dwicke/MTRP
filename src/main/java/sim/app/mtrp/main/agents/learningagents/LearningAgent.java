@@ -193,7 +193,26 @@ public class LearningAgent extends Agent {
 
 
 
+
 //    @Override
+//    public Depo getClosestDepo() {
+//        int nindex = 0;
+//        double maxval = pTable.getQValue(0,0);
+//        for (int i = 0; i < numNeighborhoods; i++) {
+//            if (pTable.getQValue(i,0) > maxval) {
+//                nindex = i;
+//                maxval = pTable.getQValue(i,0);
+//            }
+//        }
+//        double dist = getNumTimeStepsFromLocation(state.depos[nindex].getLocation(), curLocation);
+//
+//        if (dist <= this.curFuel) {
+//            return state.depos[nindex];
+//        }
+//        return super.getClosestDepo();
+//    }
+
+    //    @Override
 //    public String toString() {
 //        return "Agent id:" + this.id + " curJob: " + curJob + " ptable: " + pTable.getQTableAsString();
 //    }

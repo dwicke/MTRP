@@ -2,6 +2,15 @@ package sim.app.mtrp.main;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import kn.uni.voronoitreemap.datastructure.OpenList;
+import kn.uni.voronoitreemap.diagram.PowerDiagram;
+import kn.uni.voronoitreemap.j2d.Point2D;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
+import kn.uni.voronoitreemap.j2d.Site;
+import org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.apache.commons.math3.geometry.euclidean.twod.hull.MonotoneChain;
+import org.apache.commons.math3.geometry.partitioning.Region;
 import sim.app.mtrp.main.agents.AgentFactory;
 import sim.app.mtrp.main.agents.Valuators.EquitablePartitions;
 import sim.engine.*;
@@ -784,4 +793,105 @@ public class MTRP extends SimState {
         }
         return 0;
     }
+
+
+    double myArea = 0;
+    double myAreaCount = 0;
+
+    public double getPDAreadStat() {
+
+        if (agents != null) {
+            PowerDiagram pd = new PowerDiagram();
+            OpenList sites = new OpenList();
+            for (int i = 0; i < numAgents; i++) {
+                sites.add(new Site(agents[i].curLocation.x, agents[i].curLocation.y));
+            }
+
+            pd.setSites(sites);
+            PolygonSimple rootPolygon = new PolygonSimple();
+            int width = (int) (getSimWidth()/* + state.taskLocLength*/);
+            int height = (int) (getSimHeight() /*+ state.taskLocLength*/);
+            rootPolygon.add(0, 0);
+            rootPolygon.add(width, 0);
+            rootPolygon.add(width, height);
+            rootPolygon.add(0, height);
+            // set the clipping polygon, which limits the power voronoi diagram
+            pd.setClipPoly(rootPolygon);
+
+            // do the computation
+            pd.computeDiagram();
+
+//            double minArea = sites.get(0).getPolygon().getArea();
+//            double maxArea = sites.get(0).getPolygon().getArea();
+//
+//            for (Site s : sites) {
+//                if (s.getPolygon().getArea() > maxArea) {
+//                    maxArea = s.getPolygon().getArea();
+//                } else if (s.getPolygon().getArea() < minArea) {
+//                    minArea = s.getPolygon().getArea();
+//                }
+//            }
+            myArea += sites.get(0).getPolygon().getArea();
+            myAreaCount++;
+            return myArea / myAreaCount;
+        }
+        return 0.0;
+
+    }
+
+
+    public OpenList getVoronoi() {
+
+        if (agents != null && agents.length == numAgents) {
+            PowerDiagram pd = new PowerDiagram();
+            OpenList sites = new OpenList();
+            for (int i = 0; i < numAgents; i++) {
+                sites.add(new Site(agents[i].curLocation.x , agents[i].curLocation.y ));
+            }
+
+            pd.setSites(sites);
+            PolygonSimple rootPolygon = new PolygonSimple();
+            int width = (int) (getSimWidth() /* + state.taskLocLength*/);
+            int height = (int) (getSimHeight() /*+ state.taskLocLength*/);
+            rootPolygon.add(0, 0);
+            rootPolygon.add(width, 0);
+            rootPolygon.add(width, height);
+            rootPolygon.add(0, height);
+
+
+
+
+            // set the clipping polygon, which limits the power voronoi diagram
+            pd.setClipPoly(rootPolygon);
+
+            try {
+                // do the computation
+                pd.computeDiagram();
+                //pd.showDiagram();
+
+                return sites;
+            }catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+
+
+    }
+
+
+
+    public double getTotalAverageResponsibleAreaPerAgent() {
+
+        if (agents != null) {
+            double totalArea = 0;
+            for (int i = 0; i < numAgents; i++) {
+                totalArea += agents[i].getAreaConvexHullOfMyTasks();
+            }
+
+            return totalArea / numAgents;
+        }
+        return 0;
+    }
+
 }

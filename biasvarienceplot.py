@@ -107,5 +107,6 @@ for experiments in os.listdir(startDir):
 			plt.xticks(x,xlabels)
 			plt.xlabel('Bounty Rate')
 			plt.ylabel('Normalized Error')
+			plt.title('{} with {}'.format(myTitle[experiments], split_upper(fuelOrNoFuel)))
 			plt.legend(fontsize="small")
 			plt.show()
