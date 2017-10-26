@@ -69,7 +69,7 @@ public class Neighborhood implements Steppable{
 
 
         meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
-        meanLocation = getCentral();
+       // meanLocation = getCentral();
 
 
         // then generate the initial tasks locations
@@ -193,22 +193,46 @@ public class Neighborhood implements Steppable{
     }
 
 
+    public boolean inEpsilon(double x, double y) {
+        double epsilon = .5;
+        if (y < (state.taskLocLength/2.0) + epsilon && y > (state.taskLocLength/2.0) - epsilon &&
+                x < (state.taskLocLength/2.0) + epsilon && x > (state.taskLocLength/2.0) - epsilon) {
+            return true;
+        }
+        return false;
+    }
+
+
     public Double2D generateLocationInNeighborhood() {
         // first generate its coordinates using a gausian
-//        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
-//        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
+        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
+        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
 
         double neighborhoodLength = state.taskLocLength;// * (1 + 12.0 * state.random.nextDouble(true, true));
         // generate the x and y coordinates within the bounding area of the neighborhood
-        double x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
-        double y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+//        double x, y;
+
+//        if (state.random.nextDouble() < state.delta) {
+//            // use rejection sampling to get the distribution
+//            // generate those outside the epsilon area
+//            do {
+//                x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+//                y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+//            }while(inEpsilon(x, y));
+//        }else {
+//            // generate those inside the epsilon area
+//            do {
+//                x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+//                y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+//            }while(!inEpsilon(x, y));
+//        }
 
 
 
 
         // generate them within the view
-        //double x = (state.random.nextDouble(true, true) * state.getSimWidth());
-        //double y = (state.random.nextDouble(true, true) * state.getSimHeight());
+//        double x = (state.random.nextDouble(true, true) * state.getSimWidth());
+//        double y = (state.random.nextDouble(true, true) * state.getSimHeight());
         return new Double2D(x, y);
     }
 

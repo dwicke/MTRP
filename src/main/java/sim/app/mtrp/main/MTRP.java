@@ -86,7 +86,7 @@ public class MTRP extends SimState {
 
     @Parameter(names={"--jobLength", "-jl"})
     public int jobLength = 1; // the max mean job length (the mean is picked randomly from zero to this max)
-    public double taskLocStdDev = 5.0; // 5.0 is the same as what we used in the original paper.
+    public double taskLocStdDev = 10.0;
     @Parameter(names={"--taskLocLength", "-tll"})
     public double taskLocLength = 40.0; // this is the length of the sides of the square region of the neighborhood
     public double meanDistBetweenNeighborhoods = 20;//Math.sqrt(Math.pow(taskLocLength / 2, 2)*2); // this is the average distance between any two neighborhoods
@@ -150,6 +150,8 @@ public class MTRP extends SimState {
     @Parameter(names={"--groupLabel", "-gl"})
     public String groupLabel = "NA";
 
+    @Parameter(names={"--delta", "-de"})
+    public double delta = 0.05;
 
     public DoubleGrid2D valgrid[];
     public static final double MAX_TASK = 2;
@@ -784,4 +786,14 @@ public class MTRP extends SimState {
         }
         return 0;
     }
+
+    public double getDelta() {
+        return delta;
+    }
+
+    public void setDelta(double delta) {
+        this.delta = delta;
+    }
+
+
 }

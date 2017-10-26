@@ -57,11 +57,20 @@ public class NearestFirstWithJump extends LearningAgentWithJumpship {
                 return Double.NEGATIVE_INFINITY;
             }
         }else {
-            double cellHalf = (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2.0;
-            if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX()) <= cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY()) <= cellHalf) {
+//            double cellHalf = (state.getTaskLocLength() / Math.sqrt(state.numAgents)) / 2.0;
+//            if (Math.abs(startDepo.getLocation().getX() - t.getLocation().getX()) <= cellHalf && Math.abs(startDepo.getLocation().getY() - t.getLocation().getY()) <= cellHalf) {
+//                return -getNumTimeStepsFromLocation(t.getLocation());
+//            }
+//            return Double.NEGATIVE_INFINITY;
+            double centerX = state.neighborhoods[0].getMeanLocation().x;// + (state.taskLocLength / 2);
+            double centerY = state.neighborhoods[0].getMeanLocation().y;
+            // if it is in my quadrant then it is my task it will have the same sign as the depo
+            if (Math.signum(startDepo.getLocation().getX() - centerX) ==  Math.signum(t.getLocation().getX() - centerX) && Math.signum(centerY - startDepo.getLocation().getY() ) ==  Math.signum(centerY - t.getLocation().getY() ))
+            {
                 return -getNumTimeStepsFromLocation(t.getLocation());
             }
             return Double.NEGATIVE_INFINITY;
+
         }
 
 
