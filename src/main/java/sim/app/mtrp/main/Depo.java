@@ -36,7 +36,7 @@ public class Depo implements Steppable{
 
 
         // so i go from the index to the center of the grid cell
-        location = getCentral();
+        //location = getCentral();
 
         //location = new Double2D(50,50);
 

@@ -41,17 +41,17 @@ public class Neighborhood implements Steppable{
 
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
         meanLocation = new Double2D(20 + state.random.nextDouble(true,true)*(state.simWidth - 40), 20 + state.random.nextDouble(true,true)*(state.simHeight -40));
-//        if (state.numNeighborhoods == 4) {
-//            if (id == 0) {
-//                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
-//            } else if (id == 1) {
-//                meanLocation = new Double2D(0 + 20, 20);
-//            } else if (id == 2) {
-//                meanLocation = new Double2D(20, state.simHeight - 20);
-//            } else if (id == 3) {
-//                meanLocation = new Double2D(state.simWidth - 20, 20);
-//            }
-//        }
+        if (state.numNeighborhoods == 4) {
+            if (id == 0) {
+                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
+            } else if (id == 1) {
+                meanLocation = new Double2D(0 + 20, 20);
+            } else if (id == 2) {
+                meanLocation = new Double2D(20, state.simHeight - 20);
+            } else if (id == 3) {
+                meanLocation = new Double2D(state.simWidth - 20, 20);
+            }
+        }
 
 //        if (state.numNeighborhoods == 4) {
 //            if (id == 0) {
@@ -68,7 +68,7 @@ public class Neighborhood implements Steppable{
 
 
 
-        meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+        //meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
        // meanLocation = getCentral();
 
 
@@ -205,13 +205,14 @@ public class Neighborhood implements Steppable{
 
     public Double2D generateLocationInNeighborhood() {
         // first generate its coordinates using a gausian
-        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
-        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
+//        double x = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getX();
+//        double y = state.random.nextGaussian() * state.taskLocStdDev + meanLocation.getY();
 
         double neighborhoodLength = state.taskLocLength;// * (1 + 12.0 * state.random.nextDouble(true, true));
         // generate the x and y coordinates within the bounding area of the neighborhood
-//        double x, y;
-
+        double x, y;
+        x = meanLocation.getX() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
+        y = meanLocation.getY() + (state.random.nextDouble(true, true) * neighborhoodLength) - neighborhoodLength / 2.0;
 //        if (state.random.nextDouble() < state.delta) {
 //            // use rejection sampling to get the distribution
 //            // generate those outside the epsilon area

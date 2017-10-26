@@ -103,6 +103,8 @@ public class MTRP extends SimState {
 
     @Parameter(names={"--hasBountyRate", "-hbr"}, arity = 1)
     public boolean hasBountyRate = true;
+    @Parameter(names={"--hasNeighborhoodBounty", "-hnb"}, arity = 1)
+    public boolean hasNeighborhoodBounty = false;
 
     public Bondsman bondsman;
     public Agent agents[];
@@ -796,4 +798,12 @@ public class MTRP extends SimState {
     }
 
 
+
+    public boolean isHasNeighborhoodBounty() {
+        return hasNeighborhoodBounty;
+    }
+
+    public void setHasNeighborhoodBounty(boolean hasNeighborhoodBounty) {
+        this.hasNeighborhoodBounty = hasNeighborhoodBounty;
+    }
 }

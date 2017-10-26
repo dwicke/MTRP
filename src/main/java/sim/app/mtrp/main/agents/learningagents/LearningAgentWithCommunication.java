@@ -119,12 +119,22 @@ public class LearningAgentWithCommunication extends LearningAgentWithJumpship {
         //state.printlnSynchronized("Time = " + tTable.getQValue(t.getJob().getJobType(), 0));
 
         //double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime));
-        double util =  confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)  /*+ (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime)*/);
+
+        if(state.isHasNeighborhoodBounty()) {
+            double util = confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)  + (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime));
 
 
-        double fullVal =  util;// - (1 - confidence) * (2*getCost(t) / totalTime); // add this in to get better results for small rho
-        //state.printlnSynchronized("full value = " + fullVal + " task = " + t.getId() + " for agent id = " + id);
-        return fullVal;
+            double fullVal = util;// - (1 - confidence) * (2*getCost(t) / totalTime); // add this in to get better results for small rho
+            //state.printlnSynchronized("full value = " + fullVal + " task = " + t.getId() + " for agent id = " + id);
+            return fullVal;
+        } else {
+            double util = confidence * ((t.getBounty() / totalTime) + t.getJob().getBountyRate() - (getCost(t) / totalTime)  /*+ (expectedNeighborhoodReward.getQValue(t.getNeighborhood().getId(), 0) / totalTime)*/);
+
+
+            double fullVal = util;// - (1 - confidence) * (2*getCost(t) / totalTime); // add this in to get better results for small rho
+            //state.printlnSynchronized("full value = " + fullVal + " task = " + t.getId() + " for agent id = " + id);
+            return fullVal;
+        }
     }
     public double getNorm(Task t) {
         double ptableSum = 0.0;
