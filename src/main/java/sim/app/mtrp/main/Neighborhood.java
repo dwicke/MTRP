@@ -69,9 +69,16 @@ public class Neighborhood implements Steppable{
         //meanLocation = new Double2D(80, 80);
 
 
+        if (state.numNeighborhoods == 2) {
+            if (id == 0) {
+                meanLocation = new Double2D(20,20);
+            }else if (id == 1) {
+                meanLocation = new Double2D(150,150);
+            }
+        }
 
-        meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
-        meanLocation = getCentral();
+        //meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+        //meanLocation = getCentral();
 
 
         // then generate the initial tasks locations

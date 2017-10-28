@@ -155,6 +155,10 @@ public class MTRP extends SimState {
     @Parameter(names={"--delta", "-de"})
     public double delta = 0.05;
 
+    @Parameter(names={"--logStep", "-ls"})
+    public long logStep = 300000;
+
+
     public DoubleGrid2D valgrid[];
     public static final double MAX_TASK = 2;
 
@@ -297,7 +301,7 @@ public class MTRP extends SimState {
         order++;
 
         // create the stat publisher
-        statsPublisher = new StatsPublisher(this, 200000, directory);
+        statsPublisher = new StatsPublisher(this, logStep, directory);
         schedule.scheduleRepeating(Schedule.EPOCH, order, statsPublisher);
     }
 
