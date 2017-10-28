@@ -87,6 +87,21 @@ public class Bondsman implements Steppable {
     public double getVarianceTime() {
 
 
+//        double inner = 0;
+//        double avg = getTotalAverageTime();
+//        double count = 0;
+//        for(Neighborhood n : state.neighborhoods) {
+//            for (Double d : n.getWaitingTimes()) {
+//                inner += Math.pow((d - avg),2);
+//                if (d > avg) {
+//                    //state.printlnSynchronized("Value of d = " + d + " avg = " + avg);
+//                }
+//                count++;
+//            }
+//        }
+//
+//        double var0 = (1.0 / (count - 1)) * inner;
+
         double avg = getTotalAverageTime();
         double count = getCount();
         double waitSquaredTotal = 0.0;
@@ -94,7 +109,12 @@ public class Bondsman implements Steppable {
             waitSquaredTotal += n.waitsquared;
         }
 
-        return (count / (count - 1))*(waitSquaredTotal / count - ((avg*avg) / (count * count)));
+        //state.printlnSynchronized("waitsquared = " + waitSquaredTotal + " avg = " + avg);
+        double var1 = 1.0 / (count - 1) * (waitSquaredTotal - 2.0 * avg * getTotalTime() + count * avg * avg);
+        //double var2 = (count / (count - 1))*(waitSquaredTotal / count - ((avg*avg) / (count * count)));
+        //state.printlnSynchronized("Var new way = " + var1 + " var long way = " + var0);
+        return var1;
+        //return (count / (count - 1))*(waitSquaredTotal / count - ((avg*avg) / (count * count)));
     }
 
 

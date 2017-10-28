@@ -33,25 +33,27 @@ public class Neighborhood implements Steppable{
 
     double neighborhoodBounty = 0;
 
+    ArrayList<Double> waitingTimes;
+
 
 
     public Neighborhood(MTRP state, int id) {
         this.state = state;
         this.id = id;
-
+        waitingTimes = new ArrayList<Double>();
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
         meanLocation = new Double2D(20 + state.random.nextDouble(true,true)*(state.simWidth - 40), 20 + state.random.nextDouble(true,true)*(state.simHeight -40));
-        if (state.numNeighborhoods == 4) {
-            if (id == 0) {
-                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
-            } else if (id == 1) {
-                meanLocation = new Double2D(0 + 20, 20);
-            } else if (id == 2) {
-                meanLocation = new Double2D(20, state.simHeight - 20);
-            } else if (id == 3) {
-                meanLocation = new Double2D(state.simWidth - 20, 20);
-            }
-        }
+//        if (state.numNeighborhoods == 4) {
+//            if (id == 0) {
+//                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
+//            } else if (id == 1) {
+//                meanLocation = new Double2D(0 + 20, 20);
+//            } else if (id == 2) {
+//                meanLocation = new Double2D(20, state.simHeight - 20);
+//            } else if (id == 3) {
+//                meanLocation = new Double2D(state.simWidth - 20, 20);
+//            }
+//        }
 
 //        if (state.numNeighborhoods == 4) {
 //            if (id == 0) {
@@ -68,8 +70,8 @@ public class Neighborhood implements Steppable{
 
 
 
-        //meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
-       // meanLocation = getCentral();
+        meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+        meanLocation = getCentral();
 
 
         // then generate the initial tasks locations
@@ -274,10 +276,15 @@ public class Neighborhood implements Steppable{
         totalTimeBetween += state.schedule.getSteps() - timeLastFinished;
         timeLastFinished = state.schedule.getSteps();
         waitsquared += Math.pow(task.timeNotFinished, 2);
+        waitingTimes.add((double)task.timeNotFinished);
         totalBounty += task.getBounty();
         totalDist += task.getLocation().distance(meanLocation);
         count[task.getJob().jobType]++;
         tasks.remove(task);
+    }
+
+    public ArrayList<Double> getWaitingTimes() {
+        return waitingTimes;
     }
 
     public double getNeighborhoodBounty() {
