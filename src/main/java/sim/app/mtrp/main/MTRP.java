@@ -106,6 +106,14 @@ public class MTRP extends SimState {
     @Parameter(names={"--hasNeighborhoodBounty", "-hnb"}, arity = 1)
     public boolean hasNeighborhoodBounty = false;
 
+    // 0 -- indicates 64 agent experiment
+    // 1 -- indicates 4 agent experiment continuous space
+    // 2 -- indicates 4 agents discontinuous space
+    // 3 -- indicates 1 agent continuous space
+    // 4 -- indicates 1 agent discontinuous space
+    @Parameter(names={"--expSetup", "-es"})
+    public int expSetup = 0;
+
     public Bondsman bondsman;
     public Agent agents[];
     public Depo depos[];
@@ -809,5 +817,13 @@ public class MTRP extends SimState {
 
     public void setHasNeighborhoodBounty(boolean hasNeighborhoodBounty) {
         this.hasNeighborhoodBounty = hasNeighborhoodBounty;
+    }
+
+    public void setExpSetup(int expSetup) {
+        this.expSetup = expSetup;
+    }
+
+    public int getExpSetup() {
+        return expSetup;
     }
 }

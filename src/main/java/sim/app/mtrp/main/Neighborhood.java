@@ -42,7 +42,51 @@ public class Neighborhood implements Steppable{
         this.id = id;
         waitingTimes = new ArrayList<Double>();
         // first set the mean location for the neighborhood this will always be within the bounds of the simulation size
-        meanLocation = new Double2D(20 + state.random.nextDouble(true,true)*(state.simWidth - 40), 20 + state.random.nextDouble(true,true)*(state.simHeight -40));
+        //meanLocation = new Double2D(20 + state.random.nextDouble(true,true)*(state.simWidth - 40), 20 + state.random.nextDouble(true,true)*(state.simHeight -40));
+
+        // 0 -- indicates 64 agent experiment
+        // 1 -- indicates 4 agent experiment continuous space
+        // 2 -- indicates 4 agents discontinuous space
+        // 3 -- indicates 1 agent continuous space
+        // 4 -- indicates 1 agent discontinuous space
+
+        if (state.expSetup == 0) {
+            // then we have the 64 agent setup
+            meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+            meanLocation = getCentral();
+        } else if (state.expSetup == 1) {
+            meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+            meanLocation = getCentral();
+        } else if (state.expSetup == 2) {
+            if (state.numNeighborhoods == 4) {
+                if (id == 0) {
+                    meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
+                } else if (id == 1) {
+                    meanLocation = new Double2D(0 + 20, 20);
+                } else if (id == 2) {
+                    meanLocation = new Double2D(20, state.simHeight - 20);
+                } else if (id == 3) {
+                    meanLocation = new Double2D(state.simWidth - 20, 20);
+                }
+            }
+        } else if (state.expSetup == 3) {
+            meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+        } else if (state.expSetup == 4) {
+            if (state.numNeighborhoods == 2) {
+                if (id == 0) {
+                    meanLocation = new Double2D(20,20);
+                }else if (id == 1) {
+                    meanLocation = new Double2D(150,150);
+                }
+            }
+        } else {
+            state.printlnSynchronized("No valid expsetup was set defaulting to central");
+            meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
+            meanLocation = getCentral();
+        }
+
+
+
 //        if (state.numNeighborhoods == 4) {
 //            if (id == 0) {
 //                meanLocation = new Double2D(state.simWidth - 20, state.simHeight - 20);
@@ -69,13 +113,7 @@ public class Neighborhood implements Steppable{
         //meanLocation = new Double2D(80, 80);
 
 
-        if (state.numNeighborhoods == 2) {
-            if (id == 0) {
-                meanLocation = new Double2D(20,20);
-            }else if (id == 1) {
-                meanLocation = new Double2D(150,150);
-            }
-        }
+
 
         //meanLocation = new Double2D(state.simHeight / 2, state.getSimWidth() / 2);
         //meanLocation = getCentral();
