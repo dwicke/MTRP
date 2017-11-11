@@ -810,4 +810,73 @@ public class MTRP extends SimState {
     public void setHasNeighborhoodBounty(boolean hasNeighborhoodBounty) {
         this.hasNeighborhoodBounty = hasNeighborhoodBounty;
     }
+
+    public double getAgentNNI() {
+        if (bondsman == null || (bondsman != null && bondsman.getCount() < 30)) { return -1;}
+
+        double totalDist = 0;
+        if (numAgents > 30) {
+            for (int i = 0; i < agents.length; i++) {
+                Agent t = agents[i];
+                Bag results = new Bag();
+                agentPlane.getNearestNeighbors(t.curLocation, 2, false, false, true, results);
+                double dist = Double.MAX_VALUE;
+                // printlnSynchronized("Results size = " + results.size());
+                for (int j = 0; j < results.size(); j++) {
+                    Agent nearT = (Agent) results.get(j);
+                    double curdist = nearT.curLocation.distance(t.curLocation);
+                    if (curdist < dist && nearT.getId() != t.getId()) {
+                        dist = curdist;
+                        //printlnSynchronized("dist = " + dist);
+                    }
+                }
+
+                totalDist += dist;
+            }
+            //printlnSynchronized("NumTasks = " + numTasks + "  Total Dist = " + totalDist + " NNI = " + (totalDist / numTasks) / (.5 * Math.sqrt(((double)simWidth *(double)simHeight) / numTasks)));
+
+            double dNN = (totalDist / numAgents);
+            double dran = (.5 * Math.sqrt(((double)simWidth *(double)simHeight) / numAgents));
+            double sran =  0.26136 / Math.sqrt((numAgents * numAgents) / ((double)simWidth *(double)simHeight));
+            double zscore = (dNN - dran) / sran;
+            double val = (totalDist / numAgents) / (.5 * Math.sqrt(((double)simWidth *(double)simHeight) / numAgents));
+
+            return zscore;
+            //return (totalDist / numAgents) / (.5 * Math.sqrt(((double)simWidth *(double)simHeight) / numAgents));
+        }
+        return -1;
+    }
+
+
+    public double getNearestNeighborIndex() {
+        if (bondsman == null || (bondsman != null && bondsman.getCount() < 30)) { return -1;}
+
+        double totalDist = 0;
+        double numTasks = bondsman.getAllTasks().length;
+        if (numTasks > 30) {
+            for (int i = 0; i < bondsman.getAllTasks().length; i++) {
+                Task t = bondsman.getAllTasks()[i];
+                Bag results = new Bag();
+                taskPlane.getNearestNeighbors(t.location, 2, false, false, true, results);
+                double dist = Double.MAX_VALUE;
+               // printlnSynchronized("Results size = " + results.size());
+                for (int j = 0; j < results.size(); j++) {
+                    Task nearT = (Task) results.get(j);
+                    double curdist = nearT.getLocation().distance(t.getLocation());
+                    if (curdist < dist && nearT.getId() != t.getId()) {
+                        dist = curdist;
+                        //printlnSynchronized("dist = " + dist);
+                    }
+                }
+
+                totalDist += dist;
+            }
+            //printlnSynchronized("NumTasks = " + numTasks + "  Total Dist = " + totalDist + " NNI = " + (totalDist / numTasks) / (.5 * Math.sqrt(((double)simWidth *(double)simHeight) / numTasks)));
+            return (totalDist / numTasks) / (.5 * Math.sqrt(((double)simWidth *(double)simHeight) / numTasks));
+        }
+        return -1;
+
+    }
+
+
 }
