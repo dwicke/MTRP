@@ -31,6 +31,13 @@ public class Depo implements Steppable{
 
        //location = this.neighborhood.generateLocationInNeighborhood();
 
+        //location = this.neighborhood.meanLocation;
+
+        // 0 -- indicates 64 agent experiment
+        // 1 -- indicates 4 agent experiment continuous space
+        // 2 -- indicates 4 agents discontinuous space
+        // 3 -- indicates 1 agent continuous space
+        // 4 -- indicates 1 agent discontinuous space
         location = this.neighborhood.meanLocation;
 
 
