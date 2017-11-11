@@ -32,7 +32,7 @@ numAgents = {'singleCon':1, 'fouragentCon':4,'jumpshipExp':4, 'fouragentoneNeigh
 # indexToName = {'0':'Auction with Rate', '1':'Bounty Hunting with Rate', '2':'NN', '3':'Equitable Paritions', '4':'Bounty Hunting With Comm with Rate', '5':'Auction fixed Bounty', '6':'Bounty Hunting fixed Bounty', '7':'Bounty Hunting With Comm fixed Bounty', '8':'Nearest Neighbor with Task Abandonment'}
 
 
-myTitle = {'singleCon':'Single Agent 40x40 Continuous Space', 'fouragentCon':'Four Agents 80x80 Area', 'jumpshipExp':'Four Agents 80x80', 'fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
+myTitle = {'singleCon':'Single Agent Continuous Space Bias-Variance Plot', 'fouragentCon':'Four Agents 80x80 Area', 'jumpshipExp':'Four Agents 80x80', 'fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
 
 
 intervalToIndex = {'8':0, '9':1, '10':2, '11':3, '12':4, '13':5, '14':6, 
@@ -46,7 +46,7 @@ startDir = '/home/drew/tmp/finalresults/'
 
 for experiments in os.listdir(startDir):
 	
-	if 'fouragentCon' in experiments or 'sixty' in experiments:
+	if 'four' in experiments:
 		continue
 
 	if 'disaster' not in experiments:
@@ -118,5 +118,6 @@ for experiments in os.listdir(startDir):
 				plt.xticks(x,xlabels)
 				plt.xlabel('Bounty Rate')
 				plt.ylabel('Normalized Error')
+				plt.title('{}'.format(myTitle[experiments]))
 				plt.legend(fontsize="small")
 				plt.show()

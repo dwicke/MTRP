@@ -21,9 +21,9 @@ def split_upper(s):
 
 # colors = ['blue', '#9370DB', 'orange', 'yellow', 'green']
 # titles = ['Static Environment', "Emergent Jobs", "Hard Jobs", "Dynamic Agents", "Sudden Tasks"]
-rates = {'sixtyfouragentCon':.8, 'fouragentCon':.25,'singleCon':.0625, 'singleagentseperate':.0625,'gaussianTest':.25,'fouragentoneNeighborhood':.25,'fouragentfourNeighborhood':.25, 'fouragentfourneighborhoodSpreadout':.0625, 'oneagentoneneighborhood':.0625, 'OverlapFourAgentFourNeighborhood':.25, 'disaster1':.25, 'disaster2':.1875, 'sixtyfouragents':.8 }
-areas = {'sixtyfouragentCon':102400, 'fouragentCon':6400, 'singleCon':1600 , 'singleagentseperate':3200, 'gaussianTest':2826,'fouragentoneNeighborhood':1600,'fouragentfourNeighborhood': 6400, 'fouragentfourneighborhoodSpreadout':1600, 'oneagentoneneighborhood':1600, 'OverlapFourAgentFourNeighborhood':3600, 'disaster1':3600, 'disaster2':3200, 'sixtyfouragents':102400 }
-numAgents = {'sixtyfouragentCon':64, 'fouragentCon':4, 'singleCon':1, 'singleagentseperate':1, 'gaussianTest':4, 'fouragentoneNeighborhood':4,'fouragentfourNeighborhood':4,'fouragentoneNeighborhood':4, 'fouragentfourneighborhoodSpreadout':1, 'oneagentoneneighborhood':1, 'OverlapFourAgentFourNeighborhood':4, 'disaster1':4, 'disaster2':4, 'sixtyfouragents':64 }
+rates = {'sixtyfouragentCon':.8, 'fouragentConRho':0.05 , 'fouragentCon':.25,'singleCon':.0625, 'singleagentseperate':.0625,'gaussianTest':.25,'fouragentoneNeighborhood':.25,'fouragentfourNeighborhood':.25, 'fouragentfourneighborhoodSpreadout':.0625, 'oneagentoneneighborhood':.0625, 'OverlapFourAgentFourNeighborhood':.25, 'disaster1':.25, 'disaster2':.1875, 'sixtyfouragents':.8 }
+areas = {'sixtyfouragentCon':102400,'fouragentConRho':6400, 'fouragentCon':6400, 'singleCon':1600 , 'singleagentseperate':3200, 'gaussianTest':2826,'fouragentoneNeighborhood':1600,'fouragentfourNeighborhood': 6400, 'fouragentfourneighborhoodSpreadout':1600, 'oneagentoneneighborhood':1600, 'OverlapFourAgentFourNeighborhood':3600, 'disaster1':3600, 'disaster2':3200, 'sixtyfouragents':102400 }
+numAgents = {'sixtyfouragentCon':64,'fouragentConRho':4, 'fouragentCon':4, 'singleCon':1, 'singleagentseperate':1, 'gaussianTest':4, 'fouragentoneNeighborhood':4,'fouragentfourNeighborhood':4,'fouragentoneNeighborhood':4, 'fouragentfourneighborhoodSpreadout':1, 'oneagentoneneighborhood':1, 'OverlapFourAgentFourNeighborhood':4, 'disaster1':4, 'disaster2':4, 'sixtyfouragents':64 }
 # 8 is used as the auction method for a single agent experiment
 # 13 is equitable partitions with NN
 # 6 is just NN when i split the space
@@ -33,7 +33,7 @@ agentToIndex = {'0.0':0, '1.0E-4':1, '0.001':2, '0.01':3, '0.1':4, '1.0':5, '5.0
 indexToRate = {0:0.0, 1:0.0001, 2:0.001, 3:0.01, 4:0.1, 5:1.0, 6:5.0, 7:0.0}
 indexToPointChar = {'0':'o', '1':'x', '2':'s', '3':'D', '4':'^', '5':'*', '6':'+', '7':'*'}
 indexToName = {'0':'Bounty rate 0.0', '1':'Bounty rate 1.0E-4', '2':'Bounty rate 0.001', '3':'Bounty rate 0.01', '4':'Bounty rate 0.1', '5':'Bounty rate 1.0', '6':'Bounty rate 5.0', '7':'Nearest Neighbor'}
-myTitle = {'sixtyfouragentCon':'Sixty Four Agents 320x320','fouragentCon':'Four Agents 80x80', 'singleCon':'Single Agent 40x40 Continuous Space', 'singleagentseperate':'Single Agent Discontinuous Space','gaussianTest':'Gaussian Distribution Four Agents', 'fouragentfourNeighborhood':'Four Agents 80x80','fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
+myTitle = {'sixtyfouragentCon':'Sixty Four Agents 320x320','fouragentConRho':'Four Agents 80x80 $ \lambda = 0.05$','fouragentCon':'Four Agents 80x80 $ \lambda = .25$', 'singleCon':'Single Agent 40x40 Continuous Space', 'singleagentseperate':'Single Agent Discontinuous Space','gaussianTest':'Gaussian Distribution Four Agents', 'fouragentfourNeighborhood':'Four Agents 80x80','fouragentoneNeighborhood':'Four Agents $\lambda = .25$ A = 40x40', 'fouragentfourneighborhoodSpreadout':'Four Agents Serperate Regions', 'oneagentoneneighborhood':'One Agent $\lambda = .0625$ A = 40x40', 'OverlapFourAgentFourNeighborhood':'Four Agents Piecewise PPP', 'disaster':'Four Agents with Time Varying PPP',  'sixtyfouragents':'Sixty Four Agents' }
 
 
 intervalToIndex = {'8':0, '9':1, '10':2, '11':3, '12':4, '13':5, '14':6, 
@@ -194,16 +194,16 @@ for experiments in os.listdir(startDir):
 					bountyratios[count][intervalToIndex[interval]] = bounty[count][intervalToIndex[interval]] / (500.0 * gammaT*rate + indexToRate[count]*gammaT*gammaT*rate)
 				method.append(indexToRate[count])
 				count = count + 1
-			print(method)
-			print(tabulate(np.concatenate((np.array([[40,45,50,55,60,65]]).T, np.transpose(bountyratios[~np.all(bountyratios== 0, axis=1)])), axis=1), tablefmt="latex", floatfmt=".2f"))
+			#print(method)
+			#print(tabulate(np.concatenate((np.array([[40,45,50,55,60,65]]).T, np.transpose(bountyratios[~np.all(bountyratios== 0, axis=1)])), axis=1), tablefmt="latex", floatfmt=".2f"))
 
 
-			plt.xlabel(r'$\frac{\lambda A}{m^2v^2(1-\rho)^2}$')
+			plt.xlabel(r'$\frac{\lambda G}{m^2v^2(1-\rho)^2}$')
 			plt.ylabel('Experimental T')
 			plt.title('{} with {}'.format(myTitle[experiments], split_upper(fuelOrNoFuel)))
 			plt.legend(fontsize="small")
 
-			#plt.savefig('/home/drew/tmp/figsfinal/{}{}{}.pdf'.format('gamma', experiments,fuelOrNoFuel), transparent=True)
+			plt.savefig('/home/drew/tmp/figsfinal/{}{}{}.pdf'.format('gamma', experiments,fuelOrNoFuel), transparent=True)
 			plt.show()
 
 
