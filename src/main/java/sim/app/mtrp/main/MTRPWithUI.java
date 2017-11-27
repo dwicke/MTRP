@@ -28,6 +28,7 @@ public class MTRPWithUI extends GUIState {
 
     ContinuousPortrayal2D agentsPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D tasksPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D destPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D deposPortrayal = new ContinuousPortrayal2D();
 
     // portrayals for where the agents have completed tasks
@@ -82,6 +83,9 @@ public class MTRPWithUI extends GUIState {
         tasksPortrayal.setField(myState.taskPlane);
         tasksPortrayal.setPortrayalForAll(new MovablePortrayal2D(new TaskPortrayal()));
 
+        destPortrayal.setField(myState.destPlane);
+        destPortrayal.setPortrayalForAll(new MovablePortrayal2D(new TaskPortrayal()));
+
         deposPortrayal.setField(myState.depoPlane);
         deposPortrayal.setPortrayalForAll(new MovablePortrayal2D(new DepoPortrayal()));
         Color colors[] = generateColors(myState.numAgents);
@@ -99,6 +103,7 @@ public class MTRPWithUI extends GUIState {
         display.detachAll();
         display.attach(agentsPortrayal, "Agents");
         display.attach(tasksPortrayal, "Tasks");
+        display.attach(destPortrayal, "Tasks Dest");
         display.attach(deposPortrayal, "Depos");
         for (int i =0; i < areaDominance.length; i++) {
 
@@ -138,6 +143,7 @@ public class MTRPWithUI extends GUIState {
         // attach the portrayals from bottom to top
         display.attach(agentsPortrayal, "Agents");
         display.attach(tasksPortrayal, "Tasks");
+        display.attach(destPortrayal, "Task Dest");
         display.attach(deposPortrayal, "Depos");
 
 

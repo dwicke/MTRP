@@ -1,5 +1,6 @@
 package sim.app.mtrp.main;
 
+import sim.field.continuous.Continuous2D;
 import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
@@ -22,6 +23,9 @@ public class Task {
     boolean finished = false;
     Bag blackList; // agents who are not allowed to go after this task
     boolean dummy = false;
+    Task nextTask;
+    Continuous2D plane;
+
 
     public Task(Neighborhood neighborhood, MTRP state, Double2D location) {
         this.id = taskIDGenerator;
@@ -31,7 +35,8 @@ public class Task {
 
         this.location = location;
         // add it to the continuous2d
-        state.getTaskPlane().setObjectLocation(this, this.location);
+        // let the creator add it don't do it in the constructor
+        //state.getTaskPlane().setObjectLocation(this, this.location);
 
         //state.getTaskPlane().getNeighborsWithinDistance()
 
@@ -53,6 +58,17 @@ public class Task {
         blackList = new Bag();
     }
 
+
+    public void addToPlane(Continuous2D plane) {
+        plane.setObjectLocation(this, this.location);
+        this.plane = plane;
+    }
+
+    public void removeFromPlane() {
+        this.plane.remove(this);
+    }
+
+
     public void setDummy(boolean dummy) {
         this.dummy = dummy;
     }
@@ -68,6 +84,9 @@ public class Task {
 
     public void incrementBounty() {
         job.incrementBounty();
+        if (hasNextTask()) {
+            nextTask.job.incrementBounty();
+        }
     }
 
     public double getBounty() {
@@ -87,7 +106,7 @@ public class Task {
     }
 
     public void setFinished() {
-        state.getTaskPlane().remove(this);
+        this.plane.remove(this);
         neighborhood.finishedTask(this);
         finished = true;
     }
@@ -98,6 +117,9 @@ public class Task {
 
     public void incrementTimeNotFinished() {
             timeNotFinished++;
+            if (hasNextTask()) {
+                nextTask.incrementTimeNotFinished();
+            }
     }
     public int getTimeNotFinished() {
         return timeNotFinished;
@@ -141,8 +163,17 @@ public class Task {
     public double getBaseBounty() { return job.getCurrentBounty();
     }
 
+    public boolean hasNextTask() {
+        return nextTask != null;
+    }
 
+    public Task getNextTask() {
+        return nextTask;
+    }
 
+    public void setNextTask(Task t) {
+        nextTask = t;
+    }
 
     public void setLocation(Double2D newLoc) {
         this.location = newLoc;
@@ -155,4 +186,6 @@ public class Task {
     public MTRP getState() {
         return state;
     }
+
+
 }

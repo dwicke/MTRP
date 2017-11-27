@@ -37,6 +37,7 @@ public abstract class Agent implements Steppable {
     boolean slow = false;
     public Depo startDepo = null;
     double totalArea = 0.0;
+    private boolean amDelivering = false;
 
 
 //    final Logger logger = (Logger) LoggerFactory.getLogger(Agent.class);
@@ -159,7 +160,7 @@ public abstract class Agent implements Steppable {
             curDestination = nearestDepo.location;
             decommitTask();
 
-        } else {
+        } else if (!amDelivering){
             Task nextTask = getAvailableTask();
 
             if (nextTask == null) {
@@ -354,9 +355,7 @@ public abstract class Agent implements Steppable {
             // see if done the task
             numTimeStepsWorking++;
             if (curJob.doWork()) {
-                //state.printlnSynchronized("agent " + id + " Finished task id = " + curJob.getId());
-                finishTask();
-                numTimeStepsWorking = 0;
+                doneDoWork();
             }
 
         } else {
@@ -368,9 +367,7 @@ public abstract class Agent implements Steppable {
                     if (amWorking) {
                         numTimeStepsWorking = 1;
                         if (curJob.doWork()) {
-                            //state.printlnSynchronized("agent " + id + " Finished task id = " + curJob.getId());
-                            finishTask();
-                            numTimeStepsWorking = 0;
+                           doneDoWork();
                         }
                     }
 
@@ -379,6 +376,22 @@ public abstract class Agent implements Steppable {
         }
 
 
+    }
+
+
+    public void doneDoWork() {
+        if (curJob.task.hasNextTask()) {
+            curJob.task.removeFromPlane();
+            curJob = curJob.task.getNextTask().job;
+            curDestination = curJob.task.location;
+            amDelivering = true;
+
+        } else {
+            finishTask();
+            amDelivering = false;
+        }
+        numTimeStepsWorking = 0;
+        amWorking = false;
     }
 
     /**

@@ -122,6 +122,7 @@ public class MTRP extends SimState {
 
     public Continuous2D agentPlane;
     public Continuous2D taskPlane;
+    public Continuous2D destPlane;
     public Continuous2D depoPlane;
     public Continuous2D neighborhoodPlane;
 
@@ -171,6 +172,7 @@ public class MTRP extends SimState {
     public static final double MAX_TASK = 2;
 
     public EquitablePartitions ep;
+    public boolean pickupDelivery = true;
 
     public MTRP(long seed) {
         super(seed);
@@ -210,6 +212,7 @@ public class MTRP extends SimState {
 
         agentPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         taskPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
+        destPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
         depoPlane = new Continuous2D(1.0, getSimWidth(),getSimHeight());
 
         valgrid = new DoubleGrid2D[numAgents];
@@ -894,5 +897,13 @@ public class MTRP extends SimState {
 
     public int getExpSetup() {
         return expSetup;
+    }
+
+    public boolean getPickupDelivery() {
+        return pickupDelivery;
+    }
+
+    public void setPickupDelivery(boolean pickupDelivery) {
+        this.pickupDelivery = pickupDelivery;
     }
 }

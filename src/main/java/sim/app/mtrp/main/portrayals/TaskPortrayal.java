@@ -48,7 +48,11 @@ public class TaskPortrayal extends OvalPortrayal2D {
             }
         }
         else {
-            graphics.setColor(new Color(0, 0, 255, alpha));
+            if (t.hasNextTask()) {
+                graphics.setColor(new Color(0, 0, 255, alpha));
+            }else {
+                graphics.setColor(new Color(255, 0, 0, alpha));
+            }
         }
 
 

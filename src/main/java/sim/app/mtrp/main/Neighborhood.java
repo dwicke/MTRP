@@ -229,7 +229,17 @@ public class Neighborhood implements Steppable{
 //            lastTime = state.schedule.getTime();
 //            totalInterTime += interTime;
 //            state.printlnSynchronized(" average time = " + totalInterTime / numTask);
-            makeTask();
+            if (state.getPickupDelivery()) {
+                Task source = makeTask();
+                Task dest = makeTask();
+                source.nextTask = dest;
+                source.addToPlane(state.taskPlane);
+                dest.addToPlane(state.destPlane);
+
+            } else {
+                Task source = makeTask();
+                source.addToPlane(state.taskPlane);
+            }
 
         } else {
             //latestTask = null;
