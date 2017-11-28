@@ -236,6 +236,12 @@ public class Neighborhood implements Steppable{
                 source.addToPlane(state.taskPlane);
                 dest.addToPlane(state.destPlane);
 
+                // hmm what if the tasks had different bounty rates that were random
+//                double bountyRate = state.random.nextDouble();
+//                source.job.setBountyRate(bountyRate);
+//                dest.job.setBountyRate(bountyRate);
+
+
             } else {
                 Task source = makeTask();
                 source.addToPlane(state.taskPlane);

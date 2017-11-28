@@ -46,6 +46,8 @@ public class AgentFactory {
                 return new EquitableAgent(state, id);
             case 14:
                 return new LocalLearningAgentWithCommunication(state, id);
+            case 15:
+                return new LearningAgentWithCommunicationPF(state, id);
         }
         return null;
     }
