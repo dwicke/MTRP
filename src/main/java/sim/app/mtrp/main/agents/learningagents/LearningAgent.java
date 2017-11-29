@@ -32,6 +32,9 @@ public class LearningAgent extends Agent {
     public QTable expectedNeighborhoodReward;
     double neighRewardLR = .45;
 
+    FirstComeFirstServe fcfs;
+    double totalFairness = 0.0;
+    double count = 0;
 
 
     public LearningAgent(MTRP state, int id) {
@@ -40,7 +43,11 @@ public class LearningAgent extends Agent {
         pTable = new QTable(numNeighborhoods, 1, pLearningRate, pDiscountBeta, state.random, 1.0, 0.0);
         tTable = new QTable(state.numJobTypes + state.numEmergentJobTypes, 1, tLearningRate, tDiscountBeta, state.random, state.getJobLength(), 0.0);
         expectedNeighborhoodReward = new QTable(state.getNumNeighborhoods(), 1, neighRewardLR, .1, state.random);
-
+        fcfs = new FirstComeFirstServe(state);
+        fcfs.setId(id);
+        fcfs.setStepsize(state.stepsize);
+        count = 0;
+        totalFairness = 0;
     }
 
     public LearningAgent() {
@@ -66,12 +73,43 @@ public class LearningAgent extends Agent {
             //state.printlnSynchronized("Agent " + getId() + " getting task = " + getBestCounter++);
             Task bestT = getBestTask(tasks);
 
+
+            // determine the fairness here
+            if (bestT != null)
+                updateFairness(bestT, tasks);
+
+
             return bestT;
         }else {
             return curJob.getTask();
         }
 
     }
+
+
+    public void updateFairness(Task bestT, Bag tasks) {
+
+        fcfs.setCurLocation(curLocation);
+
+        fcfs.setCurJob(curJob);
+
+        //Task nearest = nf.getBestTask(tasks);
+        Task first = fcfs.getBestTask(tasks);
+        count++;
+        if (first == null) {
+            //state.printlnSynchronized("FCFS returned a null task, but the bestT is not null.  this is bad");
+        }
+        double fairness = (double)bestT.getTimeNotFinished() / (double)first.getTimeNotFinished();
+        totalFairness += fairness;
+    }
+
+
+    @Override
+    public double getTotalFairness() {
+        return totalFairness;
+    }
+
+    public double getCount() {return count;}
 
     @Override
     public Task getAvailableTask() {

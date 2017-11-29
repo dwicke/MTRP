@@ -19,15 +19,21 @@ public class Bondsman implements Steppable {
     int lengthStale = 0;
     int lengthNotStale = 0;
 
+    Bag currentBatch, nextBatch;
+
 
     public Bondsman(MTRP state) {
+
         this.state = state;
+        currentBatch = new Bag();
+        nextBatch = new Bag();
     }
 
     public void step(SimState simState) {
         numStale = 0;
         //Bag tasksToRemove = new Bag();
         for (Object task: state.getTaskPlane().getAllObjects().toArray() ){
+
             ((Task)task).incrementBounty();
             ((Task)task).incrementTimeNotFinished();
             if (((Task)task).getTimeNotFinished() >= state.getDeadline()) {
@@ -36,6 +42,9 @@ public class Bondsman implements Steppable {
             }
 
         }
+        updateCurrentBatch();
+
+
         /*
         for (Object task: tasksToRemove) {
             Task t = (Task) task;
@@ -253,4 +262,25 @@ public class Bondsman implements Steppable {
         return lengthNotStale;
     }
 
+    public void updateCurrentBatch() {
+        if (currentBatch.size() == 0 && nextBatch.size() == 0) {
+            // then add all new tasks to the current batch
+            currentBatch = getNewTasks();
+        }else if (currentBatch.size() == 0 && nextBatch.size() > 0) {
+            currentBatch = nextBatch;
+            nextBatch = new Bag();
+        } else if (currentBatch.size() > 0) {
+            nextBatch.addAll(getNewTasks());
+        }
+
+    }
+
+
+    public Bag getCurrentBatch() {
+        return currentBatch;
+    }
+
+    public void removeFromCurrentBatch(Task t) {
+        currentBatch.remove(t);
+    }
 }

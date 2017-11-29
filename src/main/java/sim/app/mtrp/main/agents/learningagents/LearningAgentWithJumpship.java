@@ -18,25 +18,23 @@ public class LearningAgentWithJumpship extends LearningAgent {
 
     public LearningAgentWithJumpship(MTRP state, int id) {
         super(state, id);
-        nf = new NearestFirst(state);
-        fcfs = new FirstComeFirstServe(state);
-        nf.setId(id);
-        fcfs.setId(id);
-        nf.setStepsize(state.stepsize);
-        fcfs.setStepsize(state.stepsize);
-        count = 0;
-        totalFairness = 0;
+        //nf = new NearestFirst(state);
+        //fcfs = new FirstComeFirstServe(state);
+        //nf.setId(id);
+//        fcfs.setId(id);
+//        nf.setStepsize(state.stepsize);
+//        fcfs.setStepsize(state.stepsize);
+//        count = 0;
+//        totalFairness = 0;
     }
 
     public LearningAgentWithJumpship() {}
 
 
-    int fairCounter = 0;
-    int oldestCounter = 0;
-    NearestFirst nf;
-    FirstComeFirstServe fcfs;
-    double totalFairness = 0.0;
-    double count = 0;
+//    NearestFirst nf;
+//    FirstComeFirstServe fcfs;
+//    double totalFairness = 0.0;
+//    double count = 0;
 
     public Task getAvailableTask(Bag tasks) {
 
@@ -60,16 +58,6 @@ public class LearningAgentWithJumpship extends LearningAgent {
         Task bestT = getBestTask(tasks);
 
 
-        fcfs.setCurLocation(curLocation);
-
-        fcfs.setCurJob(curJob);
-
-        //Task nearest = nf.getBestTask(tasks);
-        Task first = fcfs.getBestTask(tasks);
-
-        //state.printlnSynchronized(" bestT = " + bestT + " first = " + first + " size of tasks = " + tasks.size());
-
-
         boolean shouldPrint = false;
         if (curJob != null && (bestT == null || bestT.getJob().getId() != curJob.getId())) {
             bestT = handleJumpship(bestT);
@@ -91,33 +79,17 @@ public class LearningAgentWithJumpship extends LearningAgent {
         do i need to do the subtraction of the nearest neighbor's weighting time from numerator and denominator?...
          */
 
-        if (shouldPrint) {
-            // print out distance and times... try and see what is going on...
-            if (bestT == null) {
-
-            }else {
-
-                count++;
-                if (first == null) {
-                    //state.printlnSynchronized("FCFS returned a null task, but the bestT is not null.  this is bad");
-                }
-                double fairness = (double)bestT.getTimeNotFinished() / (double)first.getTimeNotFinished();
-                totalFairness += fairness;
-                //state.printlnSynchronized("Average fairness = " + (totalFairness / count) + " job fairness = " + fairness);
-            }
+        if (shouldPrint && bestT != null) {
+            updateFairness(bestT,tasks);
         }
+
 
 
         return bestT;
 
     }
 
-    @Override
-    public double getTotalFairness() {
-        return totalFairness;
-    }
 
-    public double getCount() {return count;}
 
 
     public void handleMaintain(Task bestT) {

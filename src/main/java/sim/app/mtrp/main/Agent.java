@@ -434,6 +434,19 @@ public abstract class Agent implements Steppable {
         return nonCommitedTasks;
     }
 
+    public Bag getNonCommittedTasks(Bag availTasks) {
+        Bag nonCommitedTasks = new Bag();
+        for (int i = 0; i < availTasks.size(); i++) {
+            Task t = (Task) availTasks.get(i);
+            if (t.getCommittedAgents().size() == 0) {
+                nonCommitedTasks.add(t);
+            }
+        }
+        return nonCommitedTasks;
+    }
+
+
+
     public TreeMap<Double,Integer> getPercentageJobTypes(Task[] tasks) {
 
         TreeMap<Double, Integer> percentJobTypes = new TreeMap<Double, Integer>();

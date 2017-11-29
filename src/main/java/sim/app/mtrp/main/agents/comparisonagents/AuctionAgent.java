@@ -85,7 +85,6 @@ public class AuctionAgent extends LearningAgent {
         if (curJob != null)
             curJob.getTask().decommit(this);
         super.decommitTask();
-
     }
 
 

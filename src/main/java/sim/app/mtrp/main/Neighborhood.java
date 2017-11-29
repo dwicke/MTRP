@@ -235,7 +235,7 @@ public class Neighborhood implements Steppable{
                 source.nextTask = dest;
                 source.addToPlane(state.taskPlane);
                 dest.addToPlane(state.destPlane);
-
+                latestTask = source;
                 // hmm what if the tasks had different bounty rates that were random
 //                double bountyRate = state.random.nextDouble();
 //                source.job.setBountyRate(bountyRate);
@@ -245,10 +245,11 @@ public class Neighborhood implements Steppable{
             } else {
                 Task source = makeTask();
                 source.addToPlane(state.taskPlane);
+                latestTask = source;
             }
 
         } else {
-            //latestTask = null;
+            latestTask = null;
         }
 
 
@@ -314,7 +315,7 @@ public class Neighborhood implements Steppable{
 
         totalBaseBounty += genTask.getBounty();
         tasks.add(genTask);
-        latestTask = genTask;
+
         totalNumTasksGenerated++;
         return genTask;
     }
@@ -342,6 +343,7 @@ public class Neighborhood implements Steppable{
         totalDist += task.getLocation().distance(meanLocation);
         count[task.getJob().jobType]++;
         tasks.remove(task);
+
     }
 
     public ArrayList<Double> getWaitingTimes() {

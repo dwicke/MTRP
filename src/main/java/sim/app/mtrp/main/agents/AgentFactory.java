@@ -48,6 +48,8 @@ public class AgentFactory {
                 return new LocalLearningAgentWithCommunication(state, id);
             case 15:
                 return new LearningAgentWithCommunicationPF(state, id);
+            case 16:
+                return new GatedNN(state, id);
         }
         return null;
     }
